@@ -4,6 +4,21 @@ This repository is the wild wild west playground for experimenting with workflow
 that allow a course instructor to prepare material, distribute it to learners,
 and for them to then turn in their homework.
 
+## Try it out!
+
+Install with `pip install -e.` from the directory of this README.
+
+Then run `nbauthor master/01-lecture.ipynb`. This will take the master notebook,
+and create a student and autograder version. The student version will be in
+the `student/` subdirectory and the autograder version in `autograder/`.
+
+The student directory can be distributed to students. It includes the questions
+and code to run the grading steps that students can execute themselves.
+
+In the autograder directory you will find both the public and private tests,
+but no notebook. The idea is that at a later stage students submit their
+notebook and it is executed in the autograder directory by some server/robot.
+
 
 ## Assumptions
 
