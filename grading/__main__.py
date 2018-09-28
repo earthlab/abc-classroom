@@ -4,7 +4,7 @@ import sys
 from nbclean import NotebookCleaner
 
 
-def main():
+def author():
     notebook = sys.argv[1]
     print('Processing', notebook)
 
@@ -13,19 +13,19 @@ def main():
 
     # create test files and notebook for the student
     nb = NotebookCleaner(notebook)
-    nb.create_oktests(tag='private',
-                      oktest_path=base_name,
-                      base_dir='autograder')
-    nb.create_oktests(tag='public',
-                      oktest_path=base_name,
-                      base_dir='student')
+    nb.create_tests(tag='private',
+                    oktest_path=base_name,
+                    base_dir='autograder')
+    nb.create_tests(tag='public',
+                    oktest_path=base_name,
+                    base_dir='student')
     nb.save(os.path.join('student', nb_name))
 
     # create test files for the autograder
     nb = NotebookCleaner(notebook)
-    nb.create_oktests(tag='private',
-                      oktest_path=base_name,
-                      base_dir='autograder')
-    nb.create_oktests(tag='public',
-                      oktest_path=base_name,
-                      base_dir='autograder')
+    nb.create_tests(tag='private',
+                    oktest_path=base_name,
+                    base_dir='autograder')
+    nb.create_tests(tag='public',
+                    oktest_path=base_name,
+                    base_dir='autograder')

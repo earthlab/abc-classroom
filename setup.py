@@ -14,7 +14,7 @@ setup(name='grading',
       install_requires=['nbclean'],
       entry_points={
         'console_scripts': [
-            'nbauthor = grading.__main__:main',
+            'nbauthor = grading.__main__:author',
         ]
 },
 )
