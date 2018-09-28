@@ -15,6 +15,7 @@ setup(name='grading',
       entry_points={
         'console_scripts': [
             'nbauthor = grading.__main__:author',
+            'nbdistribute = grading.__main__:distribute',
         ]
 },
 )

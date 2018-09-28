@@ -3,6 +3,7 @@ import inspect
 import io
 import json
 import glob
+import os
 from contextlib import redirect_stderr, redirect_stdout
 from jinja2 import Template
 from textwrap import dedent
@@ -228,6 +229,11 @@ def check(test_file_path, global_env=None):
     check('tests/q1.py', globals())
     Returns a TestResult object.
     """
+    # It isn't an error to call this with a non-existant file
+    # students don't have access to all tests
+    if not os.path.exists(test_file_path):
+        return None
+
     tests = OKTests([test_file_path])
 
     if global_env is None:
