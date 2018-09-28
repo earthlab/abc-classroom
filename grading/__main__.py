@@ -4,6 +4,8 @@ import shutil
 
 from nbclean import NotebookCleaner
 
+from .distribute import find_notebooks, render_circleci_template
+
 
 def distribute():
     """Create a student template repository for use with GitHub classroom"""
@@ -18,6 +20,16 @@ def distribute():
         shutil.rmtree(output_directory)
 
     shutil.copytree(student_repo_template, output_directory)
+
+    # the template only needs the basename, not the .ipynb extension
+    notebook_paths = [f[:-6] for f in find_notebooks(student_repo_template)]
+
+    circleci = render_circleci_template(notebook_paths)
+
+    os.makedirs(os.path.join(output_directory, '.circleci'))
+    circleci_yml = os.path.join(output_directory, '.circleci', 'config.yml')
+    with open(circleci_yml, 'w') as f:
+        f.write(circleci)
 
 
 def author():

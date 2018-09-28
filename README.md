@@ -15,6 +15,11 @@ the `student/` subdirectory and the autograder version in `autograder/`.
 The student directory can be distributed to students. It includes the questions
 and code to run the grading steps that students can execute themselves.
 
+To create a template repository for students use the `nbdistribute` command.
+After running `nbauthor` on all the notebooks you want to include run:
+`nbdistribute student /tmp/student-template` to take the contents of the
+`student/` directory and create a template repository from it.
+
 In the autograder directory you will find both the public and private tests,
 but no notebook. The idea is that at a later stage students submit their
 notebook and it is executed in the autograder directory by some server/robot.
