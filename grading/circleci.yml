@@ -25,10 +25,7 @@ jobs:
           command: |
             python3 -m venv /tmp/venv
             . /tmp/venv/bin/activate
-            # currently we get ipython 7 which uses an incompatible version of
-            # prompt_toolkit
-            pip install --progress-bar off "ipython<7"
-            pip install --progress-bar off papermill ipywidgets
+            pip install --progress-bar off ipython papermill ipywidgets
             pip install --progress-bar off https://github.com/betatim/grading-workflow-experiments/archive/distributing-work.zip
 
       {% for notebook in notebook_paths -%}

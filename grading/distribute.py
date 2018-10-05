@@ -1,5 +1,6 @@
 """Take a template directory and distribute it"""
 import os
+import subprocess
 
 import jinja2
 
@@ -28,3 +29,19 @@ def render_circleci_template(notebook_paths):
     t = jinja2.Template(template)
 
     return t.render(notebook_paths=notebook_paths)
+
+
+def git_init(directory):
+    """Initialise and populate a git repository in `directory`
+
+    Add all files in `directory` to a newly create git repository in that
+    directory.
+    """
+    subprocess.run(['git', 'init'], cwd=directory,
+                   check=True, stdout=subprocess.PIPE)
+
+    subprocess.run(['git', 'add', '*'], cwd=directory,
+                   check=True, stdout=subprocess.PIPE)
+
+    subprocess.run(['git', 'commit', '-m', 'Initial commit'],
+                   cwd=directory, check=True, stdout=subprocess.PIPE)

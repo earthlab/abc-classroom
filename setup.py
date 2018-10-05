@@ -14,6 +14,7 @@ setup(name='grading',
       install_requires=['nbclean', 'jinja2'],
       entry_points={
         'console_scripts': [
+            'nbgrade = grading.__main__:grade',
             'nbauthor = grading.__main__:author',
             'nbdistribute = grading.__main__:distribute',
         ]
