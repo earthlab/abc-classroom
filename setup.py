@@ -11,7 +11,7 @@ setup(name='grading',
       license='BSD',
       author='UC Boulder Earthlab',
       packages=['grading'],
-      install_requires=['nbclean', 'jinja2'],
+      install_requires=['nbclean', 'jinja2', 'pyyaml'],
       include_package_data=True,
       entry_points={
         'console_scripts': [
@@ -19,5 +19,5 @@ setup(name='grading',
             'nbauthor = grading.__main__:author',
             'nbdistribute = grading.__main__:distribute',
         ]
-},
-)
+        },
+      )
