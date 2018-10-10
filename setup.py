@@ -12,6 +12,7 @@ setup(name='grading',
       author='UC Boulder Earthlab',
       packages=['grading'],
       install_requires=['nbclean', 'jinja2'],
+      include_package_data=True,
       entry_points={
         'console_scripts': [
             'nbgrade = grading.__main__:grade',
