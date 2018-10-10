@@ -1,12 +1,14 @@
+import argparse
+import datetime
+import glob
 import os
-import sys
 import shutil
 import subprocess
+import sys
 import yaml
 
-from nbclean import NotebookCleaner
-
 from .distribute import find_notebooks, render_circleci_template, git_init
+from .notebook import split_notebook
 
 
 def get_config():
@@ -56,7 +58,7 @@ def grade():
 
 
 def distribute():
-    """Create a student template repository for use with GitHub classroom"""
+    """Create or update student repositories"""
     student_repo_template = 'student'
     output_directory = sys.argv[1]
 
@@ -99,32 +101,51 @@ def distribute():
     git_init(output_directory)
 
 
+def valid_date(s):
+    try:
+        return datetime.datetime.strptime(s, "%Y-%m-%d").date()
+    except ValueError:
+        msg = "Not a valid date: '{0}'.".format(s)
+        raise argparse.ArgumentTypeError(msg)
+
+
 def author():
-    notebook = sys.argv[1]
-    print('Processing', notebook)
+    """Create student repository and autograding tests"""
+    parser = argparse.ArgumentParser(description='Author student repository.')
+    parser.add_argument('--date',
+                        default=datetime.datetime.today().date(),
+                        type=valid_date,
+                        help='Assumed date when preparing assignments (default: today)')
+    args = parser.parse_args()
 
-    directory, nb_name = os.path.split(notebook)
-    base_name, extension = os.path.splitext(nb_name)
+    config = get_config()
+    now = args.date
 
-    # create test files and notebook for the student
-    nb = NotebookCleaner(notebook)
-    nb.create_tests(tag='private',
-                    oktest_path=base_name,
-                    base_dir='autograder')
-    nb.create_tests(tag='public',
-                    oktest_path=base_name,
-                    base_dir='student')
-    text_replace_begin = '### BEGIN SOLUTION'
-    text_replace_end = '### END SOLUTION'
-    nb.replace_text(text_replace_begin, text_replace_end)
+    if os.path.exists('student'):
+        shutil.rmtree('student')
+    os.makedirs('student')
 
-    nb.save(os.path.join('student', nb_name))
+    if os.path.exists('autograder'):
+        shutil.rmtree('autograder')
 
-    # create test files for the autograder
-    nb = NotebookCleaner(notebook)
-    nb.create_tests(tag='private',
-                    oktest_path=base_name,
-                    base_dir='autograder')
-    nb.create_tests(tag='public',
-                    oktest_path=base_name,
-                    base_dir='autograder')
+    for assignment in os.listdir('master'):
+        release_date = config['assignments'][assignment]['release']
+        if release_date > now:
+            continue
+
+        student_path = os.path.join('student', assignment)
+        master_path = os.path.join('master', assignment)
+
+        # copy over everything, including master notebooks. They will be
+        # overwritten by split_notebook() below
+        shutil.copytree(master_path, student_path)
+
+        for notebook in glob.glob('master/%s/*.ipynb' % assignment):
+            split_notebook(notebook,
+                           student_path,
+                           os.path.join('autograder', assignment))
+
+    # Create additional files
+    for target, source in config['extra_files'].items():
+        shutil.copyfile(source,
+                        os.path.join('student', target))

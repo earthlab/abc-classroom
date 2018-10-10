@@ -1,11 +1,47 @@
-from contextlib import redirect_stderr, redirect_stdout
+import os
 import inspect
+
+from contextlib import redirect_stderr, redirect_stdout
+
+from nbclean import NotebookCleaner
+
 from .utils import hide_outputs
 
 try:
     from IPython.core.inputsplitter import IPythonInputSplitter
 except ImportError:
     raise ImportError('IPython needs to be installed for notebook grading')
+
+
+def split_notebook(notebook, student_path, autograder_path):
+    """Split a master notebook into student and autograder notebooks"""
+    print('Processing', notebook)
+
+    _, nb_name = os.path.split(notebook)
+    base_name, extension = os.path.splitext(nb_name)
+
+    # create test files and notebook for the student
+    nb = NotebookCleaner(notebook)
+    nb.create_tests(tag='private',
+                    oktest_path=base_name,
+                    base_dir=autograder_path)
+    nb.create_tests(tag='public',
+                    oktest_path=base_name,
+                    base_dir=student_path)
+    text_replace_begin = '### BEGIN SOLUTION'
+    text_replace_end = '### END SOLUTION'
+    nb.replace_text(text_replace_begin, text_replace_end)
+
+    nb.save(os.path.join(student_path, nb_name))
+
+    # create test files for the autograder
+    nb = NotebookCleaner(notebook)
+    nb.create_tests(tag='private',
+                    oktest_path=base_name,
+                    base_dir=autograder_path)
+    nb.create_tests(tag='public',
+                    oktest_path=base_name,
+                    base_dir=autograder_path)
 
 
 def execute_notebook(nb, initial_env=None, ignore_errors=False):
