@@ -37,11 +37,12 @@ jobs:
           when: always
           command: |
             . /tmp/venv/bin/activate
-            jupyter nbconvert --to html {{ notebook }}-graded.ipynb
+            jupyter nbconvert --to html --output-dir=notebooks {{ notebook }}-graded.ipynb
       {% endfor -%}
 
       - store_artifacts:
-          path: /tmp/repo
+          path: /tmp/repo/notebooks
+          destination: notebooks
 
 workflows:
   version: 2
