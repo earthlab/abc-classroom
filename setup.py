@@ -11,10 +11,14 @@ setup(name='grading',
       license='BSD',
       author='UC Boulder Earthlab',
       packages=['grading'],
-      install_requires=['nbclean'],
+      install_requires=['nbclean', 'jinja2', 'ruamel.yaml', 'github3.py'],
+      include_package_data=True,
       entry_points={
         'console_scripts': [
-            'nbauthor = grading.__main__:main',
+            'nbinit = grading.__main__:init',
+            'nbgrade = grading.__main__:grade',
+            'nbauthor = grading.__main__:author',
+            'nbdistribute = grading.__main__:distribute',
         ]
-},
-)
+        },
+      )

@@ -1,0 +1,51 @@
+version: 2.1
+
+commands:
+  gradenotebook:
+    description: "Execute a notebook"
+    parameters:
+      nb:
+        type: string
+    steps:
+      - run:
+          command: |
+            . /tmp/venv/bin/activate
+            papermill << parameters.nb >>.ipynb << parameters.nb >>-graded.ipynb
+
+jobs:
+  grade:
+    docker:
+      - image: circleci/python:3.7
+
+    working_directory: /tmp/repo
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            python3 -m venv /tmp/venv
+            . /tmp/venv/bin/activate
+            pip install --progress-bar off ipython papermill ipywidgets
+            pip install --progress-bar off https://github.com/betatim/grading-workflow-experiments/archive/distributing-work.zip
+
+      {% for notebook in notebook_paths -%}
+      - gradenotebook:
+          nb: {{ notebook }}
+      {% endfor -%}
+      {% for notebook in notebook_paths -%}
+      - run:
+          when: always
+          command: |
+            . /tmp/venv/bin/activate
+            jupyter nbconvert --to html --output-dir=notebooks {{ notebook }}-graded.ipynb
+      {% endfor -%}
+
+      - store_artifacts:
+          path: /tmp/repo/notebooks
+          destination: notebooks
+
+workflows:
+  version: 2
+  grade_me:
+    jobs:
+      - grade
