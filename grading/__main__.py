@@ -139,7 +139,8 @@ def distribute():
                 student_dir = GH.fetch_student(config['organisation'],
                                                config['courseName'],
                                                student,
-                                               directory=d)
+                                               directory=d,
+                                               token=config['github']['token'])
                 # Copy assignment related files to the template repository
                 copytree('student', student_dir)
 

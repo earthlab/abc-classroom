@@ -26,21 +26,28 @@ def _call_git(*args, directory=None):
     return ret
 
 
-def fetch_student(org, course, student, directory):
+def fetch_student(org, course, student, directory, token=None):
     """Fetch course repository for `student` from `org`
 
     The repository will be cloned into a sub-directory in `directory`.
 
     Returns the directory in which to find the students work.
     """
-    # use ssh in the hope that this takes care of auth problems more often
-    fetch_command = ['git', 'clone',
-                     'git@github.com:{}/{}-{}.git'.format(
-                         org,
-                         course,
-                         student
-                         )
-                     ]
+    # use ssh if there is no token
+    if token is None:
+        fetch_command = ['git', 'clone',
+                         'git@github.com:{}/{}-{}.git'.format(
+                             org,
+                             course,
+                             student
+                             )
+                         ]
+    else:
+        fetch_command = ['git', 'clone',
+                         'https://{}@github.com/{}/{}-{}.git'.format(
+                             token, org, course, student,
+                             )
+                         ]
     subprocess.run(fetch_command,
                    cwd=directory,
                    check=True,
