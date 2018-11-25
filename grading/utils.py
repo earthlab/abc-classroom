@@ -1,6 +1,8 @@
 import os
+import subprocess
 import sys
 from contextlib import contextmanager
+from functools import lru_cache
 from shutil import copystat, copy2
 
 from IPython import get_ipython
@@ -92,6 +94,44 @@ def copytree(src, dst, symlinks=False, ignore=None, copy_function=copy2,
     if errors:
         raise Error(errors)
     return dst
+
+
+def _call_git(*args, directory=None):
+    cmd = ['git']
+    cmd.extend(args)
+    try:
+        ret = subprocess.run(cmd,
+                             cwd=directory,
+                             check=True,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
+    except subprocess.CalledProcessError as e:
+        err = e.stderr.decode('utf-8')
+        if err:
+            msg = err.split(':')[1].strip()
+        else:
+            msg = e.stdout.decode('utf-8')
+        raise RuntimeError(msg) from e
+
+    return ret
+
+
+@lru_cache(1)
+def TOP():
+    """Path to the top level of the repository we are in"""
+    try:
+        ret = _call_git('rev-parse', '--show-toplevel')
+    except RuntimeError as e:
+        print(' '.join(e.args))
+        sys.exit(1)
+
+    return ret.stdout.decode('utf-8').strip()
+
+
+def P(*paths):
+    """Construct absolute path inside the repository from `paths`"""
+    path = os.path.join(*paths)
+    return os.path.join(TOP(), path)
 
 
 def flush_inline_matplotlib_plots():
