@@ -4,6 +4,7 @@ import glob
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 
 from getpass import getpass
@@ -15,19 +16,19 @@ from github3 import authorize
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
 from . import github as GH
-from .utils import copytree
+from .utils import copytree, P
 
 
 def get_config():
     yaml = YAML()
-    with open('config.yml') as f:
+    with open(P('config.yml')) as f:
         config = yaml.load(f)
     return config
 
 
 def set_config(config):
     yaml = YAML()
-    with open('config.yml', 'w') as f:
+    with open(P('config.yml'), 'w') as f:
         yaml.dump(config, f)
 
 
@@ -66,7 +67,7 @@ def grade():
 
     for student in config['students']:
         print("Fetching work for %s..." % student)
-        cwd = os.path.join('graded', student)
+        cwd = P('graded', student)
 
         # always delete and recreate students directories
         if os.path.exists(cwd):
@@ -110,7 +111,7 @@ def distribute():
                         )
     args = parser.parse_args()
 
-    student_repo_template = 'student'
+    student_repo_template = P('student')
 
     print('Using %s to create the student template.' % student_repo_template)
     print('Loading configuration from config.yml')
@@ -121,7 +122,7 @@ def distribute():
         print("Creating template repository.")
         repo_name = "{}-{}".format(config['courseName'], 'template')
         with tempfile.TemporaryDirectory() as d:
-            copytree('student', d)
+            copytree(P('student'), d)
             GH.git_init(d)
             GH.commit_all_changes(d, "Initial commit")
             GH.create_repo(config['organisation'],
@@ -130,7 +131,7 @@ def distribute():
                            config['github']['token'])
 
         print('Visit https://github.com/{}/{}'.format(config['organisation'],
-                                                     repo_name))
+                                                      repo_name))
 
     else:
         for student in config['students']:
@@ -142,7 +143,7 @@ def distribute():
                                                directory=d,
                                                token=config['github']['token'])
                 # Copy assignment related files to the template repository
-                copytree('student', student_dir)
+                copytree(P('student'), student_dir)
 
                 if GH.repo_changed(student_dir):
                     repo = "{}-{}".format(config['courseName'], student)
@@ -182,49 +183,54 @@ def author():
     config = get_config()
     now = args.date
 
-    if os.path.exists('student'):
-        shutil.rmtree('student')
-    os.makedirs('student')
+    if os.path.exists(P('student')):
+        shutil.rmtree(P('student'))
+    os.makedirs(P('student'))
 
-    if os.path.exists('autograder'):
-        shutil.rmtree('autograder')
+    if os.path.exists(P('autograder')):
+        shutil.rmtree(P('autograder'))
 
-    for assignment in os.listdir('master'):
+    for assignment in config['assignments']:
         release_date = config['assignments'][assignment]['release']
         if release_date > now:
             continue
 
-        student_path = os.path.join('student', assignment)
-        master_path = os.path.join('master', assignment)
+        student_path = P('student', assignment)
+        master_path = P('master', assignment)
+
+        if not os.path.isdir(master_path):
+            print("Error: There is no material in '{}' for "
+                  "assignment '{}'".format(master_path, assignment))
+            sys.exit(1)
 
         # copy over everything, including master notebooks. They will be
         # overwritten by split_notebook() below
         shutil.copytree(master_path, student_path)
 
-        for notebook in glob.glob('master/%s/*.ipynb' % assignment):
+        for notebook in glob.glob(P('master/%s/*.ipynb' % assignment)):
             split_notebook(notebook,
                            student_path,
-                           os.path.join('autograder', assignment))
+                           P('autograder', assignment))
 
     # Create additional files
     for target, source in config['extra_files'].items():
-        shutil.copyfile(source,
-                        os.path.join('student', target))
+        shutil.copyfile(P(source), P('student', target))
 
     # Create the grading token file which is used by the notebook bot
     # to access the CircleCI build artefacts
-    grading_token = os.path.join('student', '.grading.token')
+    grading_token = P('student', '.grading.token')
     with open(grading_token, 'w') as f:
         f.write(config['tokens']['circleci'])
 
     # Create the required CircleCI configuration
     # the template only needs the basename, not the .ipynb extension
-    notebook_paths = [f[:-6] for f in find_notebooks('student')]
+    notebook_paths = [f[:-6] for f in find_notebooks(P('student'))]
     circleci = render_circleci_template(notebook_paths)
 
-    os.makedirs(os.path.join('student', '.circleci'))
-    circleci_yml = os.path.join('student', '.circleci', 'config.yml')
+    os.makedirs(P('student', '.circleci'))
+    circleci_yml = P('student', '.circleci', 'config.yml')
     with open(circleci_yml, 'w') as f:
         f.write(circleci)
 
-    print("Inspect `student/` to check it looks as you expect.")
+    print("Inspect `{}/` to check it looks as you "
+          "expect.".format(P('student')))

@@ -28,7 +28,8 @@ def render_circleci_template(notebook_paths):
 
     t = jinja2.Template(template)
 
-    return t.render(notebook_paths=notebook_paths)
+    return t.render(notebook_dirs=[os.path.dirname(p) for p in notebook_paths],
+                    notebooks=notebook_paths)
 
 
 def git_init(directory):

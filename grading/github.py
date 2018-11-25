@@ -5,25 +5,7 @@ import subprocess
 
 import github3 as gh3
 
-
-def _call_git(*args, directory=None):
-    cmd = ['git']
-    cmd.extend(args)
-    try:
-        ret = subprocess.run(cmd,
-                             cwd=directory,
-                             check=True,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
-    except subprocess.CalledProcessError as e:
-        err = e.stderr.decode('utf-8')
-        if err:
-            msg = err.split(':')[1].strip()
-        else:
-            msg = e.stdout.decode('utf-8')
-        raise RuntimeError(msg) from e
-
-    return ret
+from .utils import _call_git
 
 
 def fetch_student(org, course, student, directory, token=None):

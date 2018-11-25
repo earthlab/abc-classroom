@@ -71,6 +71,7 @@ def execute_notebook(nb, initial_env=None, ignore_errors=False):
                         raise
         return global_env
 
+
 def _global_anywhere(varname):
     """
     Return global with given name in any frame in the call stack

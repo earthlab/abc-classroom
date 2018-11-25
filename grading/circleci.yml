@@ -1,17 +1,5 @@
 version: 2.1
 
-commands:
-  gradenotebook:
-    description: "Execute a notebook"
-    parameters:
-      nb:
-        type: string
-    steps:
-      - run:
-          command: |
-            . /tmp/venv/bin/activate
-            papermill << parameters.nb >>.ipynb << parameters.nb >>-graded.ipynb
-
 jobs:
   grade:
     docker:
@@ -28,18 +16,20 @@ jobs:
             pip install --progress-bar off ipython papermill ipywidgets
             pip install --progress-bar off https://github.com/earthlab/grading-workflow-experiments/archive/master.zip
 
-      {% for notebook in notebook_paths -%}
-      - gradenotebook:
-          nb: {{ notebook }}
-      {% endfor -%}
-      {% for notebook in notebook_paths -%}
       - run:
-          when: always
+          name: "Prepare directories"
+          command: |
+            {% for nb_dir in notebook_dirs -%}
+            mkdir -p notebooks/{{ nb_dir }}
+            {% endfor %}
+      {% for notebook in notebooks -%}
+      - run:
+          name: Execute {{ notebook }}.ipynb
           command: |
             . /tmp/venv/bin/activate
-            jupyter nbconvert --to html --output-dir=notebooks {{ notebook }}-graded.ipynb
-      {% endfor -%}
-
+            papermill {{ notebook }}.ipynb {{ notebook }}-graded.ipynb
+            jupyter nbconvert --to html --stdout {{ notebook }}-graded.ipynb > notebooks/{{ notebook }}.html
+      {% endfor %}
       - store_artifacts:
           path: /tmp/repo/notebooks
           destination: notebooks
