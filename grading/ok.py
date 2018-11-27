@@ -190,7 +190,7 @@ class OKTestsResult:
         )
 
 
-def grade_notebook(notebook_path, tests_glob):
+def grade_notebook2(notebook_path):
     """
     Grade a notebook file & return grade
     """
@@ -213,11 +213,30 @@ def grade_notebook(notebook_path, tests_glob):
         '__OKGRADE__': True
     }
 
-    global_env = execute_notebook(nb, initial_env, ignore_errors=True)
+    global_env = execute_notebook(nb, 'secret123',
+                                  initial_env=initial_env, ignore_errors=True)
 
-    tests = OKTests(glob.glob(tests_glob))
+    #tests = OKTests(glob.glob(tests_glob))
+    #return tests.run(global_env, include_grade=True)
+    return global_env['check_results_secret123']
 
-    return tests.run(global_env, include_grade=True)
+
+def grade_notebook(notebook_path):
+    executed_nb = execute_notebook(notebook_path)
+
+    # add up marks from each cell containing a `check()` call
+    results = []
+
+    for cell in executed_nb.cells:
+        if cell.cell_type != "code":
+            continue
+
+        if cell.source.startswith('check(') and cell.source.endswith(')'):
+            output = cell['outputs'][0]['data']['text/html'].strip()
+            if output.endswith("Full grade.</p>"):
+                results.append(1.)
+
+    return results
 
 
 def check(test_file_path, global_env=None):
