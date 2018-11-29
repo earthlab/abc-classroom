@@ -177,5 +177,5 @@ def hide_outputs():
     try:
         yield
     finally:
-        flush_inline_matplotlib_plots()
+        #flush_inline_matplotlib_plots()
         ipy.display_formatter.formatters = old_formatters
