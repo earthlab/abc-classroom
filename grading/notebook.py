@@ -6,6 +6,8 @@ import papermill as pm
 
 from nbclean import NotebookCleaner
 
+from .utils import chdir
+
 
 try:
     from IPython.core.inputsplitter import IPythonInputSplitter
@@ -80,6 +82,7 @@ def find_check_assignment(tree):
 def execute_notebook(nb_path):
     """Execute a notebook under grading conditions"""
     graded_nb_path = os.path.splitext(nb_path)[0] + '-graded.ipynb'
+    nb_directory = os.path.split(nb_path)[0]
 
     # read in input notebook and check the source for shenanigans
     nb = nbformat.read(nb_path, as_version=4)
@@ -100,7 +103,8 @@ def execute_notebook(nb_path):
         return
 
     # run the notebook
-    pm.execute_notebook(nb_path, graded_nb_path)
+    with chdir(nb_directory):
+        pm.execute_notebook(nb_path, graded_nb_path)
 
     graded_nb = nbformat.read(graded_nb_path, as_version=4)
     return graded_nb

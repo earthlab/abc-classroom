@@ -177,5 +177,20 @@ def hide_outputs():
     try:
         yield
     finally:
-        #flush_inline_matplotlib_plots()
         ipy.display_formatter.formatters = old_formatters
+
+
+@contextmanager
+def chdir(path):
+    """Change working directory to `path` and restore old path on exit.
+    `path` can be `None` in which case this is a no-op.
+    """
+    if path is None:
+        yield
+    else:
+        old_dir = os.getcwd()
+        os.chdir(path)
+        try:
+            yield
+        finally:
+            os.chdir(old_dir)
