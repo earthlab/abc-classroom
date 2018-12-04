@@ -1,11 +1,13 @@
+import ast
 import os
-import inspect
 
-from contextlib import redirect_stderr, redirect_stdout
+import nbformat
+import papermill as pm
 
 from nbclean import NotebookCleaner
 
-from .utils import hide_outputs
+from .utils import chdir
+
 
 try:
     from IPython.core.inputsplitter import IPythonInputSplitter
@@ -44,44 +46,65 @@ def split_notebook(notebook, student_path, autograder_path):
                     base_dir=autograder_path)
 
 
-def execute_notebook(nb, initial_env=None, ignore_errors=False):
+def find_check_definition(tree):
+    """Walk an AST and check for definitions of a function called `check`
+
+    Return True if one is found, False otherwise.
     """
-    Execute notebook & return the global environment that results from execution.
+    for stmt in ast.walk(tree):
+        if not isinstance(stmt, ast.FunctionDef):
+            continue
+        if stmt.name == 'check':
+            return True
+    return False
 
-    If ignore_errors is True, exceptions are swallowed.
 
-    nb is passed in as a dictionary that's a parsed ipynb file
+def find_check_assignment(tree):
+    """Walk an AST and check for assignments to a variable called `check`
+
+    Return True if one is found, False otherwise.
     """
-    with hide_outputs():
-        if initial_env:
-            global_env = initial_env.copy()
-        else:
-            global_env = {}
-        for cell in nb['cells']:
-            if cell['cell_type'] == 'code':
-                # transform the input to executable Python
-                # FIXME: use appropriate IPython functions here
-                isp = IPythonInputSplitter(line_input_checker=False)
-                source = isp.transform_cell(''.join(cell['source']))
-                try:
-                    with open('/dev/null', 'w') as f, redirect_stdout(f), redirect_stderr(f):
-                        exec(source, global_env)
-                except:
-                    if not ignore_errors:
-                        raise
-        return global_env
+    for stmt in ast.walk(tree):
+        if not isinstance(stmt, ast.Assign):
+            continue
+        # check id for tuple target
+        target_names = []
+        for target in stmt.targets:
+            if isinstance(target, tuple):
+                target_names += [t.id for t in target]
+            else:
+                target_names.append(target.id)
+        if 'check' in target_names:
+            return True
+    return False
 
 
-def _global_anywhere(varname):
-    """
-    Return global with given name in any frame in the call stack
+def execute_notebook(nb_path):
+    """Execute a notebook under grading conditions"""
+    graded_nb_path = os.path.splitext(nb_path)[0] + '-graded.ipynb'
+    nb_directory = os.path.split(nb_path)[0]
 
-    Throws NameError if no such global exists anywhere in the call stack
-    """
-    # This should not be a recursive function, since that modifies the stack!
-    cur_frame = inspect.currentframe().f_back
-    while cur_frame is not None:
-        if varname in cur_frame.f_globals:
-            return cur_frame.f_globals[varname]
-        cur_frame = cur_frame.f_back
-    raise NameError(f'{varname} not found in any globals in the stack')
+    # read in input notebook and check the source for shenanigans
+    nb = nbformat.read(nb_path, as_version=4)
+    source = ""
+    for cell in nb.cells:
+        if cell.cell_type != "code":
+            continue
+
+        isp = IPythonInputSplitter(line_input_checker=False)
+        cell_source = isp.transform_cell(cell.source)
+        source += cell_source
+
+    tree = ast.parse(source)
+
+    # no points for you if you try and cheat
+    # XXX add a check for people importing a function called `check`
+    if find_check_assignment(tree) or find_check_definition(tree):
+        return
+
+    # run the notebook
+    with chdir(nb_directory):
+        pm.execute_notebook(nb_path, graded_nb_path)
+
+    graded_nb = nbformat.read(graded_nb_path, as_version=4)
+    return graded_nb

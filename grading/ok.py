@@ -1,14 +1,12 @@
 import doctest
 import inspect
 import io
-import json
-import glob
 import os
 from contextlib import redirect_stderr, redirect_stdout
 from jinja2 import Template
 from textwrap import dedent
 
-from .notebook import execute_notebook, _global_anywhere
+from .notebook import execute_notebook
 from .utils import hide_outputs
 from pygments import highlight
 from pygments.lexers import PythonConsoleLexer
@@ -76,15 +74,28 @@ class OKTest:
         self.tests = tests
 
     def run(self, global_environment):
-        for i, t in enumerate(self.tests):
-            passed, result = run_doctest(self.name + ' ' + str(i), t, global_environment)
+        results = []
+        for i, (max_points, test) in enumerate(self.tests):
+            name = "{} test #{}".format(self.name, i+1)
+            passed, result = run_doctest(name, test, global_environment)
             if not passed:
-                return False, OKTest.result_fail_template.render(
-                    name=self.name,
-                    test_code=highlight(t, PythonConsoleLexer(), HtmlFormatter(noclasses=True)),
-                    test_result=result
-                )
-        return True, OKTest.result_pass_template.render(name=self.name)
+                results.append((False,
+                                (0, max_points),
+                                OKTest.result_fail_template.render(
+                                    name=name,
+                                    test_code=highlight(test,
+                                                        PythonConsoleLexer(),
+                                                        HtmlFormatter(noclasses=True)),
+                                    test_result=result
+                                    )
+                                )
+                               )
+            else:
+                results.append((True,
+                                (max_points, max_points),
+                                OKTest.result_pass_template.render(name=name)))
+
+        return results
 
     @classmethod
     def from_file(cls, path):
@@ -121,30 +132,35 @@ class OKTest:
         tests = []
 
         for i, test_case in enumerate(test_spec['suites'][0]['cases']):
-            tests.append(dedent(test_case['code']))
+            tests.append((int(test_case['points']), dedent(test_case['code'])))
 
         return cls(path, tests)
 
 
-class OKTests:
+class OKSuite:
     def __init__(self, test_paths):
         self.tests = [OKTest.from_file(path) for path in test_paths]
 
     def run(self, global_environment, include_grade=True):
         passed_tests = []
         failed_tests = []
+        points_scored = 0
+        max_total_points = 0
         for t in self.tests:
-            passed, hint = t.run(global_environment)
-            if passed:
-                passed_tests.append(t)
-            else:
-                failed_tests.append((t, hint))
+            for passed, points, hint in t.run(global_environment):
+                points_scored += points[0]
+                max_total_points += points[1]
+                if passed:
+                    passed_tests.append(hint)
+                else:
+                    failed_tests.append(hint)
 
-        grade = len(passed_tests) / len(self.tests)
-        return OKTestsResult(grade, self.tests, passed_tests, failed_tests, include_grade)
+        grade = len(passed_tests) / len(passed_tests + failed_tests)
+        return OKSuiteResult((points_scored, max_total_points),
+                             passed_tests, failed_tests, include_grade)
 
 
-class OKTestsResult:
+class OKSuiteResult:
     """
     Displayable result from running OKTests
     """
@@ -152,19 +168,23 @@ class OKTestsResult:
     {% if include_grade %}
     <strong>Grade: {{ grade }}</strong>
     {% endif %}
-    {% if grade == 1.0 %}
-        <p>All {{ tests|length }} tests passed! Full grade.</p>
+    {% if grade[0] == grade[1] %}
+        <p>All {{ tests|length }} tests passed! Points: {{ grade[0] }}.</p>
     {% else %}
-        <p>{{ passed_tests|length }} of {{ tests|length }} tests passed</p>
+        <p>{{ passed_tests|length }} of {{ tests|length }} tests passed. Points: {{ grade[0] }} of {{ grade[1] }}.</p>
         {% if passed_tests %}
         <p> <strong>Tests passed:</strong>
-            {% for passed_test in passed_tests %} {{ passed_test.name }} {% endfor %}
+            <ul>
+            {% for passed_test_hint in passed_tests %}
+                <li> {{ passed_test_hint }} </li>
+            {% endfor %}
+            </ul>
         </p>
         {% endif %}
         {% if failed_tests %}
         <p> <strong>Tests failed: </strong>
             <ul>
-            {% for failed_test, failed_test_hint in failed_tests %}
+            {% for failed_test_hint in failed_tests %}
                 <li> {{ failed_test_hint }} </li>
             {% endfor %}
             </ul>
@@ -172,16 +192,15 @@ class OKTestsResult:
     {% endif %}
     """)
 
-
-    def __init__(self, grade, tests, passed_tests, failed_tests, include_grade=True):
+    def __init__(self, grade, passed_tests, failed_tests, include_grade=True):
         self.grade = grade
-        self.tests = tests
         self.passed_tests = passed_tests
         self.failed_tests = failed_tests
+        self.tests = passed_tests + failed_tests
         self.include_grade = include_grade
 
     def _repr_html_(self):
-        return OKTestsResult.result_template.render(
+        return OKSuiteResult.result_template.render(
             grade=self.grade,
             passed_tests=self.passed_tests,
             failed_tests=self.failed_tests,
@@ -190,34 +209,36 @@ class OKTestsResult:
         )
 
 
-def grade_notebook(notebook_path, tests_glob):
-    """
-    Grade a notebook file & return grade
-    """
-    try:
-        # Lots of notebooks call grade_notebook in them. These notebooks are then
-        # executed by gradememaybe - which will in-turn execute grade_notebook again!
-        # This puts us in an infinite loop.
-        # We use this sentinel to detect and break out of that loop.
-        _global_anywhere('__OKGRADE__')
-        # FIXME: Do something else here?
-        return None
-    except NameError:
-        pass
+def grade_notebook(notebook_path):
+    executed_nb = execute_notebook(notebook_path)
+    # collect marks from each cell containing a `check()` call
+    results = []
 
-    with open(notebook_path) as f:
-        nb = json.load(f)
+    for cell in executed_nb.cells:
+        if cell.cell_type != "code":
+            continue
 
-    initial_env = {
-        # Set this to prevent recursive executions!
-        '__OKGRADE__': True
-    }
+        if cell.source.startswith('check(') and cell.source.endswith(')'):
+            output = cell['outputs'][0]['data']['text/html'].strip()
+            # got all points
+            if 'tests passed! Points:' in output:
+                print(output)
+                points = output.rsplit(' ')[-1]
+                points = int(points[:-len('.</p>')])
+                results.append((points, points))
+            # got some of the points
+            elif 'tests passed. Points:' in output and 'of' in output:
+                output = output.split('\n')[0]
+                print(output)
+                out = output.rsplit(' ')
+                scored = int(out[-3])
+                total = int(out[-1][:-len('.</p>')])
+                results.append((scored, total))
 
-    global_env = execute_notebook(nb, initial_env, ignore_errors=True)
+            if output.endswith("Full grade.</p>"):
+                results.append(1.)
 
-    tests = OKTests(glob.glob(tests_glob))
-
-    return tests.run(global_env, include_grade=True)
+    return results
 
 
 def check(test_file_path, global_env=None):
@@ -234,7 +255,7 @@ def check(test_file_path, global_env=None):
     if not os.path.exists(test_file_path):
         return None
 
-    tests = OKTests([test_file_path])
+    tests = OKSuite([test_file_path])
 
     if global_env is None:
         # Get the global env of our callers - one level below us in the stack

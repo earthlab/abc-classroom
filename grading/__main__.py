@@ -7,12 +7,15 @@ import subprocess
 import sys
 import tempfile
 
+import os.path as op
+
 from getpass import getpass
 
 from ruamel.yaml import YAML
 
 from github3 import authorize
 
+from . import ok
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
 from . import github as GH
@@ -62,14 +65,48 @@ def init():
 
 def grade():
     """Grade student's work"""
+    parser = argparse.ArgumentParser(description='Grade student repository.')
+    parser.add_argument('--date',
+                        default=datetime.datetime.today().date(),
+                        type=valid_date,
+                        help=('Assumed date when grading assignments '
+                              '(default: today)'))
+    parser.add_argument('--student',
+                        default=None,
+                        action='append',
+                        help=('Student name to grade, use flag multiple times '
+                              'to select several students '
+                              '(default: all students)')
+                        )
+    parser.add_argument('--assignment',
+                        default=None,
+                        action='append',
+                        help=('Assignment to grade, use flag multiple times '
+                              'to select several assignments '
+                              '(default: all assignments)')
+                        )
+    args = parser.parse_args()
+
+    now = args.date
+
     config = get_config()
     course = config['courseName']
 
-    for student in config['students']:
+    if args.student is None:
+        students = config['students']
+    else:
+        students = args.student
+
+    if args.assignment is None:
+        assignments = config['assignments']
+    else:
+        assignments = args.assignment
+
+    for student in students:
         print("Fetching work for %s..." % student)
         cwd = P('graded', student)
 
-        # always delete and recreate students directories
+        # always delete and recreate student's directories
         if os.path.exists(cwd):
             shutil.rmtree(cwd)
         os.makedirs(cwd)
@@ -82,11 +119,12 @@ def grade():
                              config['organisation'],
                              course,
                              student,
-                             )
+                             ),
+                         student
                          ]
         try:
             subprocess.run(fetch_command,
-                           cwd=cwd,
+                           cwd=P('graded'),
                            check=True,
                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except subprocess.CalledProcessError as err:
@@ -98,7 +136,38 @@ def grade():
             continue
 
         print("Grading work...")
-        print("🎉 Top marks all around because grading isn't implemented yet.")
+        for assignment in assignments:
+            # only grade assignments that are due or have been explicitly
+            # requested by command-line flag
+            deadline_date = config['assignments'][assignment]['deadline']
+            if deadline_date > now and args.assignment is None:
+                print('Skipping assignment "{}".'.format(assignment))
+
+            # remove check files so we only use a clean copy from this repo
+            # instead of trusting students
+            for notebook in glob.glob(P('graded', student,
+                                        '%s/*.ipynb' % assignment)):
+                print("Grading {}".format(notebook))
+                notebook = op.split(notebook)[-1]
+
+                tests_path = P('graded', student, assignment,
+                               op.splitext(notebook)[0])
+                if os.path.exists(tests_path):
+                    shutil.rmtree(tests_path)
+
+                autograder_path = P('autograder',
+                                    assignment, op.splitext(notebook)[0])
+                copytree(autograder_path, tests_path)
+
+                results = ok.grade_notebook(P('graded', student,
+                                              assignment, notebook))
+
+                print("Points:")
+                for res in results:
+                    print(res)
+
+            print("🎉 Top marks for {} on assignment {}.".format(student,
+                                                                assignment))
         print()
 
 
@@ -206,6 +275,9 @@ def author():
         # copy over everything, including master notebooks. They will be
         # overwritten by split_notebook() below
         shutil.copytree(master_path, student_path)
+
+        if os.path.exists(P('student', assignment, '.ipynb_checkpoints')):
+            shutil.rmtree(P('student', assignment, '.ipynb_checkpoints'))
 
         for notebook in glob.glob(P('master/%s/*.ipynb' % assignment)):
             split_notebook(notebook,
