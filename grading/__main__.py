@@ -218,11 +218,6 @@ def distribute():
                       "yet? Skipping them for now.".format(student))
                 continue
 
-            repo = "{}-{}".format(config['courseName'], student)
-            GH.close_existing_pullrequests(config['organisation'],
-                                           repo,
-                                           token=config['github']['token'])
-
             with tempfile.TemporaryDirectory() as d:
                 student_dir = GH.fetch_student(config['organisation'],
                                                config['courseName'],
@@ -233,6 +228,13 @@ def distribute():
                 copytree(P('student'), student_dir)
 
                 if GH.repo_changed(student_dir):
+                    # only close outstanding PRs if we are about to make a
+                    # new PR. Otherwise we can skip this.
+                    repo = "{}-{}".format(config['courseName'], student)
+                    GH.close_existing_pullrequests(config['organisation'],
+                                                   repo,
+                                                   token=config['github']['token'])
+
                     message = 'New material for next week.'
                     branch = GH.new_branch(student_dir)
 
