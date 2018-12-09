@@ -1,4 +1,5 @@
 import os
+import logging
 import random
 import string
 import subprocess
@@ -6,6 +7,31 @@ import subprocess
 import github3 as gh3
 
 from .utils import _call_git
+
+
+def check_student_repo_exists(org, course, student, token=None):
+    """Check if the student has a repository for the course.
+
+    It happens that students delete their repository or do not accept the
+    invitation to the course. In either case they will not have a repository
+    yet.
+    """
+    # temporarily change log level of github3.py as it prints weird messages
+    # XXX could be done more nicely with a context manager maybe
+    gh3_log = logging.getLogger('github3')
+    old_level = gh3_log.level
+    gh3_log.setLevel('ERROR')
+
+    try:
+        g = gh3.login(token=token)
+        repository = "{}-{}".format(course, student)
+        g.repository(org, repository)
+
+    except Exception as e:
+        raise e
+
+    finally:
+        gh3_log.setLevel(old_level)
 
 
 def fetch_student(org, course, student, directory, token=None):
