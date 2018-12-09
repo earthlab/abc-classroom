@@ -79,8 +79,8 @@ def close_existing_pullrequests(org, repository, branch_base='new-material-',
         origin = pr.head.label
         origin_repo, origin_branch = origin.split(':')
         if origin_branch.startswith(branch_base) and pr.user == me:
-            pr.comment("Closed in favor of a new Pull Request to bring you "
-                       "up-to-date.")
+            pr.create_comment("Closed in favor of a new Pull Request to "
+                              "bring you up-to-date.")
             pr.close()
 
 
