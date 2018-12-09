@@ -1,6 +1,8 @@
 import os
 import subprocess
 import sys
+import tempfile
+import textwrap
 from contextlib import contextmanager
 from functools import lru_cache
 from shutil import copystat, copy2
@@ -94,6 +96,28 @@ def copytree(src, dst, symlinks=False, ignore=None, copy_function=copy2,
     if errors:
         raise Error(errors)
     return dst
+
+
+def input_editor(default_message=None):
+    """Ask for user input via a text editor"""
+    default_message = textwrap.dedent(default_message)
+
+    with tempfile.NamedTemporaryFile(mode='r+') as tmpfile:
+        if default_message is not None:
+            tmpfile.write(default_message)
+            tmpfile.flush()
+        subprocess.check_call([get_editor(), tmpfile.name])
+        tmpfile.seek(0)
+
+        with open(tmpfile.name) as f:
+            msg = f.read()
+            return msg.strip()
+
+
+def get_editor():
+    return (os.environ.get('VISUAL')
+            or os.environ.get('EDITOR')
+            or 'vi')
 
 
 def _call_git(*args, directory=None):

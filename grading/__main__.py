@@ -20,7 +20,7 @@ from . import ok
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
 from . import github as GH
-from .utils import copytree, P
+from .utils import copytree, P, input_editor
 
 
 def get_config():
@@ -204,6 +204,20 @@ def distribute():
                                                       repo_name))
 
     else:
+        default_message = """
+        # Please enter the commit message for your changes. Lines starting
+        # with '#' will be ignored, and an empty message aborts the commit.
+        # This message will be used as commit and Pull Request message."""
+        message = input_editor(default_message)
+        message = '\n'.join(
+            [line for line in message.split('\n')
+             if not line.strip().startswith('#')]
+            )
+
+        if not message:
+            print("Empty commit message, exiting.")
+            sys.exit(1)
+
         for student in config['students']:
             print("Fetching work for %s..." % student)
 
@@ -235,7 +249,6 @@ def distribute():
                                                    repo,
                                                    token=config['github']['token'])
 
-                    message = 'New material for next week.'
                     branch = GH.new_branch(student_dir)
 
                     GH.commit_all_changes(student_dir, message)
