@@ -44,9 +44,9 @@ def init():
     while not password:
         password = getpass('Password for {0}: '.format(user))
 
-    note = 'grading workflow helper'
-    note_url = 'http://example.com'
-    scopes = ['repo']
+    note = 'Grading workflow helper'
+    note_url = 'https://github.com/earthlab/grading-workflow-experiments'
+    scopes = ['repo', 'read:user']
 
     def two_factor():
         code = ''
@@ -228,7 +228,13 @@ def distribute():
                 copytree(P('student'), student_dir)
 
                 if GH.repo_changed(student_dir):
+                    # only close outstanding PRs if we are about to make a
+                    # new PR. Otherwise we can skip this.
                     repo = "{}-{}".format(config['courseName'], student)
+                    GH.close_existing_pullrequests(config['organisation'],
+                                                   repo,
+                                                   token=config['github']['token'])
+
                     message = 'New material for next week.'
                     branch = GH.new_branch(student_dir)
 

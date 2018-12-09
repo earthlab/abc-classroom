@@ -64,6 +64,26 @@ def fetch_student(org, course, student, directory, token=None):
     return os.path.join(directory, "{}-{}".format(course, student))
 
 
+def close_existing_pullrequests(org, repository, branch_base='new-material-',
+                                token=None):
+    """Close all oustanding course material update Pull Requests
+
+    If there are any PRs open in a student's repository that originate from
+    a branch starting with `branch_base` as name and created by the user
+    we are logged in we close them.
+    """
+    g = gh3.login(token=token)
+    me = g.me()
+    repo = g.repository(org, repository)
+    for pr in repo.pull_requests(state='open'):
+        origin = pr.head.label
+        origin_repo, origin_branch = origin.split(':')
+        if origin_branch.startswith(branch_base) and pr.user == me:
+            pr.create_comment("Closed in favor of a new Pull Request to "
+                              "bring you up-to-date.")
+            pr.close()
+
+
 def create_pr(org, repository, branch, title, token):
     """Create a Pull Request with changes from branch"""
     msg = ("Merge this Pull Request to get the material for the next "
