@@ -13,6 +13,7 @@ from getpass import getpass
 
 from ruamel.yaml import YAML
 
+import github3 as gh3
 from github3 import authorize
 
 from . import ok
@@ -205,6 +206,18 @@ def distribute():
     else:
         for student in config['students']:
             print("Fetching work for %s..." % student)
+
+            try:
+                GH.check_student_repo_exists(config['organisation'],
+                                             config['courseName'],
+                                             student,
+                                             token=config['github']['token'])
+            except gh3.exceptions.NotFoundError as e:
+                print("Student {} does not have a repository for this "
+                      "course, maybe they have not accepted the invitation "
+                      "yet? Skipping them for now.".format(student))
+                continue
+
             with tempfile.TemporaryDirectory() as d:
                 student_dir = GH.fetch_student(config['organisation'],
                                                config['courseName'],
