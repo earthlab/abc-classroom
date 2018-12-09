@@ -84,10 +84,14 @@ def close_existing_pullrequests(org, repository, branch_base='new-material-',
             pr.close()
 
 
-def create_pr(org, repository, branch, title, token):
+def create_pr(org, repository, branch, message, token):
     """Create a Pull Request with changes from branch"""
-    msg = ("Merge this Pull Request to get the material for the next "
-           "assignment.")
+    msg_parts = message.split('\n\n')
+    if len(msg_parts) == 1:
+        title = msg = msg_parts[0]
+    else:
+        title = msg_parts[0]
+        msg = '\n\n'.join(msg_parts[1:])
 
     g = gh3.login(token=token)
     repo = g.repository(org, repository)
