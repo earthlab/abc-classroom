@@ -29,6 +29,7 @@ def render_circleci_template(notebook_paths):
     t = jinja2.Template(template)
 
     return t.render(notebook_dirs=[os.path.dirname(p) for p in notebook_paths],
+                    notebook_names=[os.path.split(p)[1] for p in notebook_paths],
                     notebooks=notebook_paths)
 
 
