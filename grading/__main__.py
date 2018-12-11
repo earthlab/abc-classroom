@@ -195,10 +195,15 @@ def distribute():
             copytree(P('student'), d)
             GH.git_init(d)
             GH.commit_all_changes(d, "Initial commit")
-            GH.create_repo(config['organisation'],
-                           repo_name,
-                           d,
-                           config['github']['token'])
+            try:
+                GH.create_repo(config['organisation'],
+                               repo_name,
+                               d,
+                               config['github']['token'])
+            except gh3.exceptions.UnprocessableEntity as e:
+                print(e.msg)
+                print("This is probably because the template repository "
+                      "already exists.")
 
         print('Visit https://github.com/{}/{}'.format(config['organisation'],
                                                       repo_name))
