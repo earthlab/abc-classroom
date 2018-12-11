@@ -3,19 +3,24 @@ version: 2.1
 jobs:
   grade:
     docker:
-      - image: circleci/python:3.7
+      - image: continuumio/miniconda3:4.5.11
 
     working_directory: /tmp/repo
     steps:
       - checkout
       - run:
-          name: Install dependencies
+          name: Install grading dependencies
           command: |
-            python3 -m venv /tmp/venv
-            . /tmp/venv/bin/activate
+            source activate base
             pip install --progress-bar off ipython ipywidgets
             pip install --progress-bar off https://github.com/nteract/papermill/archive/89a43a1bade7d9ba71b47a8a18cfc4d0b82e902a.zip
             pip install --progress-bar off https://github.com/earthlab/grading-workflow-experiments/archive/master.zip
+
+      - run:
+          name: Install course specific dependencies
+          command: |
+            source activate base
+            [ -e environment.yml ] && conda env update --quiet -f environment.yml && conda clean -tipsy || echo nothing to do
 
       - run:
           name: "Prepare directories"
@@ -27,7 +32,7 @@ jobs:
       - run:
           name: Execute {{ notebook }}.ipynb
           command: |
-            . /tmp/venv/bin/activate
+            source activate base
             papermill --cwd {{ notebook_dirs[loop.index0] }} {{ notebook }}.ipynb {{ notebook_names[loop.index0] }}-graded.ipynb
             jupyter nbconvert --to html --stdout {{ notebook }}-graded.ipynb > notebooks/{{ notebook }}.html
       {% endfor %}
