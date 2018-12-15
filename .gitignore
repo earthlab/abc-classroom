@@ -3,3 +3,5 @@ student/
 .ipynb_checkpoints
 __pycache__
 *.egg-info
+*.idea
+config.yml

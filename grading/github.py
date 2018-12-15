@@ -27,8 +27,14 @@ def check_student_repo_exists(org, course, student, token=None):
         repository = "{}-{}".format(course, student)
         g.repository(org, repository)
 
-    except Exception as e:
-        raise e
+    except gh3.exceptions.NotFoundError as e:
+        print("Student {} does not have a repository for this "
+              "course, maybe they have not accepted the invitation "
+              "yet? Skipping them for now.".format(student))
+    # As written this it not capturing the right exception so it's simply failing
+    # Should this "continue" even if it fails on a student?
+    #except Exception as e:
+    #    raise e
 
     finally:
         gh3_log.setLevel(old_level)
