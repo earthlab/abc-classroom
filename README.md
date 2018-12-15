@@ -1,12 +1,16 @@
 # Experimenting with grading workflows
 
-This repository is the wild wild west playground for experimenting with workflows
-that allow a course instructor to prepare material, distribute it to learners,
-and for them to then turn in their homework.
+This under development package supports several activities related to developing 
+online courses using Jupyter notebooks including:
+
+1. preparing course materials 
+2. distributing course materials to learners in a GitHub classroom environment
+3. automatic feedback on student assignments using CircleCi and
+4. autograding infrastructure for student assignments
 
 ## Try it out!
 
-Install with `pip install -e.` from the directory of this README.
+Install locally with `pip install -e.` from the directory of this README.
 
 Then run `nbauthor master/01-lecture.ipynb`. This will take the master notebook,
 and create a student and autograder version. The student version will be in
@@ -19,7 +23,7 @@ To create a template repository for students use the `nbdistribute` command.
 After running `nbauthor` on all the notebooks you want to include run:
 `nbdistribute /tmp/student-template` to take the contents of the
 `student/` directory and create a template repository from it at `/tmp/student-template`. Push this repository to GitHub and use it as the
-template for your GitHub classro0m assignment.
+template for your GitHub classroom assignment.
 
 In the autograder directory you will find both the public and private tests,
 but no notebook. The idea is that at a later stage students submit their
@@ -33,7 +37,7 @@ notebook and it is executed in the autograder directory by some server/robot.
 * student version of materials is published on a public GitHub repository
 * answer to an assignment is multiple choice question
 * answer to an assignment is code to be executed
-* answer to an assigment is free form text
+* answer to an assignment is free form text
 * partial answers to assignments receive partial credit
 * assignments contain public parts
 * assignments contain private parts
