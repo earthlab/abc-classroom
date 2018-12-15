@@ -24,6 +24,8 @@ from .utils import copytree, P, input_editor
 
 
 def get_config():
+    """Parse the config.yml file in the course template directory to access
+    assignment and repository information. """
     yaml = YAML()
     with open(P('config.yml')) as f:
         config = yaml.load(f)
@@ -38,29 +40,36 @@ def set_config(config):
 
 def init():
     """Setup GitHub credentials for later"""
-    user = input('GitHub username: ')
-    password = ''
-
-    while not password:
-        password = getpass('Password for {0}: '.format(user))
-
-    note = 'Grading workflow helper'
-    note_url = 'https://github.com/earthlab/grading-workflow-experiments'
-    scopes = ['repo', 'read:user']
-
-    def two_factor():
-        code = ''
-        while not code:
-            # The user could accidentally press Enter before being ready,
-            # let's protect them from doing that.
-            code = input('Enter 2FA code: ')
-        return code
-
-    auth = authorize(user, password, scopes, note, note_url,
-                     two_factor_callback=two_factor)
 
     config = get_config()
-    config['github'] = {'token': auth.token, 'id': auth.id}
+
+    # Check to see if the config file has a token value
+    if not config['github']['token']:
+        print("A token value is missing. Populating")
+        user = input('GitHub username: ')
+        password = ''
+
+        while not password:
+            password = getpass('Password for {0}: '.format(user))
+
+        note = 'Grading workflow helper'
+        note_url = 'https://github.com/earthlab/grading-workflow-experiments'
+        scopes = ['repo', 'read:user']
+
+        def two_factor():
+            code = ''
+            while not code:
+                # The user could accidentally press Enter before being ready,
+                # let's protect them from doing that.
+                code = input('Enter 2FA code: ')
+            return code
+
+        auth = authorize(user, password, scopes, note, note_url,
+                         two_factor_callback=two_factor)
+
+
+        config['github'] = {'token': auth.token, 'id': auth.id}
+
     set_config(config)
 
 
@@ -180,7 +189,6 @@ def distribute():
                         help='Create template repository only (default: False)'
                         )
     args = parser.parse_args()
-
     student_repo_template = P('student')
 
     print('Using %s to create the student template.' % student_repo_template)
