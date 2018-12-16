@@ -78,11 +78,18 @@ def init():
     gh = gh3.github.GitHub()
     gh.login(username=user, password=password,
              two_factor_callback=two_factor)
-    auth = gh.authorize(user, password, scopes, note, note_url)
+    try:
+        auth = gh.authorize(user, password, scopes, note, note_url)
 
-    config['github'] = {'token': auth.token, 'id': auth.id}
+        config['github'] = {'token': auth.token, 'id': auth.id}
+        set_config(config)
 
-    set_config(config)
+    except gh3.exceptions.UnprocessableEntity:
+        print("Failed to create a access token for you. Please visit "
+              "https://github.com/settings/tokens and delete any access "
+              "token with the name 'Grading workflow helper' and run "
+              "`nbinit` again.")
+        sys.exit(1)
 
 
 def grade():
