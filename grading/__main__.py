@@ -41,34 +41,55 @@ def init():
 
     config = get_config()
 
-    # Check to see if the config file has a token value
-    if not config['github']['token']:
-        print("A token value is missing. Populating")
-        user = input('GitHub username: ')
-        password = ''
+    # check the token we have is still valid by attempting to login with
+    # the token we have if this fails we need a new one
+    if config.get('github', {}).get('token') is not None:
+        try:
+            # We have to use the GitHub API to find out if our login
+            # credentials actually work, this is why we call `me()`
+            gh = gh3.login(token=config['github']['token'])
+            _ = gh.me()
+            print("GitHub token present and valid.")
+            return
 
-        while not password:
-            password = getpass('Password for {0}: '.format(user))
+        except gh3.exceptions.AuthenticationFailed:
+            # need to get a new token
+            pass
 
-        note = 'Grading workflow helper'
-        note_url = 'https://github.com/earthlab/grading-workflow-experiments'
-        scopes = ['repo', 'read:user']
+    print("GitHub token is missing or expired. Populating")
+    user = input('GitHub username: ')
+    password = ''
 
-        def two_factor():
-            code = ''
-            while not code:
-                # The user could accidentally press Enter before being ready,
-                # let's protect them from doing that.
-                code = input('Enter 2FA code: ')
-            return code
+    while not password:
+        password = getpass('Password for {0}: '.format(user))
 
-        auth = authorize(user, password, scopes, note, note_url,
-                         two_factor_callback=two_factor)
+    note = 'Grading workflow helper'
+    note_url = 'https://github.com/earthlab/grading-workflow-experiments'
+    scopes = ['repo', 'read:user']
 
+    def two_factor():
+        code = ''
+        while not code:
+            # The user could accidentally press Enter before being ready,
+            # let's protect them from doing that.
+            code = input('Enter 2FA code: ')
+        return code
+
+    gh = gh3.github.GitHub()
+    gh.login(username=user, password=password,
+             two_factor_callback=two_factor)
+    try:
+        auth = gh.authorize(user, password, scopes, note, note_url)
 
         config['github'] = {'token': auth.token, 'id': auth.id}
+        set_config(config)
 
-    set_config(config)
+    except gh3.exceptions.UnprocessableEntity:
+        print("Failed to create a access token for you. Please visit "
+              "https://github.com/settings/tokens and delete any access "
+              "token with the name 'Grading workflow helper' and run "
+              "`nbinit` again.")
+        sys.exit(1)
 
 
 def grade():
