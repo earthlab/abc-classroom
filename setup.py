@@ -4,13 +4,13 @@ except ImportError:
     from distutils.core import setup
 
 
-setup(name='grading',
+setup(name='abcnb',
       version='0.0.1',
       description='Authoring and grading of notebook assignments',
       long_description='Authoring and grading of notebook assignments',
       license='BSD',
       author='UC Boulder Earthlab',
-      packages=['grading'],
+      packages=['abcnb'],
       install_requires=['nbclean',
                         'jinja2',
                         'papermill',
@@ -20,10 +20,10 @@ setup(name='grading',
       include_package_data=True,
       entry_points={
         'console_scripts': [
-            'nbinit = grading.__main__:init',
-            'nbgrade = grading.__main__:grade',
-            'nbauthor = grading.__main__:author',
-            'nbdistribute = grading.__main__:distribute',
+            'abc-init = abcnb.__main__:init',
+            'abc-grade = abcnb.__main__:grade',
+            'abc-author = abcnb.__main__:author',
+            'abc-distribute = abcnb.__main__:distribute',
         ]
         },
       )
