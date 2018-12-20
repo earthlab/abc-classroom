@@ -10,7 +10,7 @@ setup(name='abc-classroom',
       long_description='Authoring and grading of notebook assignments',
       license='BSD',
       author='UC Boulder Earthlab',
-      packages=['abcclassrom'],
+      packages=['abcclassroom'],
       install_requires=['nbclean',
                         'jinja2',
                         'papermill',
@@ -20,10 +20,10 @@ setup(name='abc-classroom',
       include_package_data=True,
       entry_points={
         'console_scripts': [
-            'abc-init = abcclassrom.__main__:init',
-            'abc-grade = abcclassrom.__main__:grade',
-            'abc-author = abcclassrom.__main__:author',
-            'abc-distribute = abcclassrom.__main__:distribute',
+            'abc-init = abcclassroom.__main__:init',
+            'abc-grade = abcclassroom.__main__:grade',
+            'abc-author = abcclassroom.__main__:author',
+            'abc-distribute = abcclassroom.__main__:distribute',
         ]
         },
       )
