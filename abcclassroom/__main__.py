@@ -11,16 +11,39 @@ import os.path as op
 
 from getpass import getpass
 
-from ruamel.yaml import YAML
-
 import github3 as gh3
-from github3 import authorize
+
+from ruamel.yaml import YAML
 
 from . import ok
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
 from . import github as GH
 from .utils import copytree, P, input_editor
+
+
+def get_github_auth():
+    yaml = YAML()
+    try:
+        with open(op.expanduser('~/.abc-classroom.tokens.yml')) as f:
+            config = yaml.load(f)
+        return config['github']
+
+    except FileNotFoundError:
+        return {}
+
+
+def set_github_auth(auth_info):
+    yaml = YAML()
+    config = {}
+    if get_github_auth():
+        with open(op.expanduser('~/.abc-classroom.tokens.yml')) as f:
+            config = yaml.load(f)
+
+    config['github'] = auth_info
+
+    with open(op.expanduser('~/.abc-classroom.tokens.yml'), 'w') as f:
+        yaml.dump(config, f)
 
 
 def get_config():
@@ -39,16 +62,16 @@ def set_config(config):
 def init():
     """Setup GitHub credentials for later"""
 
-    config = get_config()
+    gh_auth = get_github_auth()
 
     # check the token we have is still valid by attempting to login with
     # the token we have if this fails we need a new one
-    if config.get('github', {}).get('token') is not None:
+    if gh_auth.get('token') is not None:
         try:
             # We have to use the GitHub API to find out if our login
             # credentials actually work, this is why we call `me()`
-            gh = gh3.login(token=config['github']['token'])
-            _ = gh.me()
+            gh = gh3.login(token=gh_auth['token'])
+            gh.me()
             print("GitHub token present and valid.")
             return
 
@@ -63,8 +86,8 @@ def init():
     while not password:
         password = getpass('Password for {0}: '.format(user))
 
-    note = 'Grading workflow helper'
-    note_url = 'https://github.com/earthlab/grading-workflow-experiments'
+    note = 'ABC-classroom workflow helper'
+    note_url = 'https://github.com/earthlab/abc-classroom'
     scopes = ['repo', 'read:user']
 
     def two_factor():
@@ -81,8 +104,7 @@ def init():
     try:
         auth = gh.authorize(user, password, scopes, note, note_url)
 
-        config['github'] = {'token': auth.token, 'id': auth.id}
-        set_config(config)
+        set_github_auth({'token': auth.token, 'id': auth.id})
 
     except gh3.exceptions.UnprocessableEntity:
         print("Failed to create a access token for you. Please visit "
@@ -144,7 +166,7 @@ def grade():
         # `git clone https://<token>@github.com/owner/repo.git`
         fetch_command = ['git', 'clone',
                          'https://{}@github.com/{}/{}-{}.git'.format(
-                             config['github']['token'],
+                             get_github_auth()['token'],
                              config['organisation'],
                              course,
                              student,
@@ -227,7 +249,7 @@ def distribute():
                 GH.create_repo(config['organisation'],
                                repo_name,
                                d,
-                               config['github']['token'])
+                               get_github_auth()['token'])
             except gh3.exceptions.UnprocessableEntity as e:
                 print(e.msg)
                 print("This is probably because the template repository "
@@ -258,7 +280,7 @@ def distribute():
                 GH.check_student_repo_exists(config['organisation'],
                                              config['courseName'],
                                              student,
-                                             token=config['github']['token'])
+                                             token=get_github_auth()['token'])
             except gh3.exceptions.NotFoundError as e:
                 print("Student {} does not have a repository for this "
                       "course, maybe they have not accepted the invitation "
@@ -270,7 +292,7 @@ def distribute():
                                                config['courseName'],
                                                student,
                                                directory=d,
-                                               token=config['github']['token'])
+                                               token=get_github_auth()['token'])
                 # Copy assignment related files to the template repository
                 copytree(P('student'), student_dir)
 
@@ -280,7 +302,7 @@ def distribute():
                     repo = "{}-{}".format(config['courseName'], student)
                     GH.close_existing_pullrequests(config['organisation'],
                                                    repo,
-                                                   token=config['github']['token'])
+                                                   token=get_github_auth()['token'])
 
                     branch = GH.new_branch(student_dir)
 
@@ -290,7 +312,7 @@ def distribute():
                                  repo,
                                  branch,
                                  message,
-                                 config['github']['token'])
+                                 get_github_auth()['token'])
 
                 else:
                     print("Everything up to date.")
