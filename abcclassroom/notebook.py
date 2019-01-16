@@ -15,6 +15,22 @@ except ImportError:
     raise ImportError('IPython needs to be installed for notebook grading')
 
 
+def normalize_kernel_name(notebook):
+    nb = nbformat.read(notebook, as_version=4)
+
+    kernelspec = nb.metadata.kernelspec
+    if "[conda env:" in kernelspec.display_name:
+        if kernelspec.language == 'python':
+            if nb.metadata.language_info.version.startswith('3.'):
+                kernelspec.name = 'python3'
+                kernelspec.display_name = 'Python 3'
+            else:
+                kernelspec.name = 'python2'
+                kernelspec.display_name = 'Python 2'
+
+        nbformat.write(nb, notebook)
+
+
 def split_notebook(notebook, student_path, autograder_path):
     """Split a master notebook into student and autograder notebooks"""
     print('Processing', notebook)
@@ -35,6 +51,7 @@ def split_notebook(notebook, student_path, autograder_path):
     nb.replace_text(text_replace_begin, text_replace_end)
 
     nb.save(os.path.join(student_path, nb_name))
+    normalize_kernel_name(os.path.join(student_path, nb_name))
 
     # create test files for the autograder
     nb = NotebookCleaner(notebook)

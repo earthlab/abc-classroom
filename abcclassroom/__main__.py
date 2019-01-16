@@ -15,6 +15,8 @@ import github3 as gh3
 
 from ruamel.yaml import YAML
 
+import nbformat
+
 from . import ok
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
