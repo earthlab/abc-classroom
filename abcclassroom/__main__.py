@@ -111,8 +111,8 @@ def init():
     except gh3.exceptions.UnprocessableEntity:
         print("Failed to create a access token for you. Please visit "
               "https://github.com/settings/tokens and delete any access "
-              "token with the name 'Grading workflow helper' and run "
-              "`nbinit` again.")
+              "token with the name 'ABC-classroom workflow helper' and run "
+              "`abc-init` again.")
         sys.exit(1)
 
 
