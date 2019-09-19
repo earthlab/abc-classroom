@@ -1,0 +1,7 @@
+name: abc-dev
+channels:
+  - conda-forge
+dependencies:
+  # Github API
+  - github3.py
+

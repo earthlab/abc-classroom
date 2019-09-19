@@ -5,4 +5,11 @@
 
 ## Try it!
 
-Run `pip install -e.` in the directory of this README.
+Run `pip install -e .` in the directory of this README.
+
+
+## Dev
+
+
+
+
