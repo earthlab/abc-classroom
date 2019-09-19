@@ -22,8 +22,8 @@ local filesystem::
 3. Set up your fork for local development
 -----------------------------------------
 
-Create an environment
-^^^^^^^^^^^^^^^^^^^^^
+Setup the ABC-Classroom Dev Environment
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Using conda, there are two options.
 
@@ -35,12 +35,17 @@ locally, but this is the recommended option on Windows and MacOS::
     $ conda env create -f environment.yml
     $ conda activate abc-dev
 
-Install the package
-^^^^^^^^^^^^^^^^^^^
+Install the package & The Precommit Hook
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Once your earthpy-dev environment is activated, install EarthPy in editable
 mode, along with the development requirements and pre-commit hooks::
 
     $ pip install -e .
     $ pip install -r dev-requirements.txt
+
+We are using black to enforce PEP 8 styles. Install the pre-commit once and black
+will run every time you make a commit. Note that you will need to commit any changes
+that black makes to your code after those changes are applied.
+
     $ pre-commit install
