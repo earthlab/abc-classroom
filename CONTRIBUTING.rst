@@ -38,7 +38,7 @@ locally, but this is the recommended option on Windows and MacOS::
 Install the package & The Precommit Hook
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Once your earthpy-dev environment is activated, install EarthPy in editable
+Once your abc-dev environment is activated, install EarthPy in editable
 mode, along with the development requirements and pre-commit hooks::
 
     $ pip install -e .
