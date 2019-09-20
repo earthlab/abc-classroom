@@ -25,6 +25,16 @@ from .utils import copytree, P, input_editor
 
 
 def get_github_auth():
+    """
+    Check to see if there is an existing github authentication
+    and load the authentication.
+
+    Returns
+    -------
+    ruamel.yaml.comments.CommentedMap
+        Yaml object that contains the token and id for a github session.
+        If yaml doesn't exists, return an empty dictionary.
+    """
     yaml = YAML()
     try:
         with open(op.expanduser('~/.abc-classroom.tokens.yml')) as f:
@@ -36,6 +46,16 @@ def get_github_auth():
 
 
 def set_github_auth(auth_info):
+    """
+    Set the github authentication information. Put the token and id authentication
+    information into a yaml file if it doesn't already exist.
+
+    Parameters
+    ----------
+    auth_info : dictionary
+        The token and id authentication information from github stored in a
+        dictionary object.
+    """
     yaml = YAML()
     config = {}
     if get_github_auth():
@@ -62,7 +82,10 @@ def set_config(config):
 
 
 def init():
-    """Setup GitHub credentials for later"""
+    """
+    Setup GitHub credentials for later. Make sure that there is a valid GitHub authentication
+    yaml file, and if there isn't one, create a valid file.
+    """
 
     gh_auth = get_github_auth()
 
