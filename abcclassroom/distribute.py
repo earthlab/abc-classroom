@@ -1,4 +1,9 @@
-"""Take a template directory and distribute it"""
+"""
+abc-classroom.distribute
+========================
+
+Take a template directory and distribute it
+"""
 import os
 import subprocess
 
@@ -16,7 +21,7 @@ def find_notebooks(base_path):
         # remove leading directory
         path = os.path.relpath(path, base_path)
         for f in files:
-            if f.endswith('.ipynb'):
+            if f.endswith(".ipynb"):
                 notebook_paths.append(os.path.join(path, f))
 
     return notebook_paths
@@ -24,13 +29,15 @@ def find_notebooks(base_path):
 
 def render_circleci_template(notebook_paths):
     """Load the CircleCI template"""
-    template = open(os.path.join(HERE, 'circleci.yml')).read()
+    template = open(os.path.join(HERE, "circleci.yml")).read()
 
     t = jinja2.Template(template)
 
-    return t.render(notebook_dirs=[os.path.dirname(p) for p in notebook_paths],
-                    notebook_names=[os.path.split(p)[1] for p in notebook_paths],
-                    notebooks=notebook_paths)
+    return t.render(
+        notebook_dirs=[os.path.dirname(p) for p in notebook_paths],
+        notebook_names=[os.path.split(p)[1] for p in notebook_paths],
+        notebooks=notebook_paths,
+    )
 
 
 def git_init(directory):
@@ -39,11 +46,15 @@ def git_init(directory):
     Add all files in `directory` to a newly create git repository in that
     directory.
     """
-    subprocess.run(['git', 'init'], cwd=directory,
-                   check=True, stdout=subprocess.PIPE)
+    subprocess.run(["git", "init"], cwd=directory, check=True, stdout=subprocess.PIPE)
 
-    subprocess.run(['git', 'add', '*'], cwd=directory,
-                   check=True, stdout=subprocess.PIPE)
+    subprocess.run(
+        ["git", "add", "*"], cwd=directory, check=True, stdout=subprocess.PIPE
+    )
 
-    subprocess.run(['git', 'commit', '-m', 'Initial commit'],
-                   cwd=directory, check=True, stdout=subprocess.PIPE)
+    subprocess.run(
+        ["git", "commit", "-m", "Initial commit"],
+        cwd=directory,
+        check=True,
+        stdout=subprocess.PIPE,
+    )
