@@ -4,3 +4,4 @@ student/
 __pycache__
 *.egg-info
 .idea/
+docs/_build
