@@ -10,4 +10,5 @@
 
  script:
    # Build documentation
-   - pushd docs && make html && popd
+   #- pushd docs && make html && popd
+   - make docs -B
