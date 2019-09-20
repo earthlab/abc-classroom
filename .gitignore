@@ -6,3 +6,35 @@ __pycache__
 .idea/
 docs/_build
 .DS_Store
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# mkdocs documentation
+/site
+doc/source/gallery
+doc/source/gallery_vignettes
+
+# Pycharm
+.idea/
+.idea/*
+
+pip-wheel-metadata/
