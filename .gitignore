@@ -38,3 +38,5 @@ doc/source/gallery_vignettes
 .idea/*
 
 pip-wheel-metadata/
+config.yml
+docs/api

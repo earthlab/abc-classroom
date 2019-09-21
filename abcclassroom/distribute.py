@@ -46,7 +46,9 @@ def git_init(directory):
     Add all files in `directory` to a newly create git repository in that
     directory.
     """
-    subprocess.run(["git", "init"], cwd=directory, check=True, stdout=subprocess.PIPE)
+    subprocess.run(
+        ["git", "init"], cwd=directory, check=True, stdout=subprocess.PIPE
+    )
 
     subprocess.run(
         ["git", "add", "*"], cwd=directory, check=True, stdout=subprocess.PIPE

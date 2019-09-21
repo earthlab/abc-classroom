@@ -46,7 +46,9 @@ def split_notebook(notebook, student_path, autograder_path):
 
     # create test files and notebook for the student
     nb = NotebookCleaner(notebook)
-    nb.create_tests(tag="private", oktest_path=base_name, base_dir=autograder_path)
+    nb.create_tests(
+        tag="private", oktest_path=base_name, base_dir=autograder_path
+    )
     nb.create_tests(tag="public", oktest_path=base_name, base_dir=student_path)
     text_replace_begin = "### BEGIN SOLUTION"
     text_replace_end = "### END SOLUTION"
@@ -57,8 +59,12 @@ def split_notebook(notebook, student_path, autograder_path):
 
     # create test files for the autograder
     nb = NotebookCleaner(notebook)
-    nb.create_tests(tag="private", oktest_path=base_name, base_dir=autograder_path)
-    nb.create_tests(tag="public", oktest_path=base_name, base_dir=autograder_path)
+    nb.create_tests(
+        tag="private", oktest_path=base_name, base_dir=autograder_path
+    )
+    nb.create_tests(
+        tag="public", oktest_path=base_name, base_dir=autograder_path
+    )
 
 
 def find_check_definition(tree):

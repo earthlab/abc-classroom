@@ -58,7 +58,9 @@ def fetch_student(org, course, student, directory, token=None):
         fetch_command = [
             "git",
             "clone",
-            "https://{}@github.com/{}/{}-{}.git".format(token, org, course, student),
+            "https://{}@github.com/{}/{}-{}.git".format(
+                token, org, course, student
+            ),
         ]
     subprocess.run(
         fetch_command,
@@ -88,7 +90,8 @@ def close_existing_pullrequests(
         origin_repo, origin_branch = origin.split(":")
         if origin_branch.startswith(branch_base) and pr.user == me:
             pr.create_comment(
-                "Closed in favor of a new Pull Request to " "bring you up-to-date."
+                "Closed in favor of a new Pull Request to "
+                "bring you up-to-date."
             )
             pr.close()
 
@@ -132,7 +135,9 @@ def repo_changed(directory):
 def new_branch(directory, name=None):
     """Create a new git branch in directory"""
     if name is None:
-        postfix = "".join([random.choice(string.ascii_letters) for n in range(4)])
+        postfix = "".join(
+            [random.choice(string.ascii_letters) for n in range(4)]
+        )
         name = "new-material-{}".format(postfix)
 
     _call_git("checkout", "-b", name, directory=directory)

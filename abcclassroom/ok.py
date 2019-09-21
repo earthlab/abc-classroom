@@ -39,7 +39,9 @@ def run_doctest(name, doctest_string, global_environment):
     doctestrunner = doctest.DocTestRunner(verbose=True)
 
     runresults = io.StringIO()
-    with redirect_stdout(runresults), redirect_stderr(runresults), hide_outputs():
+    with redirect_stdout(runresults), redirect_stderr(
+        runresults
+    ), hide_outputs():
         doctestrunner.run(test, clear_globs=False)
     with open("/dev/null", "w") as f, redirect_stderr(f), redirect_stdout(f):
         result = doctestrunner.summarize(verbose=True)
@@ -174,7 +176,10 @@ class OKSuite:
 
         grade = len(passed_tests) / len(passed_tests + failed_tests)
         return OKSuiteResult(
-            (points_scored, max_total_points), passed_tests, failed_tests, include_grade
+            (points_scored, max_total_points),
+            passed_tests,
+            failed_tests,
+            include_grade,
         )
 
 

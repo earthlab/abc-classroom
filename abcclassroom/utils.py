@@ -85,7 +85,9 @@ def copytree(
                         continue
                     # otherwise let the copy occurs. copy2 will raise an error
                     if os.path.isdir(srcname):
-                        copytree(srcname, dstname, symlinks, ignore, copy_function)
+                        copytree(
+                            srcname, dstname, symlinks, ignore, copy_function
+                        )
                     else:
                         copy_function(srcname, dstname)
             elif os.path.isdir(srcname):
