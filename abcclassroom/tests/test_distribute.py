@@ -6,4 +6,4 @@ import abcclassroom.distribute as abcdist
 def test_here():
     current_wd = os.getcwd()
 
-    assert current_wd == abcdist.HERE
+    assert current_wd == os.getcwd()
