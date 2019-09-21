@@ -1,3 +1,10 @@
+"""
+abc-classroom.utils
+===================
+
+"""
+
+
 import os
 import subprocess
 import sys
@@ -16,8 +23,14 @@ class Error(OSError):
 
 # a copy of shutil.copytree() that is ok with the target directory
 # already existing
-def copytree(src, dst, symlinks=False, ignore=None, copy_function=copy2,
-             ignore_dangling_symlinks=False):
+def copytree(
+    src,
+    dst,
+    symlinks=False,
+    ignore=None,
+    copy_function=copy2,
+    ignore_dangling_symlinks=False,
+):
     """Recursively copy a directory tree.
     The destination directory must not already exist.
     If exception(s) occur, an Error is raised with a list of reasons.
@@ -34,7 +47,7 @@ def copytree(src, dst, symlinks=False, ignore=None, copy_function=copy2,
     is called with the `src` parameter, which is the directory
     being visited by copytree(), and `names` which is the list of
     `src` contents, as returned by os.listdir():
-        callable(src, names) -> ignored_names
+    ``callable(src, names) -> ignored_names``
     Since copytree() is called recursively, the callable will be
     called once for each directory that is copied. It returns a
     list of names relative to the `src` directory that should
@@ -72,8 +85,9 @@ def copytree(src, dst, symlinks=False, ignore=None, copy_function=copy2,
                         continue
                     # otherwise let the copy occurs. copy2 will raise an error
                     if os.path.isdir(srcname):
-                        copytree(srcname, dstname, symlinks, ignore,
-                                 copy_function)
+                        copytree(
+                            srcname, dstname, symlinks, ignore, copy_function
+                        )
                     else:
                         copy_function(srcname, dstname)
             elif os.path.isdir(srcname):
@@ -91,7 +105,7 @@ def copytree(src, dst, symlinks=False, ignore=None, copy_function=copy2,
         copystat(src, dst)
     except OSError as why:
         # Copying file access times may fail on Windows
-        if getattr(why, 'winerror', None) is None:
+        if getattr(why, "winerror", None) is None:
             errors.append((src, dst, str(why)))
     if errors:
         raise Error(errors)
@@ -102,7 +116,7 @@ def input_editor(default_message=None):
     """Ask for user input via a text editor"""
     default_message = textwrap.dedent(default_message)
 
-    with tempfile.NamedTemporaryFile(mode='r+') as tmpfile:
+    with tempfile.NamedTemporaryFile(mode="r+") as tmpfile:
         if default_message is not None:
             tmpfile.write(default_message)
             tmpfile.flush()
@@ -115,26 +129,26 @@ def input_editor(default_message=None):
 
 
 def get_editor():
-    return (os.environ.get('VISUAL')
-            or os.environ.get('EDITOR')
-            or 'vi')
+    return os.environ.get("VISUAL") or os.environ.get("EDITOR") or "vi"
 
 
 def _call_git(*args, directory=None):
-    cmd = ['git']
+    cmd = ["git"]
     cmd.extend(args)
     try:
-        ret = subprocess.run(cmd,
-                             cwd=directory,
-                             check=True,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
+        ret = subprocess.run(
+            cmd,
+            cwd=directory,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
     except subprocess.CalledProcessError as e:
-        err = e.stderr.decode('utf-8')
+        err = e.stderr.decode("utf-8")
         if err:
-            msg = err.split(':')[1].strip()
+            msg = err.split(":")[1].strip()
         else:
-            msg = e.stdout.decode('utf-8')
+            msg = e.stdout.decode("utf-8")
         raise RuntimeError(msg) from e
 
     return ret
@@ -144,12 +158,12 @@ def _call_git(*args, directory=None):
 def TOP():
     """Path to the top level of the repository we are in"""
     try:
-        ret = _call_git('rev-parse', '--show-toplevel')
+        ret = _call_git("rev-parse", "--show-toplevel")
     except RuntimeError as e:
-        print(' '.join(e.args))
+        print(" ".join(e.args))
         sys.exit(1)
 
-    return ret.stdout.decode('utf-8').strip()
+    return ret.stdout.decode("utf-8").strip()
 
 
 def P(*paths):
@@ -170,7 +184,7 @@ def flush_inline_matplotlib_plots():
 
     Stolen from https://github.com/jupyter-widgets/ipywidgets/blob/4cc15e66d5e9e69dac8fc20d1eb1d7db825d7aa2/ipywidgets/widgets/interaction.py#L35
     """
-    if 'matplotlib' not in sys.modules:
+    if "matplotlib" not in sys.modules:
         # matplotlib hasn't been imported, nothing to do.
         return
 
@@ -180,7 +194,7 @@ def flush_inline_matplotlib_plots():
     except ImportError:
         return
 
-    if mpl.get_backend() == 'module://ipykernel.pylab.backend_inline':
+    if mpl.get_backend() == "module://ipykernel.pylab.backend_inline":
         flush_figures()
 
 

@@ -1,3 +1,10 @@
+"""
+abc-classroom.ok
+================
+
+"""
+
+
 import doctest
 import inspect
 import io
@@ -19,29 +26,28 @@ def run_doctest(name, doctest_string, global_environment):
     Returns (True, '') if the doctest passes.
     Returns (False, failure_message) if the doctest fails.
     """
-    examples = doctest.DocTestParser().parse(
-        doctest_string,
-        name
-    )
+    examples = doctest.DocTestParser().parse(doctest_string, name)
     test = doctest.DocTest(
         [e for e in examples if isinstance(e, doctest.Example)],
         global_environment,
         name,
         None,
         None,
-        doctest_string
+        doctest_string,
     )
 
     doctestrunner = doctest.DocTestRunner(verbose=True)
 
     runresults = io.StringIO()
-    with redirect_stdout(runresults), redirect_stderr(runresults), hide_outputs():
+    with redirect_stdout(runresults), redirect_stderr(
+        runresults
+    ), hide_outputs():
         doctestrunner.run(test, clear_globs=False)
-    with open('/dev/null', 'w') as f, redirect_stderr(f), redirect_stdout(f):
+    with open("/dev/null", "w") as f, redirect_stderr(f), redirect_stdout(f):
         result = doctestrunner.summarize(verbose=True)
     # An individual test can only pass or fail
     if result.failed == 0:
-        return (True, '')
+        return (True, "")
     else:
         return False, runresults.getvalue()
 
@@ -56,15 +62,20 @@ class OKTest:
     other scopes with local variables. This is a limitation of
     doctest, so we roll with it.
     """
-    result_pass_template = Template("""
-    <p><strong>{{ name }}</strong> passed!</p>
-    """)
 
-    result_fail_template = Template("""
+    result_pass_template = Template(
+        """
+    <p><strong>{{ name }}</strong> passed!</p>
+    """
+    )
+
+    result_fail_template = Template(
+        """
     <p><strong style='color: red;'>{{ name }}</strong></p>
     <p><strong>Test code:</strong><pre>{{test_code}}</pre></p>
     <p><strong>Test result:</strong><pre>{{test_result}}</pre></p>
-    """)
+    """
+    )
 
     def __init__(self, name, tests):
         """
@@ -76,24 +87,32 @@ class OKTest:
     def run(self, global_environment):
         results = []
         for i, (max_points, test) in enumerate(self.tests):
-            name = "{} test #{}".format(self.name, i+1)
+            name = "{} test #{}".format(self.name, i + 1)
             passed, result = run_doctest(name, test, global_environment)
             if not passed:
-                results.append((False,
-                                (0, max_points),
-                                OKTest.result_fail_template.render(
-                                    name=name,
-                                    test_code=highlight(test,
-                                                        PythonConsoleLexer(),
-                                                        HtmlFormatter(noclasses=True)),
-                                    test_result=result
-                                    )
-                                )
-                               )
+                results.append(
+                    (
+                        False,
+                        (0, max_points),
+                        OKTest.result_fail_template.render(
+                            name=name,
+                            test_code=highlight(
+                                test,
+                                PythonConsoleLexer(),
+                                HtmlFormatter(noclasses=True),
+                            ),
+                            test_result=result,
+                        ),
+                    )
+                )
             else:
-                results.append((True,
-                                (max_points, max_points),
-                                OKTest.result_pass_template.render(name=name)))
+                results.append(
+                    (
+                        True,
+                        (max_points, max_points),
+                        OKTest.result_pass_template.render(name=name),
+                    )
+                )
 
         return results
 
@@ -107,32 +126,32 @@ class OKTest:
         with open(path) as f:
             exec(f.read(), test_globals)
 
-        test_spec = test_globals['test']
+        test_spec = test_globals["test"]
 
         # We only support a subset of these tests, so let's validate!
 
         # Make sure there is a name
-        assert 'name' in test_spec
+        assert "name" in test_spec
 
         # Do not support multiple suites in the same file
-        assert len(test_spec['suites']) == 1
+        assert len(test_spec["suites"]) == 1
 
         # Do not support point values other than 1
-        assert test_spec.get('points', 1) == 1
+        assert test_spec.get("points", 1) == 1
 
-        test_suite = test_spec['suites'][0]
+        test_suite = test_spec["suites"][0]
 
         # Only support doctest. I am unsure if other tests are implemented
-        assert test_suite.get('type', 'doctest') == 'doctest'
+        assert test_suite.get("type", "doctest") == "doctest"
 
         # Not setup and teardown supported
-        assert not bool(test_suite.get('setup'))
-        assert not bool(test_suite.get('teardown'))
+        assert not bool(test_suite.get("setup"))
+        assert not bool(test_suite.get("teardown"))
 
         tests = []
 
-        for i, test_case in enumerate(test_spec['suites'][0]['cases']):
-            tests.append((int(test_case['points']), dedent(test_case['code'])))
+        for i, test_case in enumerate(test_spec["suites"][0]["cases"]):
+            tests.append((int(test_case["points"]), dedent(test_case["code"])))
 
         return cls(path, tests)
 
@@ -156,15 +175,21 @@ class OKSuite:
                     failed_tests.append(hint)
 
         grade = len(passed_tests) / len(passed_tests + failed_tests)
-        return OKSuiteResult((points_scored, max_total_points),
-                             passed_tests, failed_tests, include_grade)
+        return OKSuiteResult(
+            (points_scored, max_total_points),
+            passed_tests,
+            failed_tests,
+            include_grade,
+        )
 
 
 class OKSuiteResult:
     """
     Displayable result from running OKTests
     """
-    result_template = Template("""
+
+    result_template = Template(
+        """
     {% if include_grade %}
     <strong>Grade: {{ grade }}</strong>
     {% endif %}
@@ -190,7 +215,8 @@ class OKSuiteResult:
             </ul>
         {% endif %}
     {% endif %}
-    """)
+    """
+    )
 
     def __init__(self, grade, passed_tests, failed_tests, include_grade=True):
         self.grade = grade
@@ -205,7 +231,7 @@ class OKSuiteResult:
             passed_tests=self.passed_tests,
             failed_tests=self.failed_tests,
             tests=self.tests,
-            include_grade=self.include_grade
+            include_grade=self.include_grade,
         )
 
 
@@ -218,25 +244,25 @@ def grade_notebook(notebook_path):
         if cell.cell_type != "code":
             continue
 
-        if cell.source.startswith('check(') and cell.source.endswith(')'):
-            output = cell['outputs'][0]['data']['text/html'].strip()
+        if cell.source.startswith("check(") and cell.source.endswith(")"):
+            output = cell["outputs"][0]["data"]["text/html"].strip()
             # got all points
-            if 'tests passed! Points:' in output:
+            if "tests passed! Points:" in output:
                 print(output)
-                points = output.rsplit(' ')[-1]
-                points = int(points[:-len('.</p>')])
+                points = output.rsplit(" ")[-1]
+                points = int(points[: -len(".</p>")])
                 results.append((points, points))
             # got some of the points
-            elif 'tests passed. Points:' in output and 'of' in output:
-                output = output.split('\n')[0]
+            elif "tests passed. Points:" in output and "of" in output:
+                output = output.split("\n")[0]
                 print(output)
-                out = output.rsplit(' ')
+                out = output.rsplit(" ")
                 scored = int(out[-3])
-                total = int(out[-1][:-len('.</p>')])
+                total = int(out[-1][: -len(".</p>")])
                 results.append((scored, total))
 
             if output.endswith("Full grade.</p>"):
-                results.append(1.)
+                results.append(1.0)
 
     return results
 
