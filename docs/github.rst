@@ -29,5 +29,3 @@ This token can even be used to create pull requests
 You can view the token by going to https://github.com/settings/tokens
 The token will be called `Grading workflow helper`
 
-::::
-
