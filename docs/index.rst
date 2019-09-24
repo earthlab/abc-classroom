@@ -10,6 +10,9 @@ Welcome to abc-classroom's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   api
+   github
+
 
 
 Indices and tables
