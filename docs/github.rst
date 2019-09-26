@@ -16,16 +16,39 @@ Step two can be implemented with abc-classroom by performing the following steps
 First, you need to authenticate with GitHub. This authentication step will
 allow you to automagically create the template repo within your chosen organization.
 
+Before you can authenticate, you need a few things already installed on your
+computer.
+
+1. Git must be set up locally on your machine.
+2. ``abc-classroom`` should be installed locally as well. If you don't have
+``abc-classroom`` installed, you can run the command
+    $ pip install git+https://github.com/earthlab/abc-classroom.git
+to install it.
+3. The authentication requires a valid GitHub username and password.
+
 To authenticate, run:
 
     $ abc-init
 
+.. note::
+   When you run ``abc-init``, you may get an error saying you have an outdated
+   version of a package, or are missing a package all together. This should
+   be resolved by installing or upgrading whatever packages the error says
+   are missing or out of date.
+
 This step will ask you for your GitHub username and password. It will
 then create a token on GitHub which will allow you to create a repo.
-This token can even be used to create pull requests
+This token can even be used to interact with GitHub through ```abc-classroom``.
 
-?? this could be used to return student feedback to them but let's see what we already have in this area??
+The token is stored in a yaml file in your home directory, and is named
+``.abc-classroom.tokens.yml`` This is the file that ``abc-init`` will look for
+when creating your GitHub token.
 
-You can view the token by going to https://github.com/settings/tokens
-The token will be called `Grading workflow helper`
+.. note::
+   If there is already a token file present there, ``abc-init`` will inform you
+   that the GitHub token is present and valid. If you wish to sign in with
+   another username, you will have to delete or move this file so that
+   ``abc-init`` will know to create a new file with a different token.
 
+You can view the token online by going to https://github.com/settings/tokens
+The token will be called `Grading workflow helper`.
