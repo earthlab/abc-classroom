@@ -20,18 +20,19 @@ Before you can authenticate, you need a few things already installed on your
 computer.
 
 1. Git must be set up locally on your machine.
+
 2. ``abc-classroom`` should be installed locally as well. If you don't have
 ``abc-classroom`` installed, you can run the command
     $ pip install git+https://github.com/earthlab/abc-classroom.git
 to install it.
+
 3. The authentication requires a valid GitHub username and password.
 
 To authenticate, run:
 
     $ abc-init
 
-.. note::
-   When you run ``abc-init``, you may get an error saying you have an outdated
+.. note:: When you run ``abc-init``, you may get an error saying you have an outdated
    version of a package, or are missing a package all together. This should
    be resolved by installing or upgrading whatever packages the error says
    are missing or out of date.
@@ -44,8 +45,7 @@ The token is stored in a yaml file in your home directory, and is named
 ``.abc-classroom.tokens.yml`` This is the file that ``abc-init`` will look for
 when creating your GitHub token.
 
-.. note::
-   If there is already a token file present there, ``abc-init`` will inform you
+.. note:: If there is already a token file present there, ``abc-init`` will inform you
    that the GitHub token is present and valid. If you wish to sign in with
    another username, you will have to delete or move this file so that
    ``abc-init`` will know to create a new file with a different token.
