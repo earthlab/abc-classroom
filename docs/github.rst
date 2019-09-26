@@ -22,7 +22,9 @@ computer.
 1. Git must be set up locally on your machine.
 2. The ``abc-classroom`` package should be installed locally as well. If you don't have
    ``abc-classroom`` installed, you can run the command
-    $ pip install git+https://github.com/earthlab/abc-classroom.git
+
+   $ pip install git+https://github.com/earthlab/abc-classroom.git
+
    to install it.
 3. The authentication requires a valid GitHub username and password.
 
@@ -30,11 +32,11 @@ To authenticate, run:
 
     $ abc-init
 
-  .. note::
-     When you run ``abc-init``, you may get an error saying you have an outdated
-     version of a package, or are missing a package all together. This should
-     be resolved by installing or upgrading whatever packages the error says
-     are missing or out of date.
+.. note::
+   When you run ``abc-init``, you may get an error saying you have an outdated
+   version of a package, or are missing a package all together. This should
+   be resolved by installing or upgrading whatever packages the error says
+   are missing or out of date.
 
 This step will ask you for your GitHub username and password. It will
 then create a token on GitHub which will allow you to create a repo.
@@ -45,10 +47,10 @@ The token is stored in a yaml file in your home directory, and is named
 when creating your GitHub token.
 
 .. note::
-   If there is already a token file present there, ``abc-init`` will inform you
-   that the GitHub token is present and valid. If you wish to sign in with
-   another username, you will have to delete or move this file so that
-   ``abc-init`` will know to create a new file with a different token.
+   If there is already a token file present in your home directory, 
+   ``abc-init`` will inform that the GitHub token is present and valid. If you
+   wish to sign in with another username, you will have to delete or move this
+   file so ``abc-init`` will know to create a new file with a different token.
 
 You can view the token online by going to https://github.com/settings/tokens
 The token will be called `Grading workflow helper`.
