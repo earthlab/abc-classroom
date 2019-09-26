@@ -21,7 +21,7 @@ computer.
 
 1. Git must be set up locally on your machine.
 
-2. ``abc-classroom`` should be installed locally as well. If you don't have
+2. The ``abc-classroom`` package should be installed locally as well. If you don't have
 ``abc-classroom`` installed, you can run the command
     $ pip install git+https://github.com/earthlab/abc-classroom.git
 to install it.
