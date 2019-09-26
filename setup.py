@@ -6,7 +6,7 @@ except ImportError:
 
 setup(
     name="abc-classroom",
-    version="0.0.4",
+    version="0.0.5",
     description="Authoring and grading of notebook assignments",
     long_description="Authoring and grading of notebook assignments",
     license="BSD",
