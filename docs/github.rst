@@ -30,11 +30,11 @@ To authenticate, run:
 
     $ abc-init
 
-    .. note::
-       When you run ``abc-init``, you may get an error saying you have an outdated
-       version of a package, or are missing a package all together. This should
-       be resolved by installing or upgrading whatever packages the error says
-       are missing or out of date.
+  .. note::
+     When you run ``abc-init``, you may get an error saying you have an outdated
+     version of a package, or are missing a package all together. This should
+     be resolved by installing or upgrading whatever packages the error says
+     are missing or out of date.
 
 This step will ask you for your GitHub username and password. It will
 then create a token on GitHub which will allow you to create a repo.
