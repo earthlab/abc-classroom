@@ -6,7 +6,7 @@ except ImportError:
 
 setup(
     name="abc-classroom",
-    version="0.0.5",
+    version="0.0.6",
     description="Efficiently manage github classroom assignments from the command line.",
     long_description="Authoring and grading of notebook assignments",
     license="BSD",
