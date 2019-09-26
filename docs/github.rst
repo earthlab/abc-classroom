@@ -30,7 +30,9 @@ To authenticate, run:
 
     $ abc-init
 
-.. note:: When you run ``abc-init``, you may get an error saying you have an outdated
+.. note::
+
+   When you run ``abc-init``, you may get an error saying you have an outdated
    version of a package, or are missing a package all together. This should
    be resolved by installing or upgrading whatever packages the error says
    are missing or out of date.
@@ -43,7 +45,9 @@ The token is stored in a yaml file in your home directory, and is named
 ``.abc-classroom.tokens.yml`` This is the file that ``abc-init`` will look for
 when creating your GitHub token.
 
-.. note:: If there is already a token file present there, ``abc-init`` will inform you
+.. note::
+
+   If there is already a token file present there, ``abc-init`` will inform you
    that the GitHub token is present and valid. If you wish to sign in with
    another username, you will have to delete or move this file so that
    ``abc-init`` will know to create a new file with a different token.
