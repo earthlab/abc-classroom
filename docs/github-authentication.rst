@@ -47,7 +47,7 @@ The token is stored in a yaml file in your home directory, and is named
 when creating your GitHub token.
 
 .. note::
-   If there is already a token file present in your home directory, 
+   If there is already a token file present in your home directory,
    ``abc-init`` will inform that the GitHub token is present and valid. If you
    wish to sign in with another username, you will have to delete or move this
    file so ``abc-init`` will know to create a new file with a different token.
