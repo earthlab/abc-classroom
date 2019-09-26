@@ -41,3 +41,4 @@ pip-wheel-metadata/
 config.yml
 docs/api
 scratch-workspace/
+dist/
