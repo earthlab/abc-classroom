@@ -22,9 +22,9 @@ computer.
 1. Git must be set up locally on your machine.
 
 2. The ``abc-classroom`` package should be installed locally as well. If you don't have
-``abc-classroom`` installed, you can run the command
+   ``abc-classroom`` installed, you can run the command
     $ pip install git+https://github.com/earthlab/abc-classroom.git
-to install it.
+   to install it.
 
 3. The authentication requires a valid GitHub username and password.
 
