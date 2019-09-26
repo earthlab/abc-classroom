@@ -7,10 +7,10 @@ except ImportError:
 setup(
     name="abc-classroom",
     version="0.0.5",
-    description="Authoring and grading of notebook assignments",
+    description="Efficiently manage github classroom assignments from the command line.",
     long_description="Authoring and grading of notebook assignments",
     license="BSD",
-    author="UC Boulder Earthlab",
+    author="Earth Lab, University of Colorado -- Boulder",
     packages=["abcclassroom"],
     install_requires=[
         "nbclean",
