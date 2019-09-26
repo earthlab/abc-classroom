@@ -49,3 +49,14 @@ will run every time you make a commit. Note that you will need to commit any cha
 that black makes to your code after those changes are applied.
 
     $ pre-commit install
+
+Install nbgrader Extensions into the Active Environment
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+One the environment is activated and the package is installed, it is helpful
+to add useful extensions to Jupyter notebook. The recommended extensions can
+be installed by running::
+
+    $ bash nbgrader-ext-installs.txt
+
+This will install all of the extensions to your current active environment.
