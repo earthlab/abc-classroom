@@ -24,7 +24,7 @@ setup(
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
-    version="0.0.10",
+    version="0.0.11",
     license="BSD",
     author="Earth Lab, University of Colorado -- Boulder",
     packages=["abcclassroom"],
