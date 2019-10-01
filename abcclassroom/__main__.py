@@ -139,7 +139,6 @@ def init():
         )
         sys.exit(1)
 
-
 def grade():
     """Grade student's work"""
     parser = argparse.ArgumentParser(description="Grade student repository.")
@@ -462,3 +461,17 @@ def author():
         "Inspect `{}/` to check it looks as you "
         "expect.".format(P("student"))
     )
+
+def new_assignment():
+    """
+    Create a new assignment : create template dir locally, copy
+    required files, intialize as github repo, create remote repo on
+    GitHub, and push local to GitHub.
+    """
+    parser.add_argument(
+        "--local-only",
+        action="store_true",
+        help="Create local template repository only; do not do GitHub create and push (default: False)",
+    )
+    args = parser.parse_args()
+    config = get_config()
