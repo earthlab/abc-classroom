@@ -1,16 +1,32 @@
+import os
+
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
 
+# read the contents of your README file
+this_directory = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(this_directory, "README.md"), encoding="utf-8") as f:
+    LONG_DESCRIPTION = f.read()
+
+DISTNAME = "abc-classroom"
+DESCRIPTION = (
+    "Efficiently manage github classroom assignments from the command line."
+)
+MAINTAINER = "Leah Wasser"
+MAINTAINER_EMAIL = "leah.wasser@colorado.edu"
 
 setup(
-    name="abc-classroom",
-    version="0.0.1",
-    description="Authoring and grading of notebook assignments",
-    long_description="Authoring and grading of notebook assignments",
+    name=DISTNAME,
+    maintainer=MAINTAINER,
+    maintainer_email=MAINTAINER_EMAIL,
+    description=DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
+    long_description_content_type="text/markdown",
+    version="0.0.11",
     license="BSD",
-    author="UC Boulder Earthlab",
+    author="Earth Lab, University of Colorado -- Boulder",
     packages=["abcclassroom"],
     install_requires=[
         "nbclean",
@@ -19,6 +35,16 @@ setup(
         "nbformat",
         "ruamel.yaml",
         "github3.py",
+    ],
+    classifiers=[
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: BSD License",
+        "Programming Language :: Python",
+        "Topic :: Software Development",
+        "Operating System :: Microsoft :: Windows",
+        "Operating System :: POSIX",
+        "Operating System :: Unix",
+        "Operating System :: MacOS",
     ],
     include_package_data=True,
     entry_points={
@@ -29,4 +55,5 @@ setup(
             "abc-distribute = abcclassroom.__main__:distribute",
         ]
     },
+    url="https://github.com/earthlab/abc-classroom",
 )

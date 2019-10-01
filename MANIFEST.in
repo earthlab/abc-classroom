@@ -1,1 +1,3 @@
 recursive-include abcclassroom *.yml
+include README.md
+include LICENSE.rst

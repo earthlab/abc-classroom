@@ -24,9 +24,9 @@ copyright = "2019, Earth Lab"
 author = "Leah Wasser, Tim Head"
 
 # The short X.Y version
-version = "0.0.1"
+version = "0.0.11"
 # The full version, including alpha/beta/rc tags
-release = "0.0.1"
+release = "0.0.11"
 
 
 # -- General configuration ---------------------------------------------------

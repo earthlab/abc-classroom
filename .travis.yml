@@ -1,35 +1,31 @@
 language: python
-
 matrix:
-    include:
-        - os: linux
-          dist: xenial
-          python: 3.5
-          env: TOXENV=py35
-        - os: linux
-          dist: xenial
-          python: 3.6
-          env: TOXENV=py36
-        - os: linux
-          dist: xenial
-          python: 3.7
-          env: TOXENV=py37,black,docs
-        - os: osx
-          language: generic
-
+  include:
+  - os: linux
+    dist: xenial
+    python: 3.5
+    env: TOXENV=py35
+  - os: linux
+    dist: xenial
+    python: 3.6
+    env: TOXENV=py36
+  - os: linux
+    dist: xenial
+    python: 3.7
+    env: TOXENV=py37,black,docs
+  - os: osx
+    language: generic
 install:
-  - chmod +x .travis/install.sh
-  - ./.travis/install.sh
-
+- chmod +x .travis/install.sh
+- "./.travis/install.sh"
 script:
-  - chmod +x .travis/test.sh
-  - ./.travis/test.sh
-
+- chmod +x .travis/test.sh
+- "./.travis/test.sh"
 deploy:
   provider: pypi
-  user: lwasser
+  user: earthlab
   password:
-    secure: PZkjwwgIzvCu68ckTFjbiGaakK6bXGv48Iefbj4gLA3xEZW5JVu4Gn+c75rX0ZoJ/Ei9WwlXiRRqsFeUh8rvBkxY+2DRM8IZt8YcjdKP/O5zPyqVqDNIvlSryfbxeqcC8bBwd8ZR6iEnGysBfPuUdqLiak8t51pGjI0Eanqlh/xrTIwDqztQY5+LqOaNtJzEedX7jKbz4AKkFRUzlp35nJJ5sbWPYk+Uvr+PMx9v3IVbpxS01/iazCTAO91kUZ5pmCrDB20j8qbghmMYuSCdkO8Vyy9i6uLxWRROEnULwspucnGHygd7MGRuXOVrHHeMkcK18HI0xHiA8kQCt2kkN0Fe8COK2ZKW7u1bwo0a+SDtA2ArJY/HuUUHHs7vrotJDBHZJ1KBVuk1jZU0fAVMY0zkaPFq6LXhxSO7I7lAt0MNkEP3BkOoodOV0+AFJ8WFDvmeg3A49+H4o+qnBFZzlcy47rqDj0tX7+DxAeIKFz/9W4soCTwXNLORGKb2RcUQIprZKtEbI3VTG670SUQWHJUZOYeBlqOvh5NKN+rl1TgEK80MRmWOHl4feRkUONchdDz84T+nVuMmDBtgf+CkbM2DGbPzJfnw5w+euOaqZaniROmxRL1k2ROtvJc2xO2uYa+dqP6MFf8pWB4cnDSikUp09Rxl7F8Uj9DFdk39Qnc=
+    secure: AI/CFocrcpNBxsqvGug/zNRya34EJxbgz3MsIMXFVTpLPz6aTbeKMRWDWL3Ztrz2yvTzkUU6+sHMvm73UniXk5M9H7PVFG4XDb39+1BK6xJuvD3iKHffvAj/225wq8sRO8tMxWaNLfKaieHXu7Tao6SHl18kI2MprLmgzuzczjzDeXdFxUt/+SKg3MP5paLznfffTdF6XYLdYXVzYWIGKXa4+M8vrhI3XhCHEPB9QGPpfvN2AivX5TQ145+E4gEpKcca4liZMxzc0c903CWGNMr503Ycb0HYbXc06A4ivGkfXcpQmkrR6miX7JQodZ+JLp/Cvkzh2TuQdUbvlAF0u+bcfJFJpfoKrjZLhfdcDOV6z+LCkGrEZa11hxCn4NTK2+4/YAOqGXjDnDqekPimxICVBWWkc+u2U6UTf9QjpwQWMEdlaSTSKXLET6YZhCrnzdL9tmfnVw444SFwH391HopG5nQjyBdLudclQ3FmX/AejsItRW3yHWymcjTzwMD5oSM+oyTutEqKx8WfShYissTQ1ZutU4EOt/MgNdgWWEu/i/WUD79m3iq8uVfAZB1oEp7euPjl7znl7ZYyaymVNkzJWdcqApDn7TJUV9AyI7rJ4bMSrH2Wax7y/NkIq8pik8dYP68WmTtzanSFEFENANMWl8RT6x8jPtVF19gP5Z8=
   on:
     tags: true
     repo: earthlab/abc-classroom
