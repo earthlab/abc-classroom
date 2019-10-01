@@ -1,0 +1,52 @@
+
+# The GitHub organization to host your GitHub classroom
+# Create a new organization on GitHub and change this to the name you gave it
+organization: earth-analytics-edu
+
+# (Optional) Short name for organization. If set, this gets used to prepend
+# the repositories instead of the full organization name, just to make
+# names shorter and less unwieldy
+organization-shortname: ea
+
+# Name of your course. Will be used to prefix repositories inside the
+# organization. The repositories will be named:
+# https://github.com/<organization>/<courseName>-template
+# https://github.com/<organization>/<courseName>-<studentName>
+# or, if organization-shortname is set:
+# https://github.com/<organization-shortname>/<courseName>-template
+# https://github.com/<organization-shortname>/<courseName>-<studentName>
+courseName: earth-analytics-bootcamp
+
+# Absolute path to the course roster (list of students downloaded from
+# github classroom)
+roster: /Users/me/awesome-course/roster.csv
+
+# Absolute path to the nbgrader directory (formatted as per the
+# nbgrader docs).
+nbgrader_dir: /Users/me/awesome-course/nbgrader
+
+# Absolute path to directory where you want to clone the student
+# repositories. Because we will create many git repos here, this directory
+# should not be in a git repo
+clone_dir: /Users/me/awesome-course/cloned_dirs
+
+# Absolute path to the assignment template repositories. Again, none of
+# the parent directories should be a git repo
+template_dir: /Users/me/awesome-course/assignment_repos
+
+# Patterns to add to the .gitignore file in template repos. Add / remove
+# elements from this list to change the default contents of the .gitignore
+gitignore:
+- .ipynb_checkpoints
+- .DS_Store
+
+# Copy any files in the assignment directory that match the listed patterns
+# into the template repositories. Filenames will not be changed.
+template_files:
+- .ipynb
+
+# Additional files that will always be added to the student repository
+# In this example the file called `student_README.md` will be copied to the
+# student's repository as `README.md`
+extra_files:
+  README.md: student_README.md
