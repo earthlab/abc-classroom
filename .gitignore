@@ -40,3 +40,5 @@ doc/source/gallery_vignettes
 pip-wheel-metadata/
 config.yml
 docs/api
+scratch-workspace/
+dist/
