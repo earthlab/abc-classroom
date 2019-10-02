@@ -34,9 +34,9 @@ clone_dir: /Users/me/awesome-course/cloned_dirs
 # the parent directories should be a git repo
 template_dir: /Users/me/awesome-course/assignment_repos
 
-# Copy any files in the assignment directory that match the listed patterns
-# into the template repositories. Filenames will not be changed.
-template_files:
+# Copy files in the nbgrader 'release' directory to the template repository  
+# if they match any of these Unix shell-style patterns (NOT regular expressions)
+template_patterns:
 - *.ipynb
 
 # Additional files that will be created and added to the student repositories
