@@ -171,6 +171,18 @@ def P(*paths):
     path = os.path.join(*paths)
     return os.path.join(TOP(), path)
 
+def write_file(dir, filename, contents):
+    """Write a new file called filename to directory dir.
+    Each item in contents is a line in the file.
+    """
+    filepath = os.path.join(dir, filename)
+    try:
+        with open(filename, 'w') as f:
+            for line in contents:
+                f.write("{}\n".format(line))
+
+    except OSError as err:
+        print("Cannot open file: {0}".format(err))
 
 def flush_inline_matplotlib_plots():
     """

@@ -21,7 +21,7 @@ from . import ok
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
 from . import github as GH
-from .utils import copytree, P, input_editor
+from .utils import copytree, P, input_editor, write_file
 
 
 def get_github_auth():
@@ -74,6 +74,17 @@ def get_config():
         config = yaml.load(f)
     return config
 
+# TODO: allow for nested gets, e.g. config[a][b]
+def get_config_option(config, option, required=True):
+    try:
+        value = config[option]
+        return value
+    except KeyError as err:
+        if (required==True):
+            print("Did not find required option {} in config; exciting".format(option))
+            sys.exit(1)
+        else:
+            return None
 
 def set_config(config):
     yaml = YAML()
@@ -462,12 +473,15 @@ def author():
         "expect.".format(P("student"))
     )
 
-def new_assignment():
+def new_assignment_template():
     """
-    Create a new assignment : create template dir locally, copy
+    Create a new assignment template: create template dir locally,
+    copy / create
     required files, intialize as github repo, create remote repo on
     GitHub, and push local to GitHub.
+    Assumes that assignment files already exist in nbgrader dir.
     """
+
     parser.add_argument(
         "--local-only",
         action="store_true",
@@ -475,3 +489,70 @@ def new_assignment():
     )
     args = parser.parse_args()
     config = get_config()
+
+    print("Loading configuration from config.yml")
+    template_dir = get_config_option(config,"template_dir",True)
+    organization = get_config_option(config,"organization",True)
+    assignment = get_config_option(config,"assignment",True)
+
+    # Set up the name of the template repo and create the dir
+    orgname = organization
+    # if there is a shortname defined, use that in path
+    if exists "organization-shortname" in config:
+        orgname = config["organization-shortname"]
+    template_repo_name = orgname + '-' + assignment + '-template'
+    template_dir = os.path.join(template_dir,template_repo_name)
+    try:
+        os.mkdir(template_repo_name)
+        print("Creating new directory at {}".format(template_repo_name))
+    except FileExistsError as fee:
+        print("directory {} already exists; delete or move before re-running".format(repo_name))
+        sys.exit(1)
+
+    # Copy assignment files from nbgrader
+    print("Getting assignment files")
+    nbgrader_dir = get_config_option(config,"nbgrader_dir",True)
+    release_dir = os.path.join(nbgrader_dir,'release', assignment)
+    patterns = get_config_option(config,"template_patterns",False)
+    if len(patterns) == 0:
+        print(
+            "Warning: No template_patterns specified; no files "
+            "will be copied to template repository"
+            )
+    else:
+        nfiles = 0
+        all_files = os.listdir(release_dir)
+        matched_files = []
+        for p in patterns:
+            matched_files.extend(fnmatch.filter(all_files, pattern))
+        for f in matched_files:
+            fpath = os.path.join(release_dir,file)
+            print("copying {} to {}".format(fpath,template_repo_name))
+            shutil.copy(fpath,template_repo_name)
+            nfiles += 1
+        print("Copied {} files".format(nfiles))
+
+    # Create any extra files
+    extra_files = get_config_option(config,"extra_files",False)
+    for file in extra_files:
+        contents = config["extra_files"][file]
+        if len(contents)>0:
+            if file == "README.md":
+                first_line = "# {}: {}\n".format(assignment, coursename)
+                contents.insert(0,first_line)
+            write_file(template_dir,file,contents)
+
+    # local git things - initialize, add, commit
+    GH.git_init(template_repo_name)
+    if GH.repo_changed(template_repo_name):
+        message = get_commit_message()
+        if not message:
+            print("Empty commit message, exiting.")
+            sys.exit(1)
+        GH.commit_all_changes(template_repo_name, message)
+
+    # now do the github things, unless we've been asked to only do local things
+    if not args.local_only:
+        # create the remote repo on github
+        # add github repo as remote for local repo
+        # push! 

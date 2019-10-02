@@ -12,8 +12,7 @@ import subprocess
 
 import github3 as gh3
 
-from .utils import _call_git
-
+from .utils import _call_git, input_editor
 
 def check_student_repo_exists(org, course, student, token=None):
     """Check if the student has a repository for the course.
@@ -143,6 +142,21 @@ def new_branch(directory, name=None):
     _call_git("checkout", "-b", name, directory=directory)
 
     return name
+
+def get_commit_message():
+    default_message = """
+    # Please enter the commit message for your changes. Lines starting
+    # with '#' will be ignored, and an empty message aborts the commit.
+    # This message will be used as commit and Pull Request message."""
+    message = input_editor(default_message)
+    message = "\n".join(
+        [
+            line
+            for line in message.split("\n")
+            if not line.strip().startswith("#")
+        ]
+    )
+    return message
 
 
 def commit_all_changes(directory, msg=None):
