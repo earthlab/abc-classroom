@@ -13,8 +13,6 @@ from getpass import getpass
 
 import github3 as gh3
 
-from ruamel.yaml import YAML
-
 import nbformat
 
 from . import ok
@@ -22,74 +20,7 @@ from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
 from . import github as GH
 from .utils import copytree, P, input_editor, write_file
-
-
-def get_github_auth():
-    """
-    Check to see if there is an existing github authentication
-    and load the authentication.
-
-    Returns
-    -------
-    ruamel.yaml.comments.CommentedMap
-        Yaml object that contains the token and id for a github session.
-        If yaml doesn't exists, return an empty dictionary.
-    """
-    yaml = YAML()
-    try:
-        with open(op.expanduser("~/.abc-classroom.tokens.yml")) as f:
-            config = yaml.load(f)
-        return config["github"]
-
-    except FileNotFoundError:
-        return {}
-
-
-def set_github_auth(auth_info):
-    """
-    Set the github authentication information. Put the token and id authentication
-    information into a yaml file if it doesn't already exist.
-
-    Parameters
-    ----------
-    auth_info : dictionary
-        The token and id authentication information from github stored in a
-        dictionary object.
-    """
-    yaml = YAML()
-    config = {}
-    if get_github_auth():
-        with open(op.expanduser("~/.abc-classroom.tokens.yml")) as f:
-            config = yaml.load(f)
-
-    config["github"] = auth_info
-
-    with open(op.expanduser("~/.abc-classroom.tokens.yml"), "w") as f:
-        yaml.dump(config, f)
-
-
-def get_config():
-    yaml = YAML()
-    with open(P("config.yml")) as f:
-        config = yaml.load(f)
-    return config
-
-# TODO: allow for nested gets, e.g. config[a][b]
-def get_config_option(config, option, required=True):
-    try:
-        value = config[option]
-        return value
-    except KeyError as err:
-        if (required==True):
-            print("Did not find required option {} in config; exciting".format(option))
-            sys.exit(1)
-        else:
-            return None
-
-def set_config(config):
-    yaml = YAML()
-    with open(P("config.yml"), "w") as f:
-        yaml.dump(config, f)
+from .config import get_github_auth, set_github_auth, get_config, get_config_option, set_config
 
 
 def init():
@@ -473,7 +404,7 @@ def author():
         "expect.".format(P("student"))
     )
 
-def new_assignment_template():
+def assignment_template():
     """
     Create a new assignment template: create template dir locally,
     copy / create
@@ -552,7 +483,7 @@ def new_assignment_template():
         GH.commit_all_changes(template_repo_name, message)
 
     # now do the github things, unless we've been asked to only do local things
-    if not args.local_only:
+    #if not args.local_only:
         # create the remote repo on github
         # add github repo as remote for local repo
-        # push! 
+        # push!
