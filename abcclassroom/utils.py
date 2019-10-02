@@ -6,6 +6,7 @@ abc-classroom.utils
 
 
 import os
+import datetime
 import subprocess
 import sys
 import tempfile
@@ -209,6 +210,12 @@ def flush_inline_matplotlib_plots():
     if mpl.get_backend() == "module://ipykernel.pylab.backend_inline":
         flush_figures()
 
+def valid_date(s):
+    try:
+        return datetime.datetime.strptime(s, "%Y-%m-%d").date()
+    except ValueError:
+        msg = "Not a valid date: '{0}'.".format(s)
+        raise argparse.ArgumentTypeError(msg)
 
 @contextmanager
 def hide_outputs():

@@ -19,7 +19,7 @@ from . import ok
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
 from . import github as GH
-from .utils import copytree, P, input_editor, write_file
+from .utils import copytree, P, input_editor, write_file, valid_date
 from .config import get_github_auth, set_github_auth, get_config, get_config_option, set_config
 
 
@@ -323,14 +323,6 @@ def distribute():
 
                 else:
                     print("Everything up to date.")
-
-
-def valid_date(s):
-    try:
-        return datetime.datetime.strptime(s, "%Y-%m-%d").date()
-    except ValueError:
-        msg = "Not a valid date: '{0}'.".format(s)
-        raise argparse.ArgumentTypeError(msg)
 
 
 def author():
