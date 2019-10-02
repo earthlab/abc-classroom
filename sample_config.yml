@@ -15,7 +15,7 @@ organization-shortname: ea
 # or, if organization-shortname is set:
 # https://github.com/<organization-shortname>/<courseName>-template
 # https://github.com/<organization-shortname>/<courseName>-<studentName>
-courseName: earth-analytics-bootcamp
+course_name: earth-analytics-bootcamp
 
 # Absolute path to the course roster (list of students downloaded from
 # github classroom)
@@ -34,7 +34,7 @@ clone_dir: /Users/me/awesome-course/cloned_dirs
 # the parent directories should be a git repo
 template_dir: /Users/me/awesome-course/assignment_repos
 
-# Copy files in the nbgrader 'release' directory to the template repository  
+# Copy files in the nbgrader 'release' directory to the template repository
 # if they match any of these Unix shell-style patterns (NOT regular expressions)
 template_patterns:
 - *.ipynb
