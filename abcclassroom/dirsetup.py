@@ -1,6 +1,6 @@
 """
 abc-classroom.dir-setup
-=======================
+========================
 
 """
 
@@ -11,16 +11,13 @@ import abcclassroom
 
 
 def path_to_example(dataset):
-    """ Construct a file path to an example dataset.
-    This file defines helper functions to access data files in this directory,
-    to support examples. Adapted from the PySAL package.
+    """
+    Gets the path to an example dataset.
+
     Parameters
     ----------
-    dataset: string
-        Name of a dataset to access (e.g., "sample_config.yml")
-    Returns
-    -------
-    A file path (string) to the dataset
+    dataset : string
+        stringy boi
     """
     abcclassroom_path = os.path.split(abcclassroom.__file__)[0]
     data_dir = os.path.join(abcclassroom_path, "example-data")

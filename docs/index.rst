@@ -13,7 +13,7 @@ Welcome to abc-classroom's documentation!
    api
    github
    contributing
-
+   directory_setup
 
 
 Indices and tables
