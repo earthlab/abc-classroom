@@ -1,6 +1,6 @@
 """
 abc-classroom.dir-setup
-===================
+=======================
 
 """
 
@@ -38,7 +38,7 @@ def directory_setup():
     # Creating the default names for the cloned and template repos.
     cloned = "cloned_repos"
     template = "template_repos"
-    main_dir = os.path.join(os.getcwd(), "course_dir")
+    course = "course_dir"
     # Making sure the configuration file is where it's supposed to be.
     config = path_to_example("sample_config.yml")
     if not os.path.exists(config):
@@ -47,6 +47,10 @@ def directory_setup():
         )
     # Allows users to rename the cloned and template repos.
     parser = argparse.ArgumentParser(description=directory_setup.__doc__)
+    parser.add_argument(
+        "--course_repo",
+        help="Name of the main course repository"
+    )
     parser.add_argument(
         "--cloned_repo",
         help="Name of the repository to hold the cloned files"
@@ -65,7 +69,10 @@ def directory_setup():
         cloned = args.cloned_repo
     if args.template_repo:
         template = args.template_repo
-    if args.override_existing and os.path.isdir(main_dir):
+    if args.course_repo:
+        course = args.course_repo
+    main_dir = os.path.join(os.getcwd(), course)
+    if args.override_existing == "True" and os.path.isdir(main_dir):
         shutil.rmtree(main_dir)
     # Make sure that the main_dir doesn't exist already
     if os.path.isdir(main_dir):
