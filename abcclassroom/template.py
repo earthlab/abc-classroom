@@ -8,14 +8,14 @@ from . import github as GH
 
 def create_template_dir(config):
     template_dir = cf.get_config_option(config,"template_dir",True)
-    organization = cf.get_config_option(config,"organization",True)
+    course_name = cf.get_config_option(config,"course_name",True)
     assignment = cf.get_config_option(config,"assignment",True)
+
     # Set up the name of the template repo and create the dir
-    orgname = organization
     # if there is a shortname defined, use that in path
-    if exists "organization-shortname" in config:
-        orgname = config["organization-shortname"]
-    template_repo_name = orgname + '-' + assignment + '-template'
+    if exists "short_coursename" in config:
+        course_name = config["short_coursename"]
+    template_repo_name = course_name + '-' + assignment + '-template'
     template_dir = os.path.join(template_dir,template_repo_name)
     try:
         os.mkdir(template_repo_name)

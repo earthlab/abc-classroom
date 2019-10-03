@@ -16,8 +16,8 @@ course_directory: /Users/me/awesome-course
 # https://github.com/<organization>/<short_classname>-<studentName>
 course_name: earth-analytics-bootcamp
 
-# (Optional) Short name for organization. If set, this gets used to prepend
-# the repositories instead of the full organization name, just to make
+# (Optional) Short name for course. If set, this gets used to prepend
+# the repositories instead of the full course_name, just to make
 # names shorter and less unwieldy
 short_coursename: ea
 
