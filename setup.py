@@ -53,6 +53,7 @@ setup(
             "abc-grade = abcclassroom.__main__:grade",
             "abc-author = abcclassroom.__main__:author",
             "abc-distribute = abcclassroom.__main__:distribute",
+            "abc-dir-setup = abcclassroom.__main__:dir_setup",
         ]
     },
     url="https://github.com/earthlab/abc-classroom",
