@@ -3,27 +3,33 @@
 # Create a new organization on GitHub and change this to the name you gave it
 organization: earth-analytics-edu
 
-# (Optional) Short name for organization. If set, this gets used to prepend
-# the repositories instead of the full organization name, just to make
-# names shorter and less unwieldy
-organization-shortname: ea
+# Course directory. Your config.yml file should be in this directory and all
+# other paths are relative to this directory.
+course_directory: /Users/me/awesome-course
 
 # Name of your course. Will be used to prefix repositories inside the
 # organization. The repositories will be named:
 # https://github.com/<organization>/<courseName>-template
 # https://github.com/<organization>/<courseName>-<studentName>
-# or, if organization-shortname is set:
-# https://github.com/<organization-shortname>/<courseName>-template
-# https://github.com/<organization-shortname>/<courseName>-<studentName>
+# or, if short_classname (below) is set:
+# https://github.com/<organization>/<short_classname>-template
+# https://github.com/<organization>/<short_classname>-<studentName>
 course_name: earth-analytics-bootcamp
 
-# Absolute path to the course roster (list of students downloaded from
-# github classroom)
-roster: /Users/me/awesome-course/roster.csv
+# (Optional) Short name for organization. If set, this gets used to prepend
+# the repositories instead of the full organization name, just to make
+# names shorter and less unwieldy
+short_coursename: ea
 
-# Absolute path to the nbgrader directory (formatted as per the
-# nbgrader docs).
-nbgrader_dir: /Users/me/awesome-course/nbgrader
+# Path to the course roster (list of students downloaded from
+# github classroom). If the roster is in the course_directory, simply enter
+# the filename (otherwise, enter the path relative to the course_directory).
+roster: roster.csv
+
+# Path to the nbgrader directory. If the nbgrader dir is in the
+# course_directory, just enter the name of the nbgrader dir. Otherwise,
+# enter the path relative to the course_directory.
+nbgrader_dir: nbgrader
 
 # Absolute path to directory where you want to clone the student
 # repositories. Because we will create many git repos here, this directory
@@ -33,11 +39,6 @@ clone_dir: /Users/me/awesome-course/cloned_dirs
 # Absolute path to the assignment template repositories. Again, none of
 # the parent directories should be a git repo
 template_dir: /Users/me/awesome-course/assignment_repos
-
-# Copy files in the nbgrader 'release' directory to the template repository
-# if they match any of these Unix shell-style patterns (NOT regular expressions)
-template_patterns:
-- *.ipynb
 
 # Additional files that will be created and added to the student repositories
 # Each item in the list will be added as a line in the file
