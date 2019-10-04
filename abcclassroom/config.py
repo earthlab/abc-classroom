@@ -57,12 +57,20 @@ def set_github_auth(auth_info):
 
 def get_config():
     yaml = YAML()
-    with open(P("config.yml")) as f:
-        config = yaml.load(f)
-    return config
+    try:
+        with open("config.yml") as f:
+            config = yaml.load(f)
+        return config
+    except FileNotFoundError as err:
+        print("Error: config file (config.yml) not found in current directory\n")
+        sys.exit(1)
 
 # TODO: allow for nested gets, e.g. config[a][b]
 def get_config_option(config, option, required=True):
+    """
+    Get an option (value of key) from provided config dictionary. If the key
+    does not exist, exit with KeyError (required=True) or return None  (required=False).
+    """
     try:
         value = config[option]
         return value

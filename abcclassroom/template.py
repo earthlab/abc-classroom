@@ -3,27 +3,40 @@ abc-classroom.template
 ===================
 
 """
+import os
+import sys
+import shutil
+
 from . import config as cf
 from . import github as GH
+from . import utils
 
-def create_template_dir(config):
+def create_template_dir(config, assignment):
+    """
+    Creates a new directory in template_dir that will become the template
+    repository for the assignment.
+    """
     template_dir = cf.get_config_option(config,"template_dir",True)
     course_name = cf.get_config_option(config,"course_name",True)
-    assignment = cf.get_config_option(config,"assignment",True)
 
+    # check if the top-level template_dir exists, and create it if it does not
+    if not os.path.isdir(template_dir):
+        print("Creating new directory for template repos at {}".format(template_dir))
+        os.mkdir(template_dir)
     # Set up the name of the template repo and create the dir
     # if there is a shortname defined, use that in path
-    if exists "short_coursename" in config:
-        course_name = config["short_coursename"]
-    template_repo_name = course_name + '-' + assignment + '-template'
-    template_dir = os.path.join(template_dir,template_repo_name)
+    shortname = cf.get_config_option(config,"short_coursename")
+    if shortname is not None:
+        course_name = shortname
+    repo_name = course_name + '-' + assignment + '-template'
+    template_dir_path = os.path.join(template_dir,repo_name)
     try:
-        os.mkdir(template_repo_name)
-        print("Creating new directory at {}".format(template_repo_name))
+        os.mkdir(template_dir_path)
+        print("Creating new template repo at {}".format(template_dir_path))
     except FileExistsError as fee:
-        print("directory {} already exists; delete or move before re-running".format(template_repo_name))
+        print("Directory {} already exists; delete or move before re-running".format(template_dir_path))
         sys.exit(1)
-    return template_repo_name
+    return template_dir_path
 
 def match_patterns(target_list, pattern_list):
     """Return the list of strings in target_list that match any of the
@@ -34,11 +47,9 @@ def match_patterns(target_list, pattern_list):
         matches.extend(fnmatch.filter(target_list, pattern))
     return matches
 
-def copy_assigment_files(config, template_repo_name):
-    """Copy all of the required files into the template repo directory.
-
-    Required files are those in the nbgrader release/assignment dir that
-    match the patterns listed in the config.
+def copy_assigment_files(config, template_repo_name, assignment):
+    """Copy all of the files from the nbgrader release directory for the
+    assignment into the template repo directory.
     """
 
     print("Getting assignment files")
@@ -47,39 +58,40 @@ def copy_assigment_files(config, template_repo_name):
     if not os.path.exists(release_dir):
         print("nbgrader release directory {} does not exist; exiting\n".format(release_dir))
         sys.exit(1)
-    patterns = cf.get_config_option(config,"template_patterns",False)
-    if len(patterns) == 0:
-        print(
-            "Warning: No template_patterns specified; no files "
-            "will be copied to template repository"
-            )
-    else:
-        nfiles = 0
-        all_files = os.listdir(release_dir)
-        matched_files = match_patterns(all_files, patterns)
-        for f in matched_files:
-            fpath = os.path.join(release_dir,file)
-            print("copying {} to {}".format(fpath,template_repo_name))
-            shutil.copy(fpath,template_repo_name)
-            nfiles += 1
-        print("Copied {} files".format(nfiles))
+    # patterns = cf.get_config_option(config,"template_patterns",False)
+    # if len(patterns) == 0:
+    #     print(
+    #         "Warning: No template_patterns specified; no files "
+    #         "will be copied to template repository"
+    #         )
+    # else:
+    nfiles = 0
+    all_files = os.listdir(release_dir)
+    #matched_files = match_patterns(all_files, patterns)
+    for file in all_files:
+        fpath = os.path.join(release_dir,file)
+        print("copying {} to {}".format(fpath,template_repo_name))
+        shutil.copy(fpath,template_repo_name)
+        nfiles += 1
+    print("Copied {} files".format(nfiles))
 
-def create_extra_files(config, template_dir):
+def create_extra_files(config, template_repo_name, assignment):
     """Create any extra files as specified in the config """
     extra_files = cf.get_config_option(config,"extra_files",False)
+    nfiles = len(extra_files)
+    print("Creating {} extra files".format(nfiles))
     for file in extra_files:
         contents = config["extra_files"][file]
         if len(contents)>0:
             if file == "README.md":
                 firstline = ""
-                assignment = cf.get_config_option(config,"assignment",False)
                 coursename = cf.get_config_option(config,"course_name",False)
                 if assignment and coursename:
-                    first_line = "# {}: {}\n".format(assignment, coursename)
+                    first_line = "# {}: {}".format(assignment, coursename)
                 else:
                     first_line = "# README"
                 contents.insert(0,first_line)
-            write_file(template_dir,file,contents)
+            utils.write_file(template_repo_name,file,contents)
 
 def do_local_git_things(template_dir):
     """Run git init, git add, git commit on the local template repository
@@ -88,7 +100,7 @@ def do_local_git_things(template_dir):
     # local git things - initialize, add, commit
     GH.git_init(template_dir)
     if GH.repo_changed(template_dir):
-        message = get_commit_message()
+        message = GH.get_commit_message()
         if not message:
             print("Empty commit message, exiting.")
             sys.exit(1)

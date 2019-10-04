@@ -16,12 +16,12 @@ import github3 as gh3
 import nbformat
 
 from . import ok
+from . import template
+from . import config as cf
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
 from . import github as GH
 from .utils import copytree, P, input_editor, write_file, valid_date
-from .config import get_github_auth, set_github_auth, get_config, get_config_option, set_config
-
 
 def init():
     """
@@ -398,34 +398,35 @@ def author():
 
 def assignment_template():
     """
-    Create a new assignment template: create template dir locally,
-    copy / create
-    required files, intialize as github repo, create remote repo on
-    GitHub, and push local to GitHub.
-    Assumes that assignment files already exist in nbgrader dir.
+    Create a new assignment template repository: creates local directory,
+    copy / create required files, intialize as git repo, create remote repo
+    on GitHub, and push local repo to GitHub. Will open git editor to ask for
+    commit message.
     """
-    parser = argparse.ArgumentParser(description="Create template repo for assignment")
+    parser = argparse.ArgumentParser(description=assignment_template.__doc__)
     parser.add_argument(
-        "--assignment",
+        "-a", "--assignment",
+        dest = "assignment",
         help="Name of assignment. Must match name in nbgrader release directory"
     )
     parser.add_argument(
         "--local-only",
         action="store_true",
-        help="Create local template repository only; do not do GitHub create and push (default: False)",
+        help="Create local template repository only; do not create GitHub repo or  push to GitHub (default: False)",
     )
     args = parser.parse_args()
 
     print("Loading configuration from config.yml")
-    config = get_config()
-    template_dir = get_config_option(config,"template_dir",True)
+    config = cf.get_config()
+    template_dir = cf.get_config_option(config,"template_dir",True)
     # organization = get_config_option(config,"organization",True)
 
     # these are the steps to create the local git repository
-    template_repo_name = template.create_template_dir(config)
-    template.copy_assigment_files(config, template_repo_name)
-    template.create_extra_files(config, template_repo_name)
-    template.local_git_setup(template_repo_name)
+    assignment = args.assignment
+    template_repo_name = template.create_template_dir(config, assignment)
+    template.copy_assigment_files(config, template_repo_name, assignment)
+    template.create_extra_files(config, template_repo_name, assignment)
+    template.do_local_git_things(template_repo_name)
 
 
     # now do the github things, unless we've been asked to only do local things

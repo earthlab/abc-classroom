@@ -178,7 +178,7 @@ def write_file(dir, filename, contents):
     """
     filepath = os.path.join(dir, filename)
     try:
-        with open(filename, 'w') as f:
+        with open(filepath, 'w') as f:
             for line in contents:
                 f.write("{}\n".format(line))
 
