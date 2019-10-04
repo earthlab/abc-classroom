@@ -29,8 +29,18 @@ def path_to_example(dataset):
 
 def directory_setup():
     """
-    Set up template directory to store a course in. Creates the course directory, template directory,
-    cloned directory, and adds in a template configuration file.
+    Construct a file path to an example dataset.
+    This file defines helper functions to access data files in this directory,
+    to support examples. Adapted from the PySAL package.
+
+    Parameters
+    ----------
+    dataset: string
+        Name of a dataset to access (e.g., "epsg.json", or "RGB.byte.tif")
+
+    Returns
+    -------
+        A file path (string) to the dataset
     """
     # Creating the default names for the cloned and template repos.
     cloned = "cloned_repos"
