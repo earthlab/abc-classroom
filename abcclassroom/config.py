@@ -1,9 +1,3 @@
-"""
-abc-classroom.config
-====================
-
-Functions for setting and accessing options in configuration files.
-"""
 
 import os
 import sys
