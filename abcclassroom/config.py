@@ -1,3 +1,8 @@
+"""
+abc-classroom.config
+====================
+
+"""
 
 import os
 import sys
