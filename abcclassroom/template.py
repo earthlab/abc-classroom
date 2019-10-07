@@ -17,7 +17,6 @@ def create_template_dir(config, assignment):
     repository for the assignment.
     """
     template_dir = cf.get_config_option(config,"template_dir",True)
-    course_name = cf.get_config_option(config,"course_name",True)
 
     # check if the top-level template_dir exists, and create it if it does not
     if not os.path.isdir(template_dir):
@@ -25,9 +24,13 @@ def create_template_dir(config, assignment):
         os.mkdir(template_dir)
     # Set up the name of the template repo and create the dir
     # if there is a shortname defined, use that in path
-    shortname = cf.get_config_option(config,"short_coursename")
-    if shortname is not None:
-        course_name = shortname
+    course_name = cf.get_config_option(config,"short_coursename")
+    if course_name is None:
+        course_name = cf.get_config_option(config,"course_name")
+    if course_name is None:
+        print("Error: One of course_name or short_coursename must be set in config.yml")
+        sys.exit(1)
+
     repo_name = course_name + '-' + assignment + '-template'
     template_dir_path = os.path.join(template_dir,repo_name)
     try:
@@ -49,13 +52,6 @@ def copy_assigment_files(config, template_repo_name, assignment):
     if not os.path.exists(release_dir):
         print("nbgrader release directory {} does not exist; exiting\n".format(release_dir))
         sys.exit(1)
-    # patterns = cf.get_config_option(config,"template_patterns",False)
-    # if len(patterns) == 0:
-    #     print(
-    #         "Warning: No template_patterns specified; no files "
-    #         "will be copied to template repository"
-    #         )
-    # else:
     nfiles = 0
     all_files = os.listdir(release_dir)
     #matched_files = match_patterns(all_files, patterns)
