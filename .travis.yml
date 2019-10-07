@@ -1,13 +1,32 @@
- language: python
-
- python:
- - 3.6
-
- cache: pip
-
- install:
-   - pip install -r dev-requirements.txt
-
- script:
-   # Build documentation
-   - pushd docs && make html && popd
+language: python
+matrix:
+  include:
+  - os: linux
+    dist: xenial
+    python: 3.5
+    env: TOXENV=py35
+  - os: linux
+    dist: xenial
+    python: 3.6
+    env: TOXENV=py36
+  - os: linux
+    dist: xenial
+    python: 3.7
+    env: TOXENV=py37,black,docs
+  - os: osx
+    language: generic
+install:
+- chmod +x .travis/install.sh
+- "./.travis/install.sh"
+script:
+- chmod +x .travis/test.sh
+- "./.travis/test.sh"
+deploy:
+  provider: pypi
+  user: earthlab
+  password:
+    secure: AI/CFocrcpNBxsqvGug/zNRya34EJxbgz3MsIMXFVTpLPz6aTbeKMRWDWL3Ztrz2yvTzkUU6+sHMvm73UniXk5M9H7PVFG4XDb39+1BK6xJuvD3iKHffvAj/225wq8sRO8tMxWaNLfKaieHXu7Tao6SHl18kI2MprLmgzuzczjzDeXdFxUt/+SKg3MP5paLznfffTdF6XYLdYXVzYWIGKXa4+M8vrhI3XhCHEPB9QGPpfvN2AivX5TQ145+E4gEpKcca4liZMxzc0c903CWGNMr503Ycb0HYbXc06A4ivGkfXcpQmkrR6miX7JQodZ+JLp/Cvkzh2TuQdUbvlAF0u+bcfJFJpfoKrjZLhfdcDOV6z+LCkGrEZa11hxCn4NTK2+4/YAOqGXjDnDqekPimxICVBWWkc+u2U6UTf9QjpwQWMEdlaSTSKXLET6YZhCrnzdL9tmfnVw444SFwH391HopG5nQjyBdLudclQ3FmX/AejsItRW3yHWymcjTzwMD5oSM+oyTutEqKx8WfShYissTQ1ZutU4EOt/MgNdgWWEu/i/WUD79m3iq8uVfAZB1oEp7euPjl7znl7ZYyaymVNkzJWdcqApDn7TJUV9AyI7rJ4bMSrH2Wax7y/NkIq8pik8dYP68WmTtzanSFEFENANMWl8RT6x8jPtVF19gP5Z8=
+  on:
+    tags: true
+    repo: earthlab/abc-classroom
+    python: 3.6
