@@ -405,9 +405,13 @@ def assignment_template():
     """
     parser = argparse.ArgumentParser(description=assignment_template.__doc__)
     parser.add_argument(
-        "-a", "--assignment",
-        dest = "assignment",
+        "assignment",
         help="Name of assignment. Must match name in nbgrader release directory"
+    )
+    parser.add_argument(
+        "--custom-message",
+        action="store_true",
+        help="Use a custom commit message for git. Will open the default git text editor for entry. If not set, will use message 'Initial commit of template repository'."
     )
     parser.add_argument(
         "--local-only",
@@ -426,7 +430,7 @@ def assignment_template():
     template_repo_name = template.create_template_dir(config, assignment)
     template.copy_assigment_files(config, template_repo_name, assignment)
     template.create_extra_files(config, template_repo_name, assignment)
-    template.do_local_git_things(template_repo_name)
+    template.do_local_git_things(template_repo_name, args.custom_message)
 
     # now do the github things, unless we've been asked to only do local things
     if not args.local_only:

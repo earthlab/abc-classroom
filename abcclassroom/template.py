@@ -80,15 +80,17 @@ def create_extra_files(config, template_repo_name, assignment):
                 contents.insert(0,first_line)
             utils.write_file(template_repo_name,file,contents)
 
-def do_local_git_things(template_dir):
+def do_local_git_things(template_dir, custom_message):
     """Run git init, git add, git commit on the local template repository
     directory. Only add and commit if the repo has changed.
     """
     # local git things - initialize, add, commit
     gitu.git_init(template_dir)
     if gitu.repo_changed(template_dir):
-        message = gitu.get_commit_message()
-        if not message:
-            print("Empty commit message, exiting.")
-            sys.exit(1)
+        message = "Initial commit of template repository"
+        if custom_message:
+            message = gitu.get_commit_message()
+            if not message:
+                print("Empty commit message, exiting.")
+                sys.exit(1)
         gitu.commit_all_changes(template_dir, message)
