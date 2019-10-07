@@ -133,28 +133,6 @@ def get_editor():
     return os.environ.get("VISUAL") or os.environ.get("EDITOR") or "vi"
 
 
-def _call_git(*args, directory=None):
-    cmd = ["git"]
-    cmd.extend(args)
-    try:
-        ret = subprocess.run(
-            cmd,
-            cwd=directory,
-            check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-    except subprocess.CalledProcessError as e:
-        err = e.stderr.decode("utf-8")
-        if err:
-            msg = err.split(":")[1].strip()
-        else:
-            msg = e.stdout.decode("utf-8")
-        raise RuntimeError(msg) from e
-
-    return ret
-
-
 @lru_cache(1)
 def TOP():
     """Path to the top level of the repository we are in"""

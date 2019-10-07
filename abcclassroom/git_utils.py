@@ -12,7 +12,28 @@ import subprocess
 
 import github3 as gh3
 
-from .utils import _call_git, input_editor
+from .utils import input_editor
+
+def _call_git(*args, directory=None):
+    cmd = ["git"]
+    cmd.extend(args)
+    try:
+        ret = subprocess.run(
+            cmd,
+            cwd=directory,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+    except subprocess.CalledProcessError as e:
+        err = e.stderr.decode("utf-8")
+        if err:
+            msg = err.split(":")[1].strip()
+        else:
+            msg = e.stdout.decode("utf-8")
+        raise RuntimeError(msg) from e
+
+    return ret
 
 def check_student_repo_exists(org, course, student, token=None):
     """Check if the student has a repository for the course.
