@@ -137,6 +137,7 @@ def create_repo(org, repository, directory, token):
     """
     github_obj = gh3.login(token=token)
     organization = github_obj.organization(org)
+    print("Creating new repository {} at https://github.com/{}".format(repository,org))
     try:
         organization.create_repository(repository)
     except gh3.exceptions.UnprocessableEntity as err:

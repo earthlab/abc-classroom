@@ -427,21 +427,23 @@ def assignment_template():
 
     # these are the steps to create the local git repository
     assignment = args.assignment
-    template_repo_name = template.create_template_dir(config, assignment)
-    template.copy_assigment_files(config, template_repo_name, assignment)
-    template.create_extra_files(config, template_repo_name, assignment)
-    template.do_local_git_things(template_repo_name, args.custom_message)
+    template_repo_path = template.create_template_dir(config, assignment)
+    print("repo path: {}".format(template_repo_path))
+    template.copy_assigment_files(config, template_repo_path, assignment)
+    template.create_extra_files(config, template_repo_path, assignment)
+    template.do_local_git_things(template_repo_path, args.custom_message)
 
     # now do the github things, unless we've been asked to only do local things
     if not args.local_only:
         organization = cf.get_config_option(config,"organization",True)
-        # get the name of the repo from the path
-        repo_name = os.dirname(template_repo_name)
+        # get the name of the repo (the final dir in the path)
+        repo_name = os.path.basename(template_repo_path)
+        print("Creating repo {}".format(repo_name))
         # create the remote repo on github and push the local repo
         # (will print error and return if repo already exists)
         gitu.create_repo(
             organization,
             repo_name,
-            template_repo_name,
+            template_repo_path,
             cf.get_github_auth()["token"],
         )
