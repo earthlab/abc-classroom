@@ -38,15 +38,6 @@ def create_template_dir(config, assignment):
         sys.exit(1)
     return template_dir_path
 
-def match_patterns(target_list, pattern_list):
-    """Return the list of strings in target_list that match any of the
-    Unix-style wildcard patterns in pattern_list
-    """
-    matches = []
-    for p in pattern_list:
-        matches.extend(fnmatch.filter(target_list, pattern))
-    return matches
-
 def copy_assigment_files(config, template_repo_name, assignment):
     """Copy all of the files from the nbgrader release directory for the
     assignment into the template repo directory.
