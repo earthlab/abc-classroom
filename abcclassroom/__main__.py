@@ -20,7 +20,7 @@ from . import template
 from . import config as cf
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
-from . import github as GH
+from . import git_utils as gitu
 from .utils import copytree, P, input_editor, write_file, valid_date
 
 def init():
@@ -230,10 +230,10 @@ def distribute():
         repo_name = "{}-{}".format(config["courseName"], "template")
         with tempfile.TemporaryDirectory() as d:
             copytree(P("student"), d)
-            GH.git_init(d)
-            GH.commit_all_changes(d, "Initial commit")
+            gitu.git_init(d)
+            gitu.commit_all_changes(d, "Initial commit")
             try:
-                GH.create_repo(
+                gitu.create_repo(
                     config["organisation"],
                     repo_name,
                     d,
@@ -274,7 +274,7 @@ def distribute():
             print("Fetching work for %s..." % student)
 
             try:
-                GH.check_student_repo_exists(
+                gitu.check_student_repo_exists(
                     config["organisation"],
                     config["courseName"],
                     student,
@@ -289,7 +289,7 @@ def distribute():
                 continue
 
             with tempfile.TemporaryDirectory() as d:
-                student_dir = GH.fetch_student(
+                student_dir = gitu.fetch_student(
                     config["organisation"],
                     config["courseName"],
                     student,
@@ -299,21 +299,21 @@ def distribute():
                 # Copy assignment related files to the template repository
                 copytree(P("student"), student_dir)
 
-                if GH.repo_changed(student_dir):
+                if gitu.repo_changed(student_dir):
                     # only close outstanding PRs if we are about to make a
                     # new PR. Otherwise we can skip this.
                     repo = "{}-{}".format(config["courseName"], student)
-                    GH.close_existing_pullrequests(
+                    gitu.close_existing_pullrequests(
                         config["organisation"],
                         repo,
                         token=get_github_auth()["token"],
                     )
 
-                    branch = GH.new_branch(student_dir)
+                    branch = gitu.new_branch(student_dir)
 
-                    GH.commit_all_changes(student_dir, message)
-                    GH.push_to_github(student_dir, branch)
-                    GH.create_pr(
+                    gitu.commit_all_changes(student_dir, message)
+                    gitu.push_to_github(student_dir, branch)
+                    gitu.create_pr(
                         config["organisation"],
                         repo,
                         branch,

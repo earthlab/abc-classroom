@@ -8,7 +8,7 @@ import sys
 import shutil
 
 from . import config as cf
-from . import github as GH
+from . import git_utils as gitu
 from . import utils
 
 def create_template_dir(config, assignment):
@@ -89,10 +89,10 @@ def do_local_git_things(template_dir):
     directory. Only add and commit if the repo has changed.
     """
     # local git things - initialize, add, commit
-    GH.git_init(template_dir)
-    if GH.repo_changed(template_dir):
-        message = GH.get_commit_message()
+    gitu.git_init(template_dir)
+    if gitu.repo_changed(template_dir):
+        message = gitu.get_commit_message()
         if not message:
             print("Empty commit message, exiting.")
             sys.exit(1)
-        GH.commit_all_changes(template_dir, message)
+        gitu.commit_all_changes(template_dir, message)
