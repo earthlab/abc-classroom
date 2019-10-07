@@ -428,9 +428,16 @@ def assignment_template():
     template.create_extra_files(config, template_repo_name, assignment)
     template.do_local_git_things(template_repo_name)
 
-
     # now do the github things, unless we've been asked to only do local things
-    #if not args.local_only:
-        # create the remote repo on github
-        # add github repo as remote for local repo
-        # push!
+    if not args.local_only:
+        organization = cf.get_config_option(config,"organization",True)
+        # get the name of the repo from the path
+        repo_name = os.dirname(template_repo_name)
+        # create the remote repo on github and push the local repo
+        # (will print error and return if repo already exists)
+        gitu.create_repo(
+            organization,
+            repo_name,
+            template_repo_name,
+            cf.get_github_auth()["token"],
+        )
