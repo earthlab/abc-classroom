@@ -10,10 +10,11 @@ Welcome to abc-classroom's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   new_assignment
    api
    github
+   console_scripts
    contributing
-
 
 
 Indices and tables
