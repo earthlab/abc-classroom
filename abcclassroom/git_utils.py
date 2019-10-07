@@ -131,10 +131,18 @@ def create_pr(org, repository, branch, message, token):
 
 
 def create_repo(org, repository, directory, token):
-    g = gh3.login(token=token)
-    organization = g.organization(org)
-    title = "Template repository for {}".format(repository)
-    organization.create_repository(repository, title)
+    """Create a repository in the provided GitHub organization, adds that
+    repo as a remote to the local repo in directory, and pushes the
+    directory.
+    """
+    github_obj = gh3.login(token=token)
+    organization = github_obj.organization(org)
+    try:
+        organization.create_repository(repository)
+    except gh3.exceptions.UnprocessableEntity as err:
+        print("Error: organization {} already has a repository named {}".format(org,repository))
+        print("Not adding remote to local repo or pushing to github.")
+        return
 
     _call_git(
         "remote",
