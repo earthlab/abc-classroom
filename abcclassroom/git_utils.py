@@ -14,6 +14,7 @@ import github3 as gh3
 
 from .utils import input_editor
 
+
 def _call_git(*args, directory=None):
     cmd = ["git"]
     cmd.extend(args)
@@ -34,6 +35,7 @@ def _call_git(*args, directory=None):
         raise RuntimeError(msg) from e
 
     return ret
+
 
 def check_student_repo_exists(org, course, student, token=None):
     """Check if the student has a repository for the course.
@@ -137,11 +139,19 @@ def create_repo(org, repository, directory, token):
     """
     github_obj = gh3.login(token=token)
     organization = github_obj.organization(org)
-    print("Creating new repository {} at https://github.com/{}".format(repository,org))
+    print(
+        "Creating new repository {} at https://github.com/{}".format(
+            repository, org
+        )
+    )
     try:
         organization.create_repository(repository)
     except gh3.exceptions.UnprocessableEntity as err:
-        print("Error: organization {} already has a repository named {}".format(org,repository))
+        print(
+            "Error: organization {} already has a repository named {}".format(
+                org, repository
+            )
+        )
         print("Not adding remote to local repo or pushing to github.")
         return
 
@@ -173,6 +183,7 @@ def new_branch(directory, name=None):
 
     return name
 
+
 def get_commit_message():
     default_message = """
     # Please enter the commit message for your changes. Lines starting
@@ -195,6 +206,21 @@ def commit_all_changes(directory, msg=None):
 
     _call_git("add", "*", directory=directory)
     _call_git("commit", "-a", "-m", msg, directory=directory)
+
+
+def init_and_commit(directory, custom_message=False):
+    """Run git init, git add, git commit on given directory.
+    """
+    # local git things - initialize, add, commit
+    git_init(directory)
+    if repo_changed(directory):
+        message = "Initial commit"
+        if custom_message:
+            message = get_commit_message()
+            if not message:
+                print("Empty commit message, exiting.")
+                sys.exit(1)
+        commit_all_changes(directory, message)
 
 
 def push_to_github(directory, branch):

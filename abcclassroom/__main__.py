@@ -414,7 +414,7 @@ def assignment_template():
     parser.add_argument(
         "--custom-message",
         action="store_true",
-        help="Use a custom commit message for git. Will open the default git text editor for entry. If not set, will use message 'Initial commit of template repository'.",
+        help="Use a custom commit message for git. Will open the default git text editor for entry. If not set, will use message 'Initial commit'.",
     )
     parser.add_argument(
         "--local-only",
@@ -434,7 +434,7 @@ def assignment_template():
     print("repo path: {}".format(template_repo_path))
     template.copy_assignment_files(config, template_repo_path, assignment)
     template.create_extra_files(config, template_repo_path, assignment)
-    template.do_local_git_things(template_repo_path, args.custom_message)
+    gitu.init_and_commit(template_repo_path, args.custom_message)
 
     # now do the github things, unless we've been asked to only do local things
     if not args.local_only:
