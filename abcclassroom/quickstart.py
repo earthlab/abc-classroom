@@ -50,13 +50,12 @@ def create_dir_struct():
     # Allows users to rename the cloned and template repos.
     parser = argparse.ArgumentParser(description=create_dir_struct.__doc__)
     parser.add_argument(
-        "--course_name",
-        help="Name of the main course repository"
+        "--course_name", help="Name of the main course repository"
     )
     parser.add_argument(
         "-f",
-        action='store_true',
-        help="Option to override the existing folder structure made by this function previously."
+        action="store_true",
+        help="Option to override the existing folder structure made by this function previously.",
     )
     args = parser.parse_args()
     # Assigning the custom folder name if applicable
@@ -80,11 +79,15 @@ def create_dir_struct():
     if args.course_name:
         with open(os.path.join(course, "sample_config.yml"), "r") as file:
             filedata = file.read()
-            filedata = filedata.replace("earth-analytics-bootcamp", args.course_name)
+            filedata = filedata.replace(
+                "earth-analytics-bootcamp", args.course_name
+            )
         with open(os.path.join(course, "sample_config.yml"), "w") as file:
             file.write(filedata)
-    print("""
+    print(
+        """
     Directory structure created to begin using abc-classroom. All directories needed and a sample configuration file 
     have been created. To proceed, please move your sample roster and nbgrader directory into the main directory 
     created by quickstart.
-    """)
+    """
+    )
