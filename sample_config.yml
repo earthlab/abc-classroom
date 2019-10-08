@@ -4,7 +4,7 @@
 organization: earth-analytics-edu
 
 # Course directory. Your config.yml file should be in this directory and all
-# other paths are relative to this directory.
+# other paths are assumed relative to this directory unless otherwise specified.
 course_directory: /Users/me/awesome-course
 
 # Name of your course. Will be used to prefix repositories inside the
@@ -26,18 +26,21 @@ short_coursename: ea
 # the filename (otherwise, enter the path relative to the course_directory).
 roster: roster.csv
 
-# Path to the nbgrader directory. If the nbgrader dir is in the
-# course_directory, just enter the name of the nbgrader dir. Otherwise,
-# enter the path relative to the course_directory.
+# Path to the nbgrader directory. Assumed to be relative to course_dir unless
+# you enter an absolute path (i.e. starting with '/' on Linux or OS X or with
+# 'C:' on Windows).
 nbgrader_dir: nbgrader
 
-# Absolute path to directory where you want to clone the student
-# repositories. Because we will create many git repos here, this directory
-# should not be in a git repo
+# Path to the directory where you want to clone the student repositories.
+# Assumed to be relative to course_dir unless you enter an absolute path (i.e. starting with '/' on Linux or OS X or with 'C:' on Windows). None of the
+# parent directories should be git repositories.
 clone_dir: /Users/me/awesome-course/cloned_dirs
 
-# Absolute path to the assignment template repositories. Again, none of
-# the parent directories should be a git repo
+
+# Path to the assignment template repositories. Again, none of
+# the parent directories should be a git repo. Assumed to be relative to
+# course_dir unless you enter an absolute path (i.e. starting with '/' on
+# Linux or OS X or with 'C:' on Windows). 
 template_dir: /Users/me/awesome-course/assignment_repos
 
 # Additional files that will be created and added to the student repositories
