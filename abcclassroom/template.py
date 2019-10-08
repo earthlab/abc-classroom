@@ -96,7 +96,7 @@ def create_extra_files(config, template_repo, assignment):
                 firstline = ""
                 coursename = cf.get_config_option(config, "course_name", False)
                 if assignment and coursename:
-                    first_line = "# {}: {}".format(assignment, coursename)
+                    first_line = "# {}: {}".format(coursename, assignment)
                 else:
                     first_line = "# README"
                 contents.insert(0, first_line)

@@ -12,6 +12,10 @@ class TestAssignmentTemplate:
         "template_dir": "test_template",
         "short_coursename": "tc",
         "nbgrader_dir": "nbgrader",
+        "extra_files": {
+            "testfile.txt": ["line1", "line2"],
+            "README.md": ["line1", "line2"],
+        },
     }
 
     # Tests for create_template_dir method
@@ -83,6 +87,34 @@ class TestAssignmentTemplate:
             )
 
     # Tests for create_extra_files method
-    # def test_create_extra_files(config, template_repo_name, assignment):
-    #
+    def test_create_extra_files(self, tmp_path):
+        self.config["course_directory"] = tmp_path
+        assignment = "assignment1"
+        template_repo = abctemplate.create_template_dir(
+            self.config, assignment
+        )
+        abctemplate.create_extra_files(self.config, template_repo, assignment)
+        assert Path(template_repo, "testfile.txt").exists()
+        f = open(Path(template_repo, "testfile.txt"))
+        assert f.readline() == "line1\n"
+
+    def test_create_extra_files_readme(self, tmp_path):
+        # tests for the special README.md case
+        self.config["course_directory"] = tmp_path
+        assignment = "assignment1"
+        template_repo = abctemplate.create_template_dir(
+            self.config, assignment
+        )
+        abctemplate.create_extra_files(self.config, template_repo, assignment)
+        assert Path(template_repo, "README.md").exists()
+        f = open(Path(template_repo, "README.md"))
+        assert f.readline() == "# README\n"
+
+        # test when course_name set
+        self.config["course_name"] = "Awesome course"
+        abctemplate.create_extra_files(self.config, template_repo, assignment)
+        assert Path(template_repo, "README.md").exists()
+        f = open(Path(template_repo, "README.md"))
+        assert f.readline() == "# Awesome course: {}\n".format(assignment)
+
     # def test_do_local_git_things(template_dir, custom_message):
