@@ -27,7 +27,7 @@ def path_to_example(dataset):
     return os.path.join(data_dir, dataset)
 
 
-def directory_setup():
+def quickstart():
     """
     Construct a file path to an example dataset.
     This file defines helper functions to access data files in this directory,

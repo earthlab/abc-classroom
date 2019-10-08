@@ -22,11 +22,11 @@ from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
 from . import github as GH
 from .utils import copytree, P, input_editor
-from .dirsetup import directory_setup
+from .quickstart import quickstart
 
 
 def dir_setup():
-    directory_setup()
+    quickstart()
 
 
 def get_github_auth():

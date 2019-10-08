@@ -1,12 +1,12 @@
-Setting Up a Template Directory
--------------------------------
+ABC-Classroom Quickstart
+------------------------
 
 To set up a template directory to run abc-classroom in, run:
 
     $ abc-dir-setup
 
 This will create a directory for you that contains pre-made directories for templates and cloned files, as well as
-a sample ``config.yml`` file that can be modified to run the program for your classroom. ``abc-dir-setup`` has
+a sample ``config.yml`` file that can be modified to run the program for your classroom. ``abc-quickstart`` has
 four arguments that can be used to modify its functionality.
 
 1. ``--course_repo course-repo-custom-name-here`` This argument will allow you to modify the name of the main
