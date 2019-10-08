@@ -23,6 +23,7 @@ from .notebook import split_notebook
 from . import git_utils as gitu
 from .utils import copytree, P, input_editor, write_file, valid_date
 
+
 def init():
     """
     Setup GitHub credentials for later. Make sure that there is a valid GitHub authentication
@@ -80,6 +81,7 @@ def init():
             "`abc-init` again."
         )
         sys.exit(1)
+
 
 def grade():
     """Grade student's work"""
@@ -396,6 +398,7 @@ def author():
         "expect.".format(P("student"))
     )
 
+
 def assignment_template():
     """
     Create a new assignment template repository: creates local directory,
@@ -406,12 +409,12 @@ def assignment_template():
     parser = argparse.ArgumentParser(description=assignment_template.__doc__)
     parser.add_argument(
         "assignment",
-        help="Name of assignment. Must match name in nbgrader release directory"
+        help="Name of assignment. Must match name in nbgrader release directory",
     )
     parser.add_argument(
         "--custom-message",
         action="store_true",
-        help="Use a custom commit message for git. Will open the default git text editor for entry. If not set, will use message 'Initial commit of template repository'."
+        help="Use a custom commit message for git. Will open the default git text editor for entry. If not set, will use message 'Initial commit of template repository'.",
     )
     parser.add_argument(
         "--local-only",
@@ -422,20 +425,20 @@ def assignment_template():
 
     print("Loading configuration from config.yml")
     config = cf.get_config()
-    template_dir = cf.get_config_option(config,"template_dir",True)
+    template_dir = cf.get_config_option(config, "template_dir", True)
     # organization = get_config_option(config,"organization",True)
 
     # these are the steps to create the local git repository
     assignment = args.assignment
     template_repo_path = template.create_template_dir(config, assignment)
     print("repo path: {}".format(template_repo_path))
-    template.copy_assigment_files(config, template_repo_path, assignment)
+    template.copy_assignment_files(config, template_repo_path, assignment)
     template.create_extra_files(config, template_repo_path, assignment)
     template.do_local_git_things(template_repo_path, args.custom_message)
 
     # now do the github things, unless we've been asked to only do local things
     if not args.local_only:
-        organization = cf.get_config_option(config,"organization",True)
+        organization = cf.get_config_option(config, "organization", True)
         # get the name of the repo (the final dir in the path)
         repo_name = os.path.basename(template_repo_path)
         print("Creating repo {}".format(repo_name))

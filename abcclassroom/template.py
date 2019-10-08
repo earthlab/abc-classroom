@@ -56,7 +56,7 @@ def create_template_dir(config, assignment):
     return template_path
 
 
-def copy_assigment_files(config, template_repo, assignment):
+def copy_assignment_files(config, template_repo, assignment):
     """Copy all of the files from the nbgrader release directory for the
     assignment into the template repo directory.
     """
