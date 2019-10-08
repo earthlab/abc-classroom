@@ -51,7 +51,7 @@ def create_dir_struct():
             "Configuration file can't be located, please ensure abc-classroom has been installed correctly"
         )
     # Allows users to rename the cloned and template repos.
-    parser = argparse.ArgumentParser(description=quickstart().__doc__)
+    parser = argparse.ArgumentParser(description=create_dir_struct().__doc__)
     parser.add_argument(
         "--course_name",
         help="Name of the main course repository"
