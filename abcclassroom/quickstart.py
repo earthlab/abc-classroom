@@ -27,7 +27,7 @@ def path_to_example(dataset):
     return os.path.join(data_dir, dataset)
 
 
-def quickstart():
+def create_dir_struct():
     """
     Construct a file path to an example dataset.
     This file defines helper functions to access data files in this directory,
@@ -43,8 +43,6 @@ def quickstart():
         A file path (string) to the dataset
     """
     # Creating the default names for the cloned and template repos.
-    cloned = "cloned_repos"
-    template = "template_repos"
     course = "course_dir"
     # Making sure the configuration file is where it's supposed to be.
     config = path_to_example("sample_config.yml")
@@ -53,42 +51,37 @@ def quickstart():
             "Configuration file can't be located, please ensure abc-classroom has been installed correctly"
         )
     # Allows users to rename the cloned and template repos.
-    parser = argparse.ArgumentParser(description=directory_setup.__doc__)
+    parser = argparse.ArgumentParser(description=quickstart().__doc__)
     parser.add_argument(
-        "--course_repo",
+        "--course_name",
         help="Name of the main course repository"
     )
     parser.add_argument(
-        "--cloned_repo",
-        help="Name of the repository to hold the cloned files"
-    )
-    parser.add_argument(
-        "--template_repo",
-        help="Name of the repository to hold the template files"
-    )
-    parser.add_argument(
-        "--override_existing",
+        "-f",
+        action='store_true',
         help="Option to override the existing folder structure made by this function previously."
     )
     args = parser.parse_args()
-    # Assigning the custom folder names if applicable
-    if args.cloned_repo:
-        cloned = args.cloned_repo
-    if args.template_repo:
-        template = args.template_repo
-    if args.course_repo:
-        course = args.course_repo
+    # Assigning the custom folder name if applicable
+    if args.course_name:
+        course = args.course_name
     main_dir = os.path.join(os.getcwd(), course)
-    if args.override_existing == "True" and os.path.isdir(main_dir):
+    if args.f and os.path.isdir(main_dir):
         shutil.rmtree(main_dir)
     # Make sure that the main_dir doesn't exist already
     if os.path.isdir(main_dir):
-        raise ValueError("Direcoty setup has already been run in this directory.")
+        raise ValueError(
+            "Quickstart has already been run in this directory for that course name."
+        )
     # Making all the needed directories and subdirectories, and creating the configuration file.
     os.mkdir(main_dir)
-    cloned_dir = os.path.join(main_dir, cloned)
-    template_dir = os.path.join(main_dir, template)
+    cloned_dir = os.path.join(main_dir, "cloned_files")
+    template_dir = os.path.join(main_dir, "template_files")
     os.mkdir(cloned_dir)
     os.mkdir(template_dir)
     shutil.copy(config, main_dir)
-
+    print("""
+    Directory structure created to begin using abc-classroom. All directories needed and a sample configuration file 
+    have been created. To proceed, please move your sample roster and nbgrader directory into the main directory 
+    created by quickstart.
+    """)
