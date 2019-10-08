@@ -20,7 +20,7 @@ from . import template
 from . import config as cf
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
-from . import git_utils as gitu
+from . import gitutils as gitu
 from .utils import copytree, P, input_editor, write_file, valid_date
 
 
