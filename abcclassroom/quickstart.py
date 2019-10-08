@@ -25,7 +25,6 @@ def path_to_example(dataset):
     -------
     string
         A file path (string) to the dataset
-
     """
     abcclassroom_path = os.path.split(abcclassroom.__file__)[0]
     data_dir = os.path.join(abcclassroom_path, "example-data")
