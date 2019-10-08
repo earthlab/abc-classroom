@@ -11,6 +11,7 @@ import os.path as op
 
 from ruamel.yaml import YAML
 
+
 def get_github_auth():
     """
     Check to see if there is an existing github authentication
@@ -62,8 +63,11 @@ def get_config():
             config = yaml.load(f)
         return config
     except FileNotFoundError as err:
-        print("Error: config file (config.yml) not found in current directory\n")
+        print(
+            "Error: config file (config.yml) not found in current directory\n"
+        )
         sys.exit(1)
+
 
 # TODO: allow for nested gets, e.g. config[a][b]
 def get_config_option(config, option, required=True):
@@ -75,11 +79,16 @@ def get_config_option(config, option, required=True):
         value = config[option]
         return value
     except KeyError as err:
-        if (required==True):
-            print("Did not find required option {} in config; exciting".format(option))
+        if required == True:
+            print(
+                "Did not find required option {} in config; exciting".format(
+                    option
+                )
+            )
             sys.exit(1)
         else:
             return None
+
 
 def set_config(config):
     yaml = YAML()
