@@ -1,12 +1,12 @@
 
 # The GitHub organization to host your GitHub classroom
 # Create a new organization on GitHub and change this to the name you gave it
-organization: earth-analytics-edu
+organization: your-github-org-name-here
 
 # (Optional) Short name for organization. If set, this gets used to prepend
 # the repositories instead of the full organization name, just to make
 # names shorter and less unwieldy
-organization-shortname: ea
+organization-shortname: short-org
 
 # Name of your course. Will be used to prefix repositories inside the
 # organization. The repositories will be named:
@@ -15,24 +15,24 @@ organization-shortname: ea
 # or, if organization-shortname is set:
 # https://github.com/<organization-shortname>/<courseName>-template
 # https://github.com/<organization-shortname>/<courseName>-<studentName>
-course_name: earth-analytics-bootcamp
+course_name: course-name
 
 # Absolute path to the course roster (list of students downloaded from
 # github classroom)
-roster: /Users/me/awesome-course/roster.csv
+roster: roster.csv
 
 # Absolute path to the nbgrader directory (formatted as per the
 # nbgrader docs).
-nbgrader_dir: /Users/me/awesome-course/nbgrader
+nbgrader_dir: nbgrader
 
 # Absolute path to directory where you want to clone the student
 # repositories. Because we will create many git repos here, this directory
 # should not be in a git repo
-clone_dir: /Users/me/awesome-course/cloned_dirs
+clone_dir: cloned_dirs
 
 # Absolute path to the assignment template repositories. Again, none of
 # the parent directories should be a git repo
-template_dir: /Users/me/awesome-course/assignment_repos
+template_dir: assignment_repos
 
 # Copy files in the nbgrader 'release' directory to the template repository
 # if they match any of these Unix shell-style patterns (NOT regular expressions)

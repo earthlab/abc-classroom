@@ -1,5 +1,5 @@
 """
-abc-classroom.dir-setup
+abc-classroom.quickstart
 ========================
 
 """
@@ -19,7 +19,7 @@ def path_to_example(dataset):
     Parameters
     ----------
     dataset: string
-        Name of a dataset to access (e.g., "sample_config.yml")
+        Name of a dataset to access (e.g., "config.yml")
             
     Returns
     -------
@@ -36,16 +36,16 @@ def path_to_example(dataset):
 
 def create_dir_struct():
     """
-    Creates a directory structure that can be used to start an abc-classroom course. This includes a main directory,
-    two sub directories for templates and cloned files, and a sample configuration file.
+    Create a directory structure that can be used to start an abc-classroom course. This includes a main directory,
+    two sub directories for templates and cloned files, and a start to a configuration file.
     """
     # Creating the default names for the cloned and template repos.
-    course = "course_dir"
+    course = "course-dir"
     # Making sure the configuration file is where it's supposed to be.
-    config = path_to_example("sample_config.yml")
+    config = path_to_example("config.yml")
     if not os.path.exists(config):
         raise ValueError(
-            "Configuration file can't be located, please ensure abc-classroom has been installed correctly"
+            "config.yml configuration file can't be located, please ensure abc-classroom has been installed correctly"
         )
     # Allows users to rename the cloned and template repos.
     parser = argparse.ArgumentParser(description=create_dir_struct.__doc__)
@@ -61,33 +61,45 @@ def create_dir_struct():
     # Assigning the custom folder name if applicable
     if args.course_name:
         course = args.course_name
+        if " " in course:
+            raise ValueError(
+                "Spaces not allowed in custom course name {}. Please use hyphens instead.".format(
+                    course
+                )
+            )
     main_dir = os.path.join(os.getcwd(), course)
     if args.f and os.path.isdir(main_dir):
         shutil.rmtree(main_dir)
     # Make sure that the main_dir doesn't exist already
     if os.path.isdir(main_dir):
         raise ValueError(
-            "Quickstart has already been run in this directory for that course name."
+            """
+            Ooops! It looks like the directory {} already exists on your computer. You might have already 
+            run quickstart in this directory. Consider using another course name or deleting the existing directory 
+            if you do not need it.""".format(
+                course
+            )
         )
     # Making all the needed directories and subdirectories, and creating the configuration file.
-    os.mkdir(main_dir)
-    cloned_dir = os.path.join(main_dir, "cloned_files")
-    template_dir = os.path.join(main_dir, "template_files")
-    os.mkdir(cloned_dir)
-    os.mkdir(template_dir)
+    dir_names = [
+        main_dir,
+        os.path.join(main_dir, "cloned_dirs"),
+        os.path.join(main_dir, "assignment_repos"),
+    ]
+    for directories in dir_names:
+        os.mkdir(directories)
     shutil.copy(config, main_dir)
     if args.course_name:
-        with open(os.path.join(course, "sample_config.yml"), "r") as file:
+        with open(os.path.join(course, "config.yml"), "r") as file:
             filedata = file.read()
-            filedata = filedata.replace(
-                "earth-analytics-bootcamp", args.course_name
-            )
-        with open(os.path.join(course, "sample_config.yml"), "w") as file:
+            filedata = filedata.replace("course-name", args.course_name)
+        with open(os.path.join(course, "config.yml"), "w") as file:
             file.write(filedata)
     print(
         """
-    Directory structure created to begin using abc-classroom. All directories needed and a sample configuration file 
-    have been created. To proceed, please move your sample roster and nbgrader directory into the main directory 
-    created by quickstart.
-    """
+        Directory structure created to begin using abc-classroom at {}. 
+        All directories needed and a configuration file to modify have been created. To proceed, please 
+        move your sample roster and nbgrader directory into {} created by quickstart.""".format(
+            main_dir, course
+        )
     )
