@@ -14,6 +14,7 @@ Welcome to abc-classroom's documentation!
    github
    contributing
    code-of-conduct
+   change-log
 
 
 
