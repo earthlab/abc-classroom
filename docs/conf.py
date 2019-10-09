@@ -21,7 +21,7 @@
 
 project = "abc-classroom"
 copyright = "2019, Earth Lab"
-author = "Leah Wasser, Karen Kranston"
+author = "Leah Wasser, Karen Cranston"
 
 # The short X.Y version
 version = "0.0.11"
