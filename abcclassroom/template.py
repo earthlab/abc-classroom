@@ -12,7 +12,7 @@ from . import gitutils as gitu
 from . import utils
 
 
-def create_template_dir(config, assignment):
+def create_template_dir(config, assignment, mode):
     """
     Creates a new directory in template_dir that will become the
     template repository for the assignment.
@@ -43,16 +43,24 @@ def create_template_dir(config, assignment):
 
     repo_name = course_name + "-" + assignment + "-template"
     template_path = os.path.join(parent_path, repo_name)
-    try:
+    dir_exists = os.path.exists(template_path)
+    if not dir_exists:
         os.mkdir(template_path)
         print("Creating new template repo at {}".format(template_path))
-    except FileExistsError as fee:
-        print(
-            "Directory {} already exists; delete or move before re-running".format(
-                template_path
+    else:
+        if mode == "fail":
+            print(
+                "Directory {} already exists; delete or move before re-running".format(
+                    template_path
+                )
             )
-        )
-        sys.exit(1)
+            sys.exit(1)
+        if mode == "merge":
+            print(
+                "Template directory {} already exists but mode is 'merge'; will keep directory but overwrite existing files with same names".format(
+                    template_path
+                )
+            )
     return template_path
 
 

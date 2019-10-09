@@ -421,6 +421,12 @@ def assignment_template():
         action="store_true",
         help="Create local template repository only; do not create GitHub repo or  push to GitHub (default: False)",
     )
+    parser.add_argument(
+        "--mode",
+        choices=["delete", "fail", "merge"],
+        default="fail",
+        help="Action if template directory already exists. Choices are: delete = delete the directory and contents; fail = exit and let user delete or rename; merge = keep existing dir, overwrite existing files, add new files. Default is fail.",
+    )
     args = parser.parse_args()
 
     print("Loading configuration from config.yml")
@@ -430,7 +436,9 @@ def assignment_template():
 
     # these are the steps to create the local git repository
     assignment = args.assignment
-    template_repo_path = template.create_template_dir(config, assignment)
+    template_repo_path = template.create_template_dir(
+        config, assignment, args.mode
+    )
     print("repo path: {}".format(template_repo_path))
     template.copy_assignment_files(config, template_repo_path, assignment)
     template.create_extra_files(config, template_repo_path, assignment)

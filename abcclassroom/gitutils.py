@@ -212,6 +212,8 @@ def init_and_commit(directory, custom_message=False):
     """Run git init, git add, git commit on given directory.
     """
     # local git things - initialize, add, commit
+    # note that running git init on an existing repo is safe, so no need
+    # to check anything first
     git_init(directory)
     if repo_changed(directory):
         message = "Initial commit"
