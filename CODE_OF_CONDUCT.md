@@ -1,4 +1,4 @@
-# MatPlotCheck Code of Conduct
+# ABC-Classroom Code of Conduct
 
 ## Our Pledge
 
