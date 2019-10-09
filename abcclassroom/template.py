@@ -8,7 +8,7 @@ import sys
 import shutil
 
 from . import config as cf
-from . import gitutils as gitu
+from . import github
 from . import utils
 
 
