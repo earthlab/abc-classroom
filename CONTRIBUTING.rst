@@ -54,7 +54,7 @@ Running tests
 ^^^^^^^^^^^^^
 To run all of the tests (from the root directory of the repo):
 
-    $ pytest abcclassroom
+    $ pytest
 
 To run only the subset of the tests in (for example) `singlefile.py`, use:
 
