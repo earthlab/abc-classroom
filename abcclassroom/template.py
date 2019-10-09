@@ -12,7 +12,7 @@ from . import github
 from . import utils
 
 
-def create_template_dir(config, assignment, mode):
+def create_template_dir(config, assignment, mode="fail"):
     """
     Creates a new directory in template_dir that will become the
     template repository for the assignment.
