@@ -12,7 +12,29 @@ import subprocess
 
 import github3 as gh3
 
-from .utils import _call_git
+from .utils import input_editor
+
+
+def _call_git(*args, directory=None):
+    cmd = ["git"]
+    cmd.extend(args)
+    try:
+        ret = subprocess.run(
+            cmd,
+            cwd=directory,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+    except subprocess.CalledProcessError as e:
+        err = e.stderr.decode("utf-8")
+        if err:
+            msg = err.split(":")[1].strip()
+        else:
+            msg = e.stdout.decode("utf-8")
+        raise RuntimeError(msg) from e
+
+    return ret
 
 
 def check_student_repo_exists(org, course, student, token=None):
@@ -111,10 +133,27 @@ def create_pr(org, repository, branch, message, token):
 
 
 def create_repo(org, repository, directory, token):
-    g = gh3.login(token=token)
-    organization = g.organization(org)
-    title = "Template repository for {}".format(repository)
-    organization.create_repository(repository, title)
+    """Create a repository in the provided GitHub organization, adds that
+    repo as a remote to the local repo in directory, and pushes the
+    directory.
+    """
+    github_obj = gh3.login(token=token)
+    organization = github_obj.organization(org)
+    print(
+        "Creating new repository {} at https://github.com/{}".format(
+            repository, org
+        )
+    )
+    try:
+        organization.create_repository(repository)
+    except gh3.exceptions.UnprocessableEntity as err:
+        print(
+            "Error: organization {} already has a repository named {}".format(
+                org, repository
+            )
+        )
+        print("Not adding remote to local repo or pushing to github.")
+        return
 
     _call_git(
         "remote",
@@ -145,12 +184,45 @@ def new_branch(directory, name=None):
     return name
 
 
+def get_commit_message():
+    default_message = """
+    # Please enter the commit message for your changes. Lines starting
+    # with '#' will be ignored, and an empty message aborts the commit.
+    # This message will be used as commit and Pull Request message."""
+    message = input_editor(default_message)
+    message = "\n".join(
+        [
+            line
+            for line in message.split("\n")
+            if not line.strip().startswith("#")
+        ]
+    )
+    return message
+
+
 def commit_all_changes(directory, msg=None):
     if msg is None:
         raise ValueError("Commit message can not be empty.")
 
     _call_git("add", "*", directory=directory)
     _call_git("commit", "-a", "-m", msg, directory=directory)
+
+
+def init_and_commit(directory, custom_message=False):
+    """Run git init, git add, git commit on given directory.
+    """
+    # local git things - initialize, add, commit
+    # note that running git init on an existing repo is safe, so no need
+    # to check anything first
+    git_init(directory)
+    if repo_changed(directory):
+        message = "Initial commit"
+        if custom_message:
+            message = get_commit_message()
+            if not message:
+                print("Empty commit message, exiting.")
+                sys.exit(1)
+        commit_all_changes(directory, message)
 
 
 def push_to_github(directory, branch):
