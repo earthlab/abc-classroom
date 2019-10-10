@@ -13,6 +13,8 @@ Welcome to abc-classroom's documentation!
    api
    github-authentication
    contributing
+   code-of-conduct
+   change-log
 
 
 
