@@ -50,17 +50,26 @@ def create_template_dir(config, assignment, mode="fail"):
     else:
         if mode == "fail":
             print(
-                "Directory {} already exists; delete or move before re-running".format(
+                "Directory {} already exists; re-run with '--mode merge' or --mode delete', or delete / move directory before re-running".format(
                     template_path
                 )
             )
             sys.exit(1)
-        if mode == "merge":
+        elif mode == "merge":
             print(
                 "Template directory {} already exists but mode is 'merge'; will keep directory but overwrite existing files with same names".format(
                     template_path
                 )
             )
+        else:
+            # mode == delete
+            print(
+                "Deleting existing directory and contents at {} and creating new empty directory with same name.".format(
+                    template_path
+                )
+            )
+            shutil.rmtree(template_path)
+            os.mkdir(template_path)
     return template_path
 
 
