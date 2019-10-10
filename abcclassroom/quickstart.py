@@ -5,9 +5,9 @@ abc-classroom.quickstart
 """
 
 import os
-import shutil
-import argparse
-import abcclassroom
+from shutil import copy, rmtree
+from argparse import ArgumentParser
+from abcclassroom import __file__
 
 
 def path_to_example(dataset):
@@ -26,7 +26,7 @@ def path_to_example(dataset):
     string
         A file path (string) to the dataset
     """
-    abcclassroom_path = os.path.split(abcclassroom.__file__)[0]
+    abcclassroom_path = os.path.split(__file__)[0]
     data_dir = os.path.join(abcclassroom_path, "example-data")
     data_files = os.listdir(data_dir)
     if dataset not in data_files:
@@ -48,7 +48,7 @@ def create_dir_struct():
             "config.yml configuration file can't be located, please ensure abc-classroom has been installed correctly"
         )
     # Allows users to rename the cloned and template repos.
-    parser = argparse.ArgumentParser(description=create_dir_struct.__doc__)
+    parser = ArgumentParser(description=create_dir_struct.__doc__)
     parser.add_argument(
         "--course_name", help="Name of the main course repository"
     )
@@ -69,7 +69,7 @@ def create_dir_struct():
             )
     main_dir = os.path.join(os.getcwd(), course)
     if args.f and os.path.isdir(main_dir):
-        shutil.rmtree(main_dir)
+        rmtree(main_dir)
     # Make sure that the main_dir doesn't exist already
     if os.path.isdir(main_dir):
         raise ValueError(
@@ -88,7 +88,7 @@ def create_dir_struct():
     ]
     for directories in dir_names:
         os.mkdir(directories)
-    shutil.copy(config, main_dir)
+    copy(config, main_dir)
     if args.course_name:
         with open(os.path.join(course, "config.yml"), "r") as file:
             filedata = file.read()
