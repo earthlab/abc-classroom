@@ -442,7 +442,7 @@ def assignment_template():
     print("repo path: {}".format(template_repo_path))
     template.copy_assignment_files(config, template_repo_path, assignment)
     template.create_extra_files(config, template_repo_path, assignment)
-    gitu.init_and_commit(template_repo_path, args.custom_message)
+    github.init_and_commit(template_repo_path, args.custom_message)
 
     # now do the github things, unless we've been asked to only do local things
     if not args.local_only:
@@ -452,7 +452,7 @@ def assignment_template():
         print("Creating repo {}".format(repo_name))
         # create the remote repo on github and push the local repo
         # (will print error and return if repo already exists)
-        gitu.create_repo(
+        github.create_repo(
             organization,
             repo_name,
             template_repo_path,
