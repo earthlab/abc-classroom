@@ -24,24 +24,31 @@ Command line arguments
 Run `abc-assignment_template -h` to see the command line arguments. The output
 is reproduced here::
 
-  usage: abc-assignment-template [-h] [--custom-message] [--local-only]
-                                 assignment
+usage: abc-assignment-template [-h] [--custom-message] [--local-only]
+                               [--mode {delete,fail,merge}]
+                               assignment
 
-  Create a new assignment template repository: creates local directory, copy /
-  create required files, intialize as git repo, create remote repo on GitHub,
-  and push local repo to GitHub. Will open git editor to ask for commit message.
+Create a new assignment template repository: creates local directory, copy /
+create required files, intialize as git repo, create remote repo on GitHub,
+and push local repo to GitHub. Will open git editor to ask for commit message.
 
-  positional arguments:
-    assignment        Name of assignment. Must match name in nbgrader release
-                      directory
+positional arguments:
+  assignment            Name of assignment. Must match name in nbgrader
+                        release directory
 
-  optional arguments:
-    -h, --help        show this help message and exit
-    --custom-message  Use a custom commit message for git. Will open the default
-                      git text editor for entry. If not set, will use message
-                      'Initial commit of template repository'.
-    --local-only      Create local template repository only; do not create
-                      GitHub repo or push to GitHub (default: False)
+optional arguments:
+  -h, --help            show this help message and exit
+  --custom-message      Use a custom commit message for git. Will open the
+                        default git text editor for entry. If not set, will
+                        use message 'Initial commit'.
+  --local-only          Create local template repository only; do not create
+                        GitHub repo or push to GitHub (default: False)
+  --mode {delete,fail,merge}
+                        Action if template directory already exists. Choices
+                        are: delete = delete the directory and contents; fail
+                        = exit and let user delete or rename; merge = keep
+                        existing dir, overwrite existing files, add new files.
+                        Default is fail.
 
 
 Configuration settings

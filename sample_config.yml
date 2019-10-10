@@ -16,6 +16,10 @@ course_directory: /Users/me/awesome-course
 # https://github.com/<organization>/<short_classname>-<studentName>
 course_name: earth-analytics-bootcamp
 
+# Absolute path to the course directory. If you ran abc-quickstart, this was
+# set up for you 
+course_directory: /Users/karen/awesome-course
+
 # (Optional) Short name for course. If set, this gets used to prepend
 # the repositories instead of the full course_name, just to make
 # names shorter and less unwieldy
@@ -40,7 +44,7 @@ clone_dir: /Users/me/awesome-course/cloned_dirs
 # Path to the assignment template repositories. Again, none of
 # the parent directories should be a git repo. Assumed to be relative to
 # course_dir unless you enter an absolute path (i.e. starting with '/' on
-# Linux or OS X or with 'C:' on Windows). 
+# Linux or OS X or with 'C:' on Windows).
 template_dir: /Users/me/awesome-course/assignment_repos
 
 # Additional files that will be created and added to the student repositories
