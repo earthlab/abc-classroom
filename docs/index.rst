@@ -14,7 +14,8 @@ Welcome to abc-classroom's documentation!
    github
    contributing
    quickstart
-
+   code-of-conduct
+   change-log
 
 Indices and tables
 ==================
