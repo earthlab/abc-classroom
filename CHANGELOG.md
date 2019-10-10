@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 * Add code of conduct, and md support (m2r) to build (#126, @lwasser)
-
+* Added command `abc-quickstart` to set up file directory for users(#90, @nkorinek)
 
 ## [0.0.11]
 * Change tracking started also added basic infrastructure for docs, autodoc, travis-ci testing and sphinx enhancements (@lwasser)
