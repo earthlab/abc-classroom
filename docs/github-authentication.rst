@@ -28,7 +28,7 @@ a GitHub token. This token is needed to create new repositories in GitHub classr
 
 To create a token, run:
 
-    $ abc-init
+    ``$ abc-init``
 
 at the command line. When you run ``abc-init``, you will be asked for your 
 GitHub username and password. Enter those into the command line prompts. If you 
