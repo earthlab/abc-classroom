@@ -12,9 +12,11 @@ Welcome to abc-classroom's documentation!
 
    new_assignment
    api
-   github
-   console_scripts
+   github-authentication
    contributing
+   code-of-conduct
+   change-log
+   console_scripts
 
 
 Indices and tables

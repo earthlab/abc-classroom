@@ -3,10 +3,6 @@ matrix:
   include:
   - os: linux
     dist: xenial
-    python: 3.5
-    env: TOXENV=py35
-  - os: linux
-    dist: xenial
     python: 3.6
     env: TOXENV=py36
   - os: linux
