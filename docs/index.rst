@@ -11,7 +11,7 @@ Welcome to abc-classroom's documentation!
    :caption: Contents:
 
    api
-   github
+   github-authentication
    contributing
 
 
