@@ -25,7 +25,10 @@ def test_quickstart_custom_name():
     """
     Test that abc-quickstart works with a custom name.
     """
-    output = subprocess.run("abc-quickstart --course_name python_test_dir_custom_name", capture_output=True)
+    output = subprocess.run(
+        "abc-quickstart --course_name python_test_dir_custom_name",
+        capture_output=True,
+    )
     main_dir = os.path.join(os.getcwd(), "python_test_dir_custom_name")
     with open(os.path.join(main_dir, "config.yml")) as data:
         assert (
@@ -66,7 +69,10 @@ def test_quickstart_remove_existing():
     Test that abc-quickstart doesn't fail when using the same name for a course twice and the -f argument.
     """
     subprocess.run("abc-quickstart --course_name python_test_dir_custom_name")
-    output = subprocess.run("abc-quickstart --course_name python_test_dir_custom_name -f", capture_output=True)
+    output = subprocess.run(
+        "abc-quickstart --course_name python_test_dir_custom_name -f",
+        capture_output=True,
+    )
     main_dir = os.path.join(os.getcwd(), "python_test_dir_custom_name")
     with open(os.path.join(main_dir, "config.yml")) as data:
         assert (
