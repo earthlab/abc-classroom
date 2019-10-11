@@ -7,8 +7,8 @@ Links
 -----
 Some of the documentation about abc-classroom lives outside of this repo.
 
-* 'hackmd documentation<https://hackmd.io/0ZbGctpuSdqYK2OdPI51dw?view>_' for setting up a new course
-* 'autograding course starter repo <https://github.com/betatim/autograded-course-starter>_' (contains 'sample config file<https://github.com/betatim/autograded-course-starter/blob/master/config.yml>_')
+* `hackmd documentation <https://hackmd.io/0ZbGctpuSdqYK2OdPI51dw?view/>`_ for setting up a new course
+* `autograding course starter repo <https://github.com/betatim/autograded-course-starter/>`_ (contains `sample config file <https://github.com/betatim/autograded-course-starter/blob/master/config.yml/>`_)
 
 Console_scripts
 ---------------
