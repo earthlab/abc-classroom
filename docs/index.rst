@@ -15,6 +15,7 @@ Welcome to abc-classroom's documentation!
    contributing
    code-of-conduct
    change-log
+   previous-functionality
 
 
 
