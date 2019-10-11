@@ -1,7 +1,7 @@
 Get Started!
 ============
 
-Ready to contribute? Here's how to set up EarthPy for local development.
+Ready to contribute? Here's how to set up abc-classroom for local development.
 
 1. Fork the repository on GitHub
 --------------------------------
@@ -13,7 +13,7 @@ and click the **Fork** button in the top-right corner of the page.
 2. Clone your fork locally
 --------------------------
 
-Use ``git clone`` to get a local copy of your EarthPy repository on your
+Use ``git clone`` to get a local copy of your abc-classroom repository on your
 local filesystem::
 
     $ git clone git@github.com:your_name_here/abc-classroom.git
@@ -38,7 +38,7 @@ locally, but this is the recommended option on Windows and MacOS::
 Install the package & The Precommit Hook
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Once your abc-dev environment is activated, install EarthPy in editable
+Once your abc-dev environment is activated, install abc-classroom in editable
 mode, along with the development requirements and pre-commit hooks::
 
     $ pip install -e .
@@ -49,14 +49,3 @@ will run every time you make a commit. Note that you will need to commit any cha
 that black makes to your code after those changes are applied.
 
     $ pre-commit install
-
-Install nbgrader Extensions into the Active Environment
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-One the environment is activated and the package is installed, it is helpful
-to add useful extensions to Jupyter notebook. The recommended extensions can
-be installed by running::
-
-    $ bash nbgrader-ext-installs.txt
-
-This will install all of the extensions to your current active environment.
