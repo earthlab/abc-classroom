@@ -5,7 +5,6 @@ If you are working in GitHub classroom, you will need to
 1. Create a template repository for each student assignment. This is the repo that each student will get a copy of when you release the assignment for them to work on.
 2. Push that template repository to your GitHub organization that is setup with a classroom, for distribution.
 
-<<<<<<< HEAD
 If you are using nbgrader, then the files needed to distribute and grade each assignment
 live in a sub directory of **nbgrader** called **releases**.
 
@@ -13,20 +12,11 @@ The ``abc-assignment-template`` command will pull files from the releases direct
 and create a new assignment template directory that is also initialized as a git
 repository.
 
-=======
-<Somethng about assuming nbgrader>
-To create a new assignment git repo,
-
-1. Navigate to the course directory that you created using abc-quickstart (TODO: add link to quickstart page).
-the commands below assume that you have a config.yml file with the needed information already added (TODO: Add instructions on customizing yaml file)
->>>>>>> add89a422144d682de1d70436259ecb7970b2b1b
-
 Creating a new assignment template involves getting your local assignment
 files into
 a new repository on GitHub that you can use as a template for a GitHub
 classroom assignment.
 
-<<<<<<< HEAD
 How To Create A New Assignment Template repository
 ==================================================
 
@@ -45,15 +35,6 @@ To create a new assignment git repo:
 ``abc-assignment-template`` will then perform the following steps:
 
 * create a local directory in the xxx/cloned_repos?? called assignment1 and initialize as a git repository
-=======
-To create a new assignment template called "assignment1" using abc-classroom run ::
-
-  ``$ abc-assignment-template assignment1``
-
-This performs the following steps:
-
-* create a local directory and initialize as a git repository
->>>>>>> add89a422144d682de1d70436259ecb7970b2b1b
 * copy files from the ``nbgrader/release/assignment`` directory
 * create any additional files as listed in ``config.yml``
 * create a new repository on GitHub with the name ``assignment1-template``
