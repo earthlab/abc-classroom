@@ -3,10 +3,6 @@
 # Create a new organization on GitHub and change this to the name you gave it
 organization: earth-analytics-edu
 
-# Course directory. Your config.yml file should be in this directory and all
-# other paths are assumed relative to this directory unless otherwise specified.
-course_directory: /Users/me/awesome-course
-
 # Name of your course. Will be used to prefix repositories inside the
 # organization. The repositories will be named:
 # https://github.com/<organization>/<courseName>-template
@@ -17,7 +13,7 @@ course_directory: /Users/me/awesome-course
 course_name: earth-analytics-bootcamp
 
 # Absolute path to the course directory. If you ran abc-quickstart, this was
-# set up for you 
+# set up for you
 course_directory: /Users/karen/awesome-course
 
 # (Optional) Short name for course. If set, this gets used to prepend
