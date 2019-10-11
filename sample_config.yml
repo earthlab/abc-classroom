@@ -1,0 +1,60 @@
+
+# The GitHub organization to host your GitHub classroom
+# Create a new organization on GitHub and change this to the name you gave it
+organization: earth-analytics-edu
+
+# Name of your course. Will be used to prefix repositories inside the
+# organization. The repositories will be named:
+# https://github.com/<organization>/<courseName>-template
+# https://github.com/<organization>/<courseName>-<studentName>
+# or, if short_classname (below) is set:
+# https://github.com/<organization>/<short_classname>-template
+# https://github.com/<organization>/<short_classname>-<studentName>
+course_name: earth-analytics-bootcamp
+
+# Absolute path to the course directory. If you ran abc-quickstart, this was
+# set up for you
+course_directory: /Users/karen/awesome-course
+
+# (Optional) Short name for course. If set, this gets used to prepend
+# the repositories instead of the full course_name, just to make
+# names shorter and less unwieldy
+short_coursename: ea
+
+# Path to the course roster (list of students downloaded from
+# github classroom). If the roster is in the course_directory, simply enter
+# the filename (otherwise, enter the path relative to the course_directory).
+roster: roster.csv
+
+# Path to the nbgrader directory. Assumed to be relative to course_dir unless
+# you enter an absolute path (i.e. starting with '/' on Linux or OS X or with
+# 'C:' on Windows).
+nbgrader_dir: nbgrader
+
+# Path to the directory where you want to clone the student repositories.
+# Assumed to be relative to course_dir unless you enter an absolute path (i.e. starting with '/' on Linux or OS X or with 'C:' on Windows). None of the
+# parent directories should be git repositories.
+clone_dir: /Users/me/awesome-course/cloned_dirs
+
+
+# Path to the assignment template repositories. Again, none of
+# the parent directories should be a git repo. Assumed to be relative to
+# course_dir unless you enter an absolute path (i.e. starting with '/' on
+# Linux or OS X or with 'C:' on Windows).
+template_dir: /Users/me/awesome-course/assignment_repos
+
+# Additional files that will be created and added to the student repositories
+# Each item in the list will be added as a line in the file
+extra_files:
+  gitignore:
+  - .ipynb_checkpoints
+  - .DS_Store
+  README.md:
+  - \nThis repository contains the notebooks for this week's assignment.
+  - Complete the homework in each .ipynb notebook, commit your work, and
+  - push the changes to github. Your instructor will pull the completed
+  - assignment after the deadline.
+  - \nOnce grading is complete, your instructor will push the results to a
+  - file called `feedback.html`. You will need to pull the changes to your
+  - local copy and open this file in a browser to view (github will not
+  - render html files).

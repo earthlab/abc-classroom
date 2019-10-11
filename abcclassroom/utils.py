@@ -6,6 +6,7 @@ abc-classroom.utils
 
 
 import os
+import datetime
 import subprocess
 import sys
 import tempfile
@@ -132,28 +133,6 @@ def get_editor():
     return os.environ.get("VISUAL") or os.environ.get("EDITOR") or "vi"
 
 
-def _call_git(*args, directory=None):
-    cmd = ["git"]
-    cmd.extend(args)
-    try:
-        ret = subprocess.run(
-            cmd,
-            cwd=directory,
-            check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-    except subprocess.CalledProcessError as e:
-        err = e.stderr.decode("utf-8")
-        if err:
-            msg = err.split(":")[1].strip()
-        else:
-            msg = e.stdout.decode("utf-8")
-        raise RuntimeError(msg) from e
-
-    return ret
-
-
 @lru_cache(1)
 def TOP():
     """Path to the top level of the repository we are in"""
@@ -170,6 +149,31 @@ def P(*paths):
     """Construct absolute path inside the repository from `paths`"""
     path = os.path.join(*paths)
     return os.path.join(TOP(), path)
+
+
+def get_abspath(testpath, coursepath):
+    """
+    Create an absoluate path of testpath inside coursepath if testpath is
+    not already absolute.
+    """
+    if os.path.isabs(testpath):
+        return testpath
+    else:
+        return os.path.join(coursepath, testpath)
+
+
+def write_file(dir, filename, contents):
+    """Write a new file called filename to directory dir.
+    Each item in contents is a line in the file.
+    """
+    filepath = os.path.join(dir, filename)
+    try:
+        with open(filepath, "w") as f:
+            for line in contents:
+                f.write("{}\n".format(line))
+
+    except OSError as err:
+        print("Cannot open file: {0}".format(err))
 
 
 def flush_inline_matplotlib_plots():
@@ -196,6 +200,14 @@ def flush_inline_matplotlib_plots():
 
     if mpl.get_backend() == "module://ipykernel.pylab.backend_inline":
         flush_figures()
+
+
+def valid_date(s):
+    try:
+        return datetime.datetime.strptime(s, "%Y-%m-%d").date()
+    except ValueError:
+        msg = "Not a valid date: '{0}'.".format(s)
+        raise argparse.ArgumentTypeError(msg)
 
 
 @contextmanager
