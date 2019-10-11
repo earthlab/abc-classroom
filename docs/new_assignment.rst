@@ -5,24 +5,37 @@ If you are working in GitHub classroom, you will need to
 1. Create a template repository for each student assignment. This is the repo that each student will get a copy of when you release the assignment for them to work on.
 2. Push that template repository to your GitHub organization that is setup with a classroom, for distribution.
 
-<Somethng about assuming nbgrader>
-To create a new assignment git repo,
+If you are using nbgrader, then the files needed to distribute and grade each assignment
+live in a sub directory of **nbgrader** called **releases**.
 
-1. Navigate to the course directory that you created using abc-quickstart (TODO: add link to quickstart page).
-the commands below assume that you have a config.yml file with the needed information already added (TODO: Add instructions on customizing yaml file)
+The ``abc-assignment-template`` command will pull files from the releases directory
+and create a new assignment template directory that is also initialized as a git
+repository.
+
 
 Creating a new assignment template involves getting your local assignment
 files into
 a new repository on GitHub that you can use as a template for a GitHub
 classroom assignment.
 
-To create a new assignment template called "assignment1" using abc-classroom run ::
+How To Create A New Assignment Template repository
+==================================================
+
+Creating a new assignment using ``abc-assignment-template`` requires you to first
+update your config.yml file. Be sure to read the documentation about updating the config
+before followign the steps below <TODO: add link to that documentation>.
+
+To create a new assignment git repo:
+
+1. In the terminal, navigate to the course directory that you created using ``abc-quickstart`` (TODO: add link to quickstart page).
+
+2. To create a new assignment template called **assignment1** run:
 
   ``$ abc-assignment-template assignment1``
 
-This performs the following steps:
+``abc-assignment-template`` will then perform the following steps:
 
-* create a local directory and initialize as a git repository
+* create a local directory in the xxx/cloned_repos?? called assignment1 and initialize as a git repository
 * copy files from the ``nbgrader/release/assignment`` directory
 * create any additional files as listed in ``config.yml``
 * create a new repository on GitHub with the name ``assignment1-template``
