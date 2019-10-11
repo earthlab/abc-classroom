@@ -13,9 +13,21 @@ username and password).
 
 abc-grade
 ~~~~~~~~~
+Grades the work of some or all students, for some or all assignments.
+
+* clones the course repo for each student into a directory called 'graded'
+* checks which assignments have a due date today or in the past
+* collects notebooks for assignment that are due
+* grades the notebooks (using ok.grade_notebook): execute notebook, then iterate through cells collecting points
+* prints results
 
 abc-author
 ~~~~~~~~~~
+Creates student repository and autograding tests.
+
+* copy notebooks from master directory to student directory
+* copy any extra files listed in config
+* set up CircleCI on student directory 
 
 abc-distribute
 ~~~~~~~~~~~~~~
