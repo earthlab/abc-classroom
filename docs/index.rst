@@ -10,12 +10,13 @@ Welcome to abc-classroom's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   new_assignment
    api
    github-authentication
    contributing
    code-of-conduct
    change-log
-
+   console_scripts
 
 
 Indices and tables
