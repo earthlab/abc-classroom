@@ -33,7 +33,7 @@ def path_to_example(dataset):
     return os.path.join(data_dir, dataset)
 
 
-def create_dir_struct(course_name, f):
+def create_dir_struct(course_name="course_dir", f=False):
     """
     Create a directory structure that can be used to start an abc-classroom course. This includes a main directory,
     two sub directories for templates and cloned files, and a start to a configuration file.
