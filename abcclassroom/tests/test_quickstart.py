@@ -13,10 +13,14 @@ def test_quickstart_default():
     with open(os.path.join(main_dir, "config.yml")) as data:
         assert (
             os.path.isdir(main_dir)
-            and os.path.isdir(os.path.join(main_dir, "assignment-template-repos"))
+            and os.path.isdir(
+                os.path.join(main_dir, "assignment-template-repos")
+            )
             and os.path.isdir(os.path.join(main_dir, "student-cloned-repos"))
             and os.path.isfile(os.path.join(main_dir, "config.yml"))
-            and "course-name" and "assignment-template-repos" and "student-cloned-repos" in data.read()
+            and "course-name"
+            and "assignment-template-repos"
+            and "student-cloned-repos" in data.read()
         )
     rmtree(main_dir)
 
@@ -30,10 +34,14 @@ def test_quickstart_custom_name():
     with open(os.path.join(main_dir, "config.yml")) as data:
         assert (
             os.path.isdir(main_dir)
-            and os.path.isdir(os.path.join(main_dir, "assignment-template-repos"))
+            and os.path.isdir(
+                os.path.join(main_dir, "assignment-template-repos")
+            )
             and os.path.isdir(os.path.join(main_dir, "student-cloned-repos"))
             and os.path.isfile(os.path.join(main_dir, "config.yml"))
-            and "python_test_dir_custom_name" and "assignment-template-repos" and "student-cloned-repos" in data.read()
+            and "python_test_dir_custom_name"
+            and "assignment-template-repos"
+            and "student-cloned-repos" in data.read()
         )
     rmtree(main_dir)
 
@@ -66,10 +74,14 @@ def test_quickstart_remove_existing():
     main_dir = os.path.join(os.getcwd(), "python_test_dir_custom_name")
     with open(os.path.join(main_dir, "config.yml")) as data:
         assert (
-                os.path.isdir(main_dir)
-                and os.path.isdir(os.path.join(main_dir, "assignment-template-repos"))
-                and os.path.isdir(os.path.join(main_dir, "student-cloned-repos"))
-                and os.path.isfile(os.path.join(main_dir, "config.yml"))
-                and "course-name" and "assignment-template-repos" and "student-cloned-repos" in data.read()
+            os.path.isdir(main_dir)
+            and os.path.isdir(
+                os.path.join(main_dir, "assignment-template-repos")
+            )
+            and os.path.isdir(os.path.join(main_dir, "student-cloned-repos"))
+            and os.path.isfile(os.path.join(main_dir, "config.yml"))
+            and "course-name"
+            and "assignment-template-repos"
+            and "student-cloned-repos" in data.read()
         )
     rmtree(main_dir)
