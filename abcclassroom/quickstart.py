@@ -76,10 +76,20 @@ def create_dir_struct(course_name, f):
     if course_name:
         with open(os.path.join(course_name, "config.yml"), "r") as file:
             filedata = file.read()
-            filedata = filedata.replace("/Users/karen/awesome-course", main_dir)
-            filedata = filedata.replace("earth-analytics-bootcamp", course_name)
-            filedata = filedata.replace("/Users/me/awesome-course/cloned_dirs", os.path.join(main_dir, "student-cloned-repos"))
-            filedata = filedata.replace("/Users/me/awesome-course/assignment_repos", os.path.join(main_dir, "assignment-template-repos"))
+            filedata = filedata.replace(
+                "/Users/karen/awesome-course", main_dir
+            )
+            filedata = filedata.replace(
+                "earth-analytics-bootcamp", course_name
+            )
+            filedata = filedata.replace(
+                "/Users/me/awesome-course/cloned_dirs",
+                os.path.join(main_dir, "student-cloned-repos"),
+            )
+            filedata = filedata.replace(
+                "/Users/me/awesome-course/assignment_repos",
+                os.path.join(main_dir, "assignment-template-repos"),
+            )
         with open(os.path.join(course_name, "config.yml"), "w") as file:
             file.write(filedata)
     print(
