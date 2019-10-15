@@ -13,77 +13,20 @@ from getpass import getpass
 
 import github3 as gh3
 
-from ruamel.yaml import YAML
-
 import nbformat
 
 from . import ok
+from . import template
+from . import config as cf
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
-from . import github as GH
-from .utils import copytree, P, input_editor
 from .quickstart import create_dir_struct
+from . import github
+from .utils import copytree, P, input_editor, write_file, valid_date
 
 
 def dir_setup():
     create_dir_struct()
-
-
-def get_github_auth():
-    """
-    Check to see if there is an existing github authentication
-    and load the authentication.
-
-    Returns
-    -------
-    ruamel.yaml.comments.CommentedMap
-        Yaml object that contains the token and id for a github session.
-        If yaml doesn't exists, return an empty dictionary.
-    """
-    yaml = YAML()
-    try:
-        with open(op.expanduser("~/.abc-classroom.tokens.yml")) as f:
-            config = yaml.load(f)
-        return config["github"]
-
-    except FileNotFoundError:
-        return {}
-
-
-def set_github_auth(auth_info):
-    """
-    Set the github authentication information. Put the token and id authentication
-    information into a yaml file if it doesn't already exist.
-
-    Parameters
-    ----------
-    auth_info : dictionary
-        The token and id authentication information from github stored in a
-        dictionary object.
-    """
-    yaml = YAML()
-    config = {}
-    if get_github_auth():
-        with open(op.expanduser("~/.abc-classroom.tokens.yml")) as f:
-            config = yaml.load(f)
-
-    config["github"] = auth_info
-
-    with open(op.expanduser("~/.abc-classroom.tokens.yml"), "w") as f:
-        yaml.dump(config, f)
-
-
-def get_config():
-    yaml = YAML()
-    with open(P("config.yml")) as f:
-        config = yaml.load(f)
-    return config
-
-
-def set_config(config):
-    yaml = YAML()
-    with open(P("config.yml"), "w") as f:
-        yaml.dump(config, f)
 
 
 def init():
@@ -294,10 +237,10 @@ def distribute():
         repo_name = "{}-{}".format(config["courseName"], "template")
         with tempfile.TemporaryDirectory() as d:
             copytree(P("student"), d)
-            GH.git_init(d)
-            GH.commit_all_changes(d, "Initial commit")
+            gitu.git_init(d)
+            gitu.commit_all_changes(d, "Initial commit")
             try:
-                GH.create_repo(
+                gitu.create_repo(
                     config["organisation"],
                     repo_name,
                     d,
@@ -338,7 +281,7 @@ def distribute():
             print("Fetching work for %s..." % student)
 
             try:
-                GH.check_student_repo_exists(
+                gitu.check_student_repo_exists(
                     config["organisation"],
                     config["courseName"],
                     student,
@@ -353,7 +296,7 @@ def distribute():
                 continue
 
             with tempfile.TemporaryDirectory() as d:
-                student_dir = GH.fetch_student(
+                student_dir = gitu.fetch_student(
                     config["organisation"],
                     config["courseName"],
                     student,
@@ -363,21 +306,21 @@ def distribute():
                 # Copy assignment related files to the template repository
                 copytree(P("student"), student_dir)
 
-                if GH.repo_changed(student_dir):
+                if gitu.repo_changed(student_dir):
                     # only close outstanding PRs if we are about to make a
                     # new PR. Otherwise we can skip this.
                     repo = "{}-{}".format(config["courseName"], student)
-                    GH.close_existing_pullrequests(
+                    gitu.close_existing_pullrequests(
                         config["organisation"],
                         repo,
                         token=get_github_auth()["token"],
                     )
 
-                    branch = GH.new_branch(student_dir)
+                    branch = gitu.new_branch(student_dir)
 
-                    GH.commit_all_changes(student_dir, message)
-                    GH.push_to_github(student_dir, branch)
-                    GH.create_pr(
+                    gitu.commit_all_changes(student_dir, message)
+                    gitu.push_to_github(student_dir, branch)
+                    gitu.create_pr(
                         config["organisation"],
                         repo,
                         branch,
@@ -387,14 +330,6 @@ def distribute():
 
                 else:
                     print("Everything up to date.")
-
-
-def valid_date(s):
-    try:
-        return datetime.datetime.strptime(s, "%Y-%m-%d").date()
-    except ValueError:
-        msg = "Not a valid date: '{0}'.".format(s)
-        raise argparse.ArgumentTypeError(msg)
 
 
 def author():
@@ -467,3 +402,64 @@ def author():
         "Inspect `{}/` to check it looks as you "
         "expect.".format(P("student"))
     )
+
+
+def assignment_template():
+    """
+    Create a new assignment template repository: creates local directory,
+    copy / create required files, intialize as git repo, create remote repo
+    on GitHub, and push local repo to GitHub. Will open git editor to ask for
+    commit message.
+    """
+    parser = argparse.ArgumentParser(description=assignment_template.__doc__)
+    parser.add_argument(
+        "assignment",
+        help="Name of assignment. Must match name in nbgrader release directory",
+    )
+    parser.add_argument(
+        "--custom-message",
+        action="store_true",
+        help="Use a custom commit message for git. Will open the default git text editor for entry. If not set, will use message 'Initial commit'.",
+    )
+    parser.add_argument(
+        "--local-only",
+        action="store_true",
+        help="Create local template repository only; do not create GitHub repo or  push to GitHub (default: False)",
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["delete", "fail", "merge"],
+        default="fail",
+        help="Action if template directory already exists. Choices are: delete = delete the directory and contents; fail = exit and let user delete or rename; merge = keep existing dir, overwrite existing files, add new files. Default is fail.",
+    )
+    args = parser.parse_args()
+
+    print("Loading configuration from config.yml")
+    config = cf.get_config()
+    template_dir = cf.get_config_option(config, "template_dir", True)
+    # organization = get_config_option(config,"organization",True)
+
+    # these are the steps to create the local git repository
+    assignment = args.assignment
+    template_repo_path = template.create_template_dir(
+        config, assignment, args.mode
+    )
+    print("repo path: {}".format(template_repo_path))
+    template.copy_assignment_files(config, template_repo_path, assignment)
+    template.create_extra_files(config, template_repo_path, assignment)
+    github.init_and_commit(template_repo_path, args.custom_message)
+
+    # now do the github things, unless we've been asked to only do local things
+    if not args.local_only:
+        organization = cf.get_config_option(config, "organization", True)
+        # get the name of the repo (the final dir in the path)
+        repo_name = os.path.basename(template_repo_path)
+        print("Creating repo {}".format(repo_name))
+        # create the remote repo on github and push the local repo
+        # (will print error and return if repo already exists)
+        github.create_repo(
+            organization,
+            repo_name,
+            template_repo_path,
+            cf.get_github_auth()["token"],
+        )

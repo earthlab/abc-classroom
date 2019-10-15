@@ -11,6 +11,6 @@ two arguments that can be used to modify its functionality.
 
 1. ``--course_name course-repo-custom-name-here`` This argument will allow you to modify the name of the main
 repository ``abc-quickstart`` will create.
-2. ``-f Boolean`` This argument will allow you to override an existing output from ``abc-quickstart``. Doing this will
+2. ``-f`` This argument will allow you to override an existing output from ``abc-quickstart``. Doing this will
 delete anything currently in your course directory, but will allow you to start over fresh.
 
