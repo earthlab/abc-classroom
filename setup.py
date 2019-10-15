@@ -54,6 +54,7 @@ setup(
             "abc-author = abcclassroom.__main__:author",
             "abc-distribute = abcclassroom.__main__:distribute",
             "abc-assignment-template = abcclassroom.__main__:assignment_template",
+            "abc-clone = abcclassroom.__main__:clone",
         ]
     },
     url="https://github.com/earthlab/abc-classroom",

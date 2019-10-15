@@ -458,3 +458,30 @@ def assignment_template():
             template_repo_path,
             cf.get_github_auth()["token"],
         )
+
+
+def clone():
+    """
+    Clone the student repositories for a given assignment. Uses the student
+    list in the roster and clones into clone_dir, as defined in config.yml.
+    """
+    parser = argparse.ArgumentParser(description=clone.__doc__)
+    parser.add_argument(
+        "assignment",
+        help="Name of assignment. Must match name in nbgrader release directory",
+    )
+    parser.add_argument(
+        "-n",
+        "--dry-run",
+        help="List repositories that would be cloned without actually cloning them",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--skip-existing",
+        help="Skip attempt to update repositories that have already been cloned",
+        action="store_true",
+    )
+    args = parser.parse_args()
+
+    clone_student_repos()
+    check_student_repos_against_master()
