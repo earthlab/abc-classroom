@@ -40,7 +40,7 @@ def quickstart():
     course_name = args.course_name
     if not course_name:
         course_name = "course_dir"
-    create_dir_struct(args.course_name, args.f)
+    create_dir_struct(course_name, args.f)
 
 
 def init():
