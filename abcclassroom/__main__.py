@@ -23,10 +23,24 @@ from .notebook import split_notebook
 from .quickstart import create_dir_struct
 from . import github
 from .utils import copytree, P, input_editor, write_file, valid_date
+from argparse import ArgumentParser
 
 
-def dir_setup():
-    create_dir_struct()
+def quickstart():
+    parser = ArgumentParser(description=create_dir_struct.__doc__)
+    parser.add_argument(
+        "--course_name", help="Name of the main course repository"
+    )
+    parser.add_argument(
+        "-f",
+        action="store_true",
+        help="Option to override the existing folder structure made by this function previously.",
+    )
+    args = parser.parse_args()
+    course_name = args.course_name
+    if not course_name:
+        course_name = "course_dir"
+    create_dir_struct(args.course_name, args.f)
 
 
 def init():

@@ -53,7 +53,7 @@ setup(
             "abc-grade = abcclassroom.__main__:grade",
             "abc-author = abcclassroom.__main__:author",
             "abc-distribute = abcclassroom.__main__:distribute",
-            "abc-quickstart = abcclassroom.__main__:dir_setup",
+            "abc-quickstart = abcclassroom.__main__:quickstart",
             "abc-assignment-template = abcclassroom.__main__:assignment_template",
         ]
     },
