@@ -6,9 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
 * Add code of conduct, and md support (m2r) to build (#126, @lwasser)
 * Add documentation for `abc-init` (#74, @nkorinek)
 * Updated documentation for previous abc-classroom functionality (@kcranston)
+* Add a new console script that creates a template repository for an assignment (@kcranston, #79, $73)
+
 
 ## [0.0.11]
 * Change tracking started also added basic infrastructure for docs, autodoc, travis-ci testing and sphinx enhancements (@lwasser)

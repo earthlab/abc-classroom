@@ -49,3 +49,13 @@ will run every time you make a commit. Note that you will need to commit any cha
 that black makes to your code after those changes are applied.
 
     $ pre-commit install
+
+Running tests
+^^^^^^^^^^^^^
+To run all of the tests (from the root directory of the repo):
+
+    $ pytest
+
+To run only the subset of the tests in (for example) `singlefile.py`, use:
+
+    $ pytest abcclassroom/tests/single_file.py
