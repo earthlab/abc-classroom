@@ -14,6 +14,7 @@ Welcome to abc-classroom's documentation!
    api
    github-authentication
    contributing
+   quickstart
    code-of-conduct
    change-log
    console_scripts
