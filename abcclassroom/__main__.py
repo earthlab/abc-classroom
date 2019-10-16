@@ -25,11 +25,13 @@ from . import github
 from .utils import copytree, P, input_editor, write_file, valid_date
 from argparse import ArgumentParser
 
-
 def quickstart():
     parser = ArgumentParser(description=create_dir_struct.__doc__)
     parser.add_argument(
-        "--course_name", help="Name of the main course repository"
+        "course_name",
+        nargs="?",
+        default="course-directory",
+        help="Name of course. Use dashes-rather-than spaces for your name.",
     )
     parser.add_argument(
         "-f",
