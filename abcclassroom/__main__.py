@@ -13,8 +13,6 @@ from getpass import getpass
 
 import github3 as gh3
 
-import nbformat
-
 from . import ok
 from . import template
 from . import config as cf
@@ -24,6 +22,7 @@ from .quickstart import create_dir_struct
 from . import github
 from .utils import copytree, P, input_editor, write_file, valid_date
 from argparse import ArgumentParser
+
 
 def quickstart():
     parser = ArgumentParser(description=create_dir_struct.__doc__)
