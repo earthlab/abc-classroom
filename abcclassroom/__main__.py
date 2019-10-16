@@ -40,8 +40,6 @@ def quickstart():
     )
     args = parser.parse_args()
     course_name = args.course_name
-    if not course_name:
-        course_name = "course-directory"
     create_dir_struct(course_name, args.f)
 
 
