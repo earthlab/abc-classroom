@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+* Add code of conduct, and md support (m2r) to build (#126, @lwasser)
+* Add documentation for `abc-init` (#74, @nkorinek)
+* Added command `abc-quickstart` to set up file directory for users(#90, @nkorinek)
 * Add a new console script that creates a template repository for an assignment (@kcranston, #79, $73)
 * Add code of conduct, and md support (m2r) to build (@lwasser, #126)
 * Add documentation for `abc-init` (@nkorinek, #74)
