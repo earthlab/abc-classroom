@@ -16,9 +16,8 @@ def test_create_template_dir(default_config, tmp_path):
         default_config, "test_assignment"
     )
     assert os.path.isdir(template_path)
-    assert (
-        template_path
-        == "{}/test_template/tc-test_assignment-template".format(tmp_path)
+    assert template_path == os.path.join(
+        tmp_path, "test_template", "tc-test_assignment-template"
     )
 
 
