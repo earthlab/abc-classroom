@@ -1,4 +1,4 @@
-Get Started!
+Contributing
 ============
 
 Ready to contribute? Here's how to set up abc-classroom for local development.
@@ -25,9 +25,7 @@ local filesystem::
 Setup the ABC-Classroom Dev Environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Using conda, there are two options.
-
-1. The easiest option is to create an environment from the
+Create an environment from the
 ``environment.yml`` file.
 Note that this will only allow you to test against one version of python
 locally, but this is the recommended option on Windows and MacOS::
@@ -45,17 +43,33 @@ mode, along with the development requirements and pre-commit hooks::
     $ pip install -r dev-requirements.txt
 
 We are using black to enforce PEP 8 styles. Install the pre-commit once and black
-will run every time you make a commit. Note that you will need to commit any changes
-that black makes to your code after those changes are applied.
+will run every time you make a commit::
 
     $ pre-commit install
 
+Note that if black makes changes to your code, you will need to run `git commit` again to complete the commit.
+
 Running tests
 ^^^^^^^^^^^^^
-To run all of the tests (from the root directory of the repo):
+To run all of the tests (from the root directory of the repo)::
 
     $ pytest
 
 To run only the subset of the tests in (for example) `singlefile.py`, use:
 
     $ pytest abcclassroom/tests/single_file.py
+
+Optional: Install nbgrader
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+While not required, abc-classroom can be integrated with `nbgrader <https://github.com/jupyter/nbgrader>`_  for managing and autograding notebooks. You can install nbgrader using pip or conda (see the `nbgrader installation documentation <https://nbgrader.readthedocs.io/en/stable/user_guide/installation.html>`_ for details). Using conda::
+
+    $ conda install jupyter
+    $ conda install -c conda-forge nbgrader
+
+One nbgrader is installed, it is helpful
+to add the nbgrader extensions to Jupyter notebook. We've provided a bash script to install the recommended extensions, which you can use by running::
+
+    $ bash nbgrader-ext-installs.txt
+
+This will install all of the extensions to your current active environment.

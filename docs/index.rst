@@ -6,18 +6,19 @@
 Welcome to abc-classroom's documentation!
 =========================================
 
+``abc-classroom`` is a python package that automates some of the integration between local development / marking of lesson material and distribution through `GitHub Classroom <https://classroom.github.com/>`_. It supports (but does not require) `nbgrader <https://github.com/jupyter/nbgrader>`_ for managing and autograding notebooks.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    new_assignment
    github-authentication
-   api
    contributing
    code-of-conduct
    change-log
    previous-functionality
-
+   api
 
 Indices and tables
 ==================
