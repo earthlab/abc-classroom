@@ -103,3 +103,23 @@ Flags
  directory ``abc-quickstart`` will create.
  2. ``-f`` This argument will allow you to override an existing output from ``abc-quickstart``. Doing this will
  delete anything currently in your course directory, but will allow you to start over fresh.
+
+ ## Optional but Required for Now
+ abc-classroom will not fully depend upon nbgrader but does require a nbgrader
+ directory structure in it's early stages of development. We suggest that you
+ setup an nbgrader directory within the quickstart directory that you created
+ above by
+
+ 1. installing nbgrader and then running
+ 2. $ nbgrader quickstart course-name-here
+
+Your final directory will look something like this:
+
+.. code-block:: bash
+
+  course-name-here/
+    cloned-files/
+    template-files/
+    nbgrader/
+      release/
+    config.yml
