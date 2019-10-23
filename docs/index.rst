@@ -12,10 +12,9 @@ Welcome to abc-classroom's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   get-started
    new_assignment
-   github-authentication
    contributing
-   quickstart
    code-of-conduct
    change-log
    previous-functionality
