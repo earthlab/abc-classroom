@@ -2,6 +2,7 @@
 
 [![codecov](https://codecov.io/gh/earthlab/abc-classroom/branch/master/graph/badge.svg)](https://codecov.io/gh/earthlab/abc-classroom)
 
+[![Documentation Status](https://readthedocs.org/projects/abc-classroom/badge/?version=latest)](https://abc-classroom.readthedocs.io/en/latest/?badge=latest)
 
 # ABC Classroom
 
