@@ -15,7 +15,6 @@ Welcome to abc-classroom's documentation!
    get-started
    new_assignment
    contributing
-   quickstart
    code-of-conduct
    change-log
    previous-functionality

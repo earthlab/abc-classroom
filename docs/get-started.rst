@@ -74,3 +74,32 @@ ensure that the ``.abc-classroom.tokens.yml`` file exists on your computer.
    present and valid. If you
    wish to use abc-classroom with another account, then you will have to delete or move this
    token file. You can then run ``abc-init`` and re-authenticate with a different username.
+
+Once you have your authentication with GitHub Setup, you are ready to setup
+your directory structure.
+
+ABC-Classroom Quickstart
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+    When you run ``abc-quickstart``, ensure you are not in an existing git repository. The directory created will
+    eventually have other git repositories inside of it, and it is best to avoid creating repositories inside of
+    existing repositories.
+
+To set up the directory structure needed for abc-classroom, run:
+
+     $ abc-quickstart course-name-here
+
+This will
+
+1. create a course directory for you that is named whatever you called your ``course-name-here`` variable
+2. Create several other directories required to store homework assignment folders
+   and cloned student repositories.
+3. Creates a sample ``config.yml`` file that can be modified to run the program for your classroom. ``abc-quickstart`` has two arguments that can be used to modify its functionality.
+
+Flags
+~~~~~
+ 1. ``--course_name course-directory-custom-name-here`` This argument will allow you to modify the name of the main
+ directory ``abc-quickstart`` will create.
+ 2. ``-f`` This argument will allow you to override an existing output from ``abc-quickstart``. Doing this will
+ delete anything currently in your course directory, but will allow you to start over fresh.
