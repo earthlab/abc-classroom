@@ -12,6 +12,49 @@ from . import github
 from . import utils
 
 
+def new_update_template(args):
+    """
+    Creates or updates an assignment template repository. Implementation of both the new_template and update_template console scripts (which perform the same basic functions but with different command line arguments and defaults).
+    """
+    print("Loading configuration from config.yml")
+    config = cf.get_config()
+    template_dir = cf.get_config_option(config, "template_dir", True)
+
+    # create the local git repository
+    assignment = args.assignment
+    template_repo_path = create_template_dir(config, assignment, args.mode)
+    print("repo path: {}".format(template_repo_path))
+    copy_assignment_files(config, template_repo_path, assignment)
+    create_extra_files(config, template_repo_path, assignment)
+    github.init_and_commit(template_repo_path, args.custom_message)
+
+    # optional github steps
+    if args.github:
+        organization = cf.get_config_option(config, "organization", True)
+        repo_name = os.path.basename(template_repo_path)
+        token = cf.get_github_auth()["token"]
+
+        create_or_update_remote(
+            template_repo_path, organization, repo_name, token
+        )
+
+
+def create_or_update_remote(
+    template_repo_path, organization, repo_name, token
+):
+    if not github.remote_repo_exists(organization, repo_name, token):
+        print("Creating remote repo {}".format(repo_name))
+        # create the remote repo on github and push the local repo
+        # (will print error and return if repo already exists)
+        github.create_repo(organization, repo_name, token)
+        # adding the remote here, assuming that we can't get into a
+        # state where the remote got created but not added
+        github.add_remote(template_repo_path, organization, remote_repo, token)
+
+    print("Pushing changes to remote repository on GitHub")
+    github.push_to_github(template_repo_path, "master")
+
+
 def create_template_dir(config, assignment, mode="fail"):
     """
     Creates a new directory in template_dir that will become the

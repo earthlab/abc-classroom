@@ -37,6 +37,20 @@ def _call_git(*args, directory=None):
     return ret
 
 
+def remote_repo_exists(org, repository, token=None):
+    """Check if the remote repository exists for the assignment.
+    """
+
+    try:
+        g = gh3.login(token=token)
+        g.repository(org, repository)
+
+    except Exception as e:
+        return False
+
+    return True
+
+
 def check_student_repo_exists(org, course, student, token=None):
     """Check if the student has a repository for the course.
 
@@ -132,10 +146,8 @@ def create_pr(org, repository, branch, message, token):
     repo.create_pull(title, "master", branch, msg)
 
 
-def create_repo(org, repository, directory, token):
-    """Create a repository in the provided GitHub organization, adds that
-    repo as a remote to the local repo in directory, and pushes the
-    directory.
+def create_repo(org, repository, token):
+    """Create a repository in the provided GitHub organization.
     """
     github_obj = gh3.login(token=token)
     organization = github_obj.organization(org)
@@ -152,17 +164,13 @@ def create_repo(org, repository, directory, token):
                 org, repository
             )
         )
-        print("Not adding remote to local repo or pushing to github.")
-        return
 
-    _call_git(
-        "remote",
-        "add",
-        "origin",
-        "https://{}@github.com/{}/{}".format(token, org, repository),
-        directory=directory,
+
+def add_remote(directory, organization, remote_repo, token):
+    remote_url = "https://{}@github.com/{}/{}".format(
+        token, organization, remote_repo
     )
-    push_to_github(directory, "master")
+    _call_git("remote", "add", "origin", remote_url, directory=directory)
 
 
 def repo_changed(directory):
