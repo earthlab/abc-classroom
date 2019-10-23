@@ -47,12 +47,17 @@ def create_or_update_remote(
         # create the remote repo on github and push the local repo
         # (will print error and return if repo already exists)
         github.create_repo(organization, repo_name, token)
-        # adding the remote here, assuming that we can't get into a
-        # state where the remote got created but not added
-        github.add_remote(template_repo_path, organization, remote_repo, token)
+
+    github.add_remote(template_repo_path, organization, repo_name, token)
 
     print("Pushing changes to remote repository on GitHub")
-    github.push_to_github(template_repo_path, "master")
+    try:
+        github.push_to_github(template_repo_path, "master")
+    except RuntimeError as e:
+        print(
+            "Push to github failed. If the remote already existed, you may need to fetch and merge before pulling. Here is the github error:"
+        )
+        print(e)
 
 
 def create_template_dir(config, assignment, mode="fail"):
@@ -61,10 +66,10 @@ def create_template_dir(config, assignment, mode="fail"):
     template repository for the assignment.
     """
     course_dir = cf.get_config_option(config, "course_directory", True)
-    template_dir = cf.get_config_option(config, "template_dir", True)
-    parent_path = utils.get_abspath(template_dir, course_dir)
+    template_parent_dir = cf.get_config_option(config, "template_dir", True)
+    parent_path = utils.get_abspath(template_parent_dir, course_dir)
 
-    # check that course_dir/template_dir exists, and create it if it does not
+    # check that parent directory for templates exists, and create it if it does not
     if not os.path.isdir(parent_path):
         print(
             "Creating new directory for template repos at {}".format(
@@ -139,6 +144,7 @@ def copy_assignment_files(config, template_repo, assignment):
     for file in all_files:
         fpath = os.path.join(release_dir, file)
         print("copying {} to {}".format(fpath, template_repo))
+        # overwrites if fpath exists in template_repo
         shutil.copy(fpath, template_repo)
         nfiles += 1
     print("Copied {} files".format(nfiles))

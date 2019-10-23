@@ -423,7 +423,7 @@ def new_template():
     )
     parser.add_argument(
         "--mode",
-        choices=["delete", "fail"],
+        choices=["delete", "fail", "merge"],
         default="fail",
         help="Action if template directory already exists. Choices are: delete = delete the directory and contents; fail = exit and let you delete or rename; merge = keep existing dir, overwrite existing files, add new files (default = fail).",
     )

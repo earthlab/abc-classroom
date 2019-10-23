@@ -28,11 +28,9 @@ def _call_git(*args, directory=None):
         )
     except subprocess.CalledProcessError as e:
         err = e.stderr.decode("utf-8")
-        if err:
-            msg = err.split(":")[1].strip()
-        else:
-            msg = e.stdout.decode("utf-8")
-        raise RuntimeError(msg) from e
+        if not err:
+            err = e.stdout.decode("utf-8")
+        raise RuntimeError(err) from e
 
     return ret
 
@@ -235,7 +233,12 @@ def init_and_commit(directory, custom_message=False):
 
 def push_to_github(directory, branch):
     """Push `branch` back to GitHub"""
-    _call_git("push", "--set-upstream", "origin", branch, directory=directory)
+    try:
+        _call_git(
+            "push", "--set-upstream", "origin", branch, directory=directory
+        )
+    except RuntimeError as e:
+        raise e
 
 
 def git_init(directory):
