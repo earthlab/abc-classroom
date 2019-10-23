@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* Fix RTD build to ensure API reference and other docs build properly (#113, #114, @lwasser)
 * Add code of conduct, and md support (m2r) to build (#126, @lwasser)
 * Add documentation for `abc-init` (#74, @nkorinek)
 * Updated documentation for previous abc-classroom functionality (@kcranston)
