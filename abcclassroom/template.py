@@ -6,6 +6,7 @@ abc-classroom.template
 import os
 import sys
 import shutil
+from pathlib import Path
 
 from . import config as cf
 from . import github
@@ -42,13 +43,18 @@ def new_update_template(args):
 def create_or_update_remote(
     template_repo_path, organization, repo_name, token
 ):
-    if not github.remote_repo_exists(organization, repo_name, token):
+    remote_exists = github.remote_repo_exists(organization, repo_name, token)
+    if not remote_exists:
         print("Creating remote repo {}".format(repo_name))
         # create the remote repo on github and push the local repo
         # (will print error and return if repo already exists)
         github.create_repo(organization, repo_name, token)
 
-    github.add_remote(template_repo_path, organization, repo_name, token)
+    try:
+        github.add_remote(template_repo_path, organization, repo_name, token)
+    except RuntimeError as e:
+        print("Remote already added to local repository")
+        pass
 
     print("Pushing changes to remote repository on GitHub")
     try:
@@ -63,7 +69,7 @@ def create_or_update_remote(
 def create_template_dir(config, assignment, mode="fail"):
     """
     Creates a new directory in template_dir that will become the
-    template repository for the assignment.
+    template repository for the assignment. If directory exists and mode is  merge, do nothing. If directory exists and mode is delete, remove contents but leave .git directory.
     """
     course_dir = cf.get_config_option(config, "course_directory", True)
     template_parent_dir = cf.get_config_option(config, "template_dir", True)
@@ -98,26 +104,36 @@ def create_template_dir(config, assignment, mode="fail"):
     else:
         if mode == "fail":
             print(
-                "Directory {} already exists; re-run with '--mode merge' or --mode delete', or delete / move directory before re-running".format(
+                "Directory {} already exists; re-run with '--mode merge' or '--mode delete', or delete / move directory before re-running".format(
                     template_path
                 )
             )
             sys.exit(1)
         elif mode == "merge":
             print(
-                "Template directory {} already exists but mode is 'merge'; will keep directory but overwrite existing files with same names".format(
+                "Template directory {} already exists; will keep directory but overwrite existing files with same names".format(
                     template_path
                 )
             )
         else:
             # mode == delete
             print(
-                "Deleting existing directory and contents at {} and creating new empty directory with same name.".format(
+                "Template directory {} already exists; deleting existing files but keeping .git directory, if exists.".format(
                     template_path
                 )
             )
+            # temporarily move the .git dir to the parent of the template_path
+            gitdir = Path(template_path, ".git")
+            target = Path(Path(template_path).parent, ".tempgit")
+            gitdir.replace(target)
+
+            # remove template_path and re-create with same name
             shutil.rmtree(template_path)
             os.mkdir(template_path)
+
+            # and then move the .git dir back
+            target.replace(gitdir)
+
     return template_path
 
 
