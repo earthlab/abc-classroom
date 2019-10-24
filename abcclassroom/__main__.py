@@ -425,7 +425,7 @@ def new_template():
         "--mode",
         choices=["delete", "fail", "merge"],
         default="fail",
-        help="Action if template directory already exists. Choices are: delete = delete the directory and contents; fail = exit and let you delete or rename; merge = keep existing dir, overwrite existing files, add new files (default = fail).",
+        help="Action if template directory already exists. Choices are: delete = delete contents before proceeding (except .git directory); merge = keep existing dir, overwrite existing files, add new files (Default = fail).",
     )
     args = parser.parse_args()
 
@@ -434,7 +434,7 @@ def new_template():
 
 def update_template():
     """
-    Updates an existing assignment template repository: copy / create required files and push local changes to GitHub. Will open git editor to ask for
+    Updates an existing assignment template repository: update / add new and  changed files, then push local changes to GitHub. Will open git editor to ask for
     commit message.
     """
     parser = argparse.ArgumentParser(description=update_template.__doc__)
@@ -446,7 +446,7 @@ def update_template():
         "--mode",
         choices=["delete", "merge"],
         default="merge",
-        help="What to do if there is an existing template directory. Choices are: delete = delete the directory and contents before proceeding; merge = keep existing dir, overwrite existing files, add new files (Default = merge).",
+        help="What to do with existing contents of template directory. Choices are: delete = remove contents before proceeding (leaving .git directory); merge = overwrite existing files add new files (Default = merge).",
     )
     args = parser.parse_args()
     template.new_update_template(args)
