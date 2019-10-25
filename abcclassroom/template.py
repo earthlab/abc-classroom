@@ -124,15 +124,16 @@ def create_template_dir(config, assignment, mode="fail"):
             )
             # temporarily move the .git dir to the parent of the template_path
             gitdir = Path(template_path, ".git")
-            target = Path(Path(template_path).parent, ".tempgit")
-            gitdir.replace(target)
+            if gitdir.exists():
+                target = Path(Path(template_path).parent, ".tempgit")
+                gitdir.replace(target)
 
-            # remove template_path and re-create with same name
-            shutil.rmtree(template_path)
-            Path(template_path).mkdir()
+                # remove template_path and re-create with same name
+                shutil.rmtree(template_path)
+                Path(template_path).mkdir()
 
-            # and then move the .git dir back
-            target.replace(gitdir)
+                # and then move the .git dir back
+                target.replace(gitdir)
 
     return template_path
 
