@@ -229,6 +229,8 @@ def init_and_commit(directory, custom_message=False):
                 print("Empty commit message, exiting.")
                 sys.exit(1)
         commit_all_changes(directory, message)
+    else:
+        print("No changes to local repository.")
 
 
 def push_to_github(directory, branch):

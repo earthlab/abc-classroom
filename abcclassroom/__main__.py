@@ -419,7 +419,7 @@ def new_template():
     parser.add_argument(
         "--github",
         action="store_true",
-        help="Perform the GitHub operations (create remote repo on GitHub and  push to remote (default: False)",
+        help="Also perform the GitHub operations (create remote repo on GitHub and push to remote (by default, only does local repository setup)",
     )
     parser.add_argument(
         "--mode",
@@ -449,4 +449,8 @@ def update_template():
         help="What to do with existing contents of template directory. Choices are: delete = remove contents before proceeding (leaving .git directory); merge = overwrite existing files add new files (Default = merge).",
     )
     args = parser.parse_args()
+    # now set the additional args (so that it matches the keys in add_template and we can use the same implementation
+    # methods)
+    setattr(args, "github", True)
+    setattr(args, "custom_message", True)
     template.new_update_template(args)

@@ -56,12 +56,12 @@ def create_or_update_remote(
         print("Remote already added to local repository")
         pass
 
-    print("Pushing changes to remote repository on GitHub")
+    print("Pushing any changes to remote repository on GitHub")
     try:
         github.push_to_github(template_repo_path, "master")
     except RuntimeError as e:
         print(
-            "Push to github failed. If the remote already existed, you may need to fetch and merge before pulling. Here is the github error:"
+            "Push to github failed. This is usually because there are changes on the remote that you do not have locally. Here is the github error:"
         )
         print(e)
 
@@ -96,10 +96,10 @@ def create_template_dir(config, assignment, mode="fail"):
         sys.exit(1)
 
     repo_name = course_name + "-" + assignment + "-template"
-    template_path = os.path.join(parent_path, repo_name)
-    dir_exists = os.path.exists(template_path)
+    template_path = Path(parent_path, repo_name)
+    dir_exists = template_path.is_dir()
     if not dir_exists:
-        os.mkdir(template_path)
+        template_path.mkdir()
         print("Creating new template repo at {}".format(template_path))
     else:
         if mode == "fail":
@@ -129,7 +129,7 @@ def create_template_dir(config, assignment, mode="fail"):
 
             # remove template_path and re-create with same name
             shutil.rmtree(template_path)
-            os.mkdir(template_path)
+            Path(template_path).mkdir()
 
             # and then move the .git dir back
             target.replace(gitdir)
