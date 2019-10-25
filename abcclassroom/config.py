@@ -64,10 +64,9 @@ def get_config():
         return config
     except FileNotFoundError as err:
         print(
-            "Oops! I can't seem to find a config.yml file in your course "
-            "directory. If you don't have a course directory and config file  "
-            "setup yet, create one using  abc-quickstart. You will need to edit"
-            "the file to ensure it contains the variables related to your course"
+            "Oops! I can't seem to find a config.yml file in this "
+            "directory. Are you in the top-level directory for the course? If you don't have a course directory and config file "
+            "setup yet, you can create one using abc-quickstart"
             ".\n"
         )
         sys.exit(1)
