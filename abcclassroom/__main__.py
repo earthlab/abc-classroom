@@ -13,15 +13,33 @@ from getpass import getpass
 
 import github3 as gh3
 
-import nbformat
-
 from . import ok
 from . import template
 from . import config as cf
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
+from .quickstart import create_dir_struct
 from . import github
 from .utils import copytree, P, input_editor, write_file, valid_date
+from argparse import ArgumentParser
+
+
+def quickstart():
+    parser = ArgumentParser(description=create_dir_struct.__doc__)
+    parser.add_argument(
+        "course_name",
+        nargs="?",
+        default="course-directory",
+        help="Name of course. Use dashes-rather-than spaces for your name.",
+    )
+    parser.add_argument(
+        "-f",
+        action="store_true",
+        help="Option to override the existing folder structure made by this function previously.",
+    )
+    args = parser.parse_args()
+    course_name = args.course_name
+    create_dir_struct(course_name, args.f)
 
 
 def init():

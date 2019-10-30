@@ -2,15 +2,20 @@
 
 [![codecov](https://codecov.io/gh/earthlab/abc-classroom/branch/master/graph/badge.svg)](https://codecov.io/gh/earthlab/abc-classroom)
 
+[![Documentation Status](https://readthedocs.org/projects/abc-classroom/badge/?version=latest)](https://abc-classroom.readthedocs.io/en/latest/?badge=latest)
 
 # ABC Classroom
 
-> A set of tools to manage your notebooks and assignments for a class.
+A set of tools to make it easier to manage a class being taught using GitHub
+Classroom.
 
 
-## Try it!
+## Get Started
 
-Run `pip install -e .` in the directory of this README.
+abc-classroom is under significant development currently. Check back
+for updates!
+
+Run `$ pip install abc-classroom`
 
 
 ## Dev
