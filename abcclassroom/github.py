@@ -28,13 +28,25 @@ def _call_git(*args, directory=None):
         )
     except subprocess.CalledProcessError as e:
         err = e.stderr.decode("utf-8")
-        if err:
-            msg = err.split(":")[1].strip()
-        else:
-            msg = e.stdout.decode("utf-8")
-        raise RuntimeError(msg) from e
+        if not err:
+            err = e.stdout.decode("utf-8")
+        raise RuntimeError(err) from e
 
     return ret
+
+
+def remote_repo_exists(org, repository, token=None):
+    """Check if the remote repository exists for the assignment.
+    """
+
+    try:
+        g = gh3.login(token=token)
+        g.repository(org, repository)
+
+    except Exception as e:
+        return False
+
+    return True
 
 
 def check_student_repo_exists(org, course, student, token=None):
@@ -132,10 +144,8 @@ def create_pr(org, repository, branch, message, token):
     repo.create_pull(title, "master", branch, msg)
 
 
-def create_repo(org, repository, directory, token):
-    """Create a repository in the provided GitHub organization, adds that
-    repo as a remote to the local repo in directory, and pushes the
-    directory.
+def create_repo(org, repository, token):
+    """Create a repository in the provided GitHub organization.
     """
     github_obj = gh3.login(token=token)
     organization = github_obj.organization(org)
@@ -152,17 +162,13 @@ def create_repo(org, repository, directory, token):
                 org, repository
             )
         )
-        print("Not adding remote to local repo or pushing to github.")
-        return
 
-    _call_git(
-        "remote",
-        "add",
-        "origin",
-        "https://{}@github.com/{}/{}".format(token, org, repository),
-        directory=directory,
+
+def add_remote(directory, organization, remote_repo, token):
+    remote_url = "https://{}@github.com/{}/{}".format(
+        token, organization, remote_repo
     )
-    push_to_github(directory, "master")
+    _call_git("remote", "add", "origin", remote_url, directory=directory)
 
 
 def repo_changed(directory):
@@ -223,11 +229,18 @@ def init_and_commit(directory, custom_message=False):
                 print("Empty commit message, exiting.")
                 sys.exit(1)
         commit_all_changes(directory, message)
+    else:
+        print("No changes to local repository.")
 
 
 def push_to_github(directory, branch):
     """Push `branch` back to GitHub"""
-    _call_git("push", "--set-upstream", "origin", branch, directory=directory)
+    try:
+        _call_git(
+            "push", "--set-upstream", "origin", branch, directory=directory
+        )
+    except RuntimeError as e:
+        raise e
 
 
 def git_init(directory):

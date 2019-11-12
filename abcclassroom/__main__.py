@@ -417,14 +417,14 @@ def author():
     )
 
 
-def assignment_template():
+def new_template():
     """
     Create a new assignment template repository: creates local directory,
-    copy / create required files, intialize as git repo, create remote repo
-    on GitHub, and push local repo to GitHub. Will open git editor to ask for
-    commit message.
+    copy / create required files, intialize as git repo, and (optionally) create remote repo
+    on GitHub and push local repo to GitHub. Will open git editor to ask for
+    commit message if custom message requested.
     """
-    parser = argparse.ArgumentParser(description=assignment_template.__doc__)
+    parser = argparse.ArgumentParser(description=new_template.__doc__)
     parser.add_argument(
         "assignment",
         help="Name of assignment. Must match name in nbgrader release directory",
@@ -432,47 +432,43 @@ def assignment_template():
     parser.add_argument(
         "--custom-message",
         action="store_true",
-        help="Use a custom commit message for git. Will open the default git text editor for entry. If not set, will use message 'Initial commit'.",
+        help="Use a custom commit message for git. Will open the default git text editor for entry (if not set, uses default message 'Initial commit').",
     )
     parser.add_argument(
-        "--local-only",
+        "--github",
         action="store_true",
-        help="Create local template repository only; do not create GitHub repo or  push to GitHub (default: False)",
+        help="Also perform the GitHub operations (create remote repo on GitHub and push to remote (by default, only does local repository setup)",
     )
     parser.add_argument(
         "--mode",
         choices=["delete", "fail", "merge"],
         default="fail",
-        help="Action if template directory already exists. Choices are: delete = delete the directory and contents; fail = exit and let user delete or rename; merge = keep existing dir, overwrite existing files, add new files. Default is fail.",
+        help="Action if template directory already exists. Choices are: delete = delete contents before proceeding (except .git directory); merge = keep existing dir, overwrite existing files, add new files (Default = fail).",
     )
     args = parser.parse_args()
 
-    print("Loading configuration from config.yml")
-    config = cf.get_config()
-    template_dir = cf.get_config_option(config, "template_dir", True)
-    # organization = get_config_option(config,"organization",True)
+    template.new_update_template(args)
 
-    # these are the steps to create the local git repository
-    assignment = args.assignment
-    template_repo_path = template.create_template_dir(
-        config, assignment, args.mode
+
+def update_template():
+    """
+    Updates an existing assignment template repository: update / add new and  changed files, then push local changes to GitHub. Will open git editor to ask for
+    commit message.
+    """
+    parser = argparse.ArgumentParser(description=update_template.__doc__)
+    parser.add_argument(
+        "assignment",
+        help="Name of assignment. Must match name in nbgrader release directory",
     )
-    print("repo path: {}".format(template_repo_path))
-    template.copy_assignment_files(config, template_repo_path, assignment)
-    template.create_extra_files(config, template_repo_path, assignment)
-    github.init_and_commit(template_repo_path, args.custom_message)
-
-    # now do the github things, unless we've been asked to only do local things
-    if not args.local_only:
-        organization = cf.get_config_option(config, "organization", True)
-        # get the name of the repo (the final dir in the path)
-        repo_name = os.path.basename(template_repo_path)
-        print("Creating repo {}".format(repo_name))
-        # create the remote repo on github and push the local repo
-        # (will print error and return if repo already exists)
-        github.create_repo(
-            organization,
-            repo_name,
-            template_repo_path,
-            cf.get_github_auth()["token"],
-        )
+    parser.add_argument(
+        "--mode",
+        choices=["delete", "merge"],
+        default="merge",
+        help="What to do with existing contents of template directory. Choices are: delete = remove contents before proceeding (leaving .git directory); merge = overwrite existing files add new files (Default = merge).",
+    )
+    args = parser.parse_args()
+    # now set the additional args (so that it matches the keys in add_template and we can use the same implementation
+    # methods)
+    setattr(args, "github", True)
+    setattr(args, "custom_message", True)
+    template.new_update_template(args)
