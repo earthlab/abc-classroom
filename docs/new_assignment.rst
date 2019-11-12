@@ -1,7 +1,8 @@
 Create A New Assignment Git Repo
 --------------------------------
 
-If you are working in GitHub classroom, you will need to
+If you are working in GitHub classroom, you will need to:
+
 1. Create a template repository for each student assignment. This is the repo that each student will get a copy of when you release the assignment for them to work on.
 2. Push that template repository to your GitHub organization that is setup with a classroom, for distribution.
 
@@ -17,12 +18,20 @@ files into
 a new repository on GitHub that you can use as a template for a GitHub
 classroom assignment.
 
+.. note::
+   If you are using nbgrader you will want to 1. run ``$ nbgrader quickstart course-name-here``
+   to setup the nbgrader directory structure within your new course created with
+   ``abc-classroom quickstart course-name-here``. 2. Create an nbgrader assignment
+   release using ``nbgrader release_assignment assignment1``. Once you have
+   created and released the assignment with nbgrader, you can then
+   create the assignment template using abc-classroom.
+
 How To Create A New Assignment Template repository
 ==================================================
 
 Creating a new assignment using ``abc-assignment-template`` requires you to first
 update your config.yml file. Be sure to read the documentation about updating the config
-before followign the steps below <TODO: add link to that documentation>.
+before following the steps below <TODO: add link to that documentation>.
 
 To create a new assignment git repo:
 
