@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Add documentation for `abc-init` (#74, @nkorinek)
 * Updated documentation for previous abc-classroom functionality (@kcranston)
 * Added command `abc-quickstart` to set up file directory for users(#90, @nkorinek)
-* Add a new console script that creates a template repository for an assignment (@kcranston, #79, $73)
+* Add a new console script that creates a template repository for an assignment (@kcranston, #79, #73)
 
 
 ## [0.0.11]
