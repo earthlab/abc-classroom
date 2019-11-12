@@ -1,4 +1,8 @@
 
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3539582.svg)](https://doi.org/10.5281/zenodo.3539582)
+
+
 ![PyPI](https://img.shields.io/pypi/v/abc-classroom.svg?color=purple&style=plastic)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/abc-classroom.svg?color=purple&label=pypi%20downloads&style=plastic)
 [![codecov](https://codecov.io/gh/earthlab/abc-classroom/branch/master/graph/badge.svg)](https://codecov.io/gh/earthlab/abc-classroom)
