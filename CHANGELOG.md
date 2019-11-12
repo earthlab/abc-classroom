@@ -6,13 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
+* Fix config.yml to ensure ``gitignore`` file has a period at the beginning, update docs (@lwasser, #124)
+* Add assignment template functionality (@kcranston, #105)
 * Fix RTD build to ensure API reference and other docs build properly (#113, #114, @lwasser)
 * Add code of conduct, and md support (m2r) to build (#126, @lwasser)
 * Add documentation for `abc-init` (#74, @nkorinek)
 * Updated documentation for previous abc-classroom functionality (@kcranston)
 * Added command `abc-quickstart` to set up file directory for users(#90, @nkorinek)
-* Add a new console script that creates a template repository for an assignment (@kcranston, #79, $73)
+* Add a new console script that creates a template repository for an assignment (@kcranston, #79, #73)
 
 
 ## [0.0.11]

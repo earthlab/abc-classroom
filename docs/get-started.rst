@@ -105,12 +105,12 @@ Flags
  delete anything currently in your course directory, but will allow you to start over fresh.
 
  ## Optional but Required for Now
- abc-classroom will not fully depend upon nbgrader but does require a nbgrader
+ ``abc-classroom`` does not fully depend upon ``nbgrader`` but does require a ``nbgrader``
  directory structure in it's early stages of development. We suggest that you
- setup an nbgrader directory within the quickstart directory that you created
- above by
+ setup an ``nbgrader`` directory within the quickstart directory that you created
+ above by:
 
- 1. installing nbgrader and then running
+ 1. Installing nbgrader and then running
  2. $ nbgrader quickstart course-name-here
 
 Your final directory will look something like this:
