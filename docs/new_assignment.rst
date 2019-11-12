@@ -19,12 +19,18 @@ a new repository on GitHub that you can use as a template for a GitHub
 classroom assignment.
 
 .. note::
-   If you are using nbgrader you will want to 1. run ``$ nbgrader quickstart course-name-here``
+   If you are using nbgrader you will want to 1. run ``$ nbgrader quickstart nbgrader``
    to setup the nbgrader directory structure within your new course created with
-   ``abc-classroom quickstart course-name-here``. 2. Create an nbgrader assignment
-   release using ``nbgrader release_assignment assignment1``. Once you have
+   ``abc-classroom quickstart course-name-here``. Note that we suggest that you name
+   your nbgrader course _nbgrader-coursename_ to make the directory structure
+   a bit cleaner. Once that is setup: 2. Create an nbgrader assignment
+    using ``nbgrader generate_assignment assignment1``. This step will move the
+    assignments created in the source/ nbgrader directory over to a release/ directory.
+    abc-classroom will look for that release/ directory to find assignment files
+    each time you run ``abc-assignment-template``. Once you have
    created and released the assignment with nbgrader, you can then
-   create the assignment template using abc-classroom.
+   create the assignment template using abc-classroom which will generate a new
+   template github repo that you can use with github classroom.
 
 How To Create A New Assignment Template repository
 ==================================================
