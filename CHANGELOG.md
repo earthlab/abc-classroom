@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.0.12]
+* Add console script for cloning student repos (@kcranston)
 * Fix config.yml to ensure ``gitignore`` file has a period at the beginning, update docs (@lwasser, #124)
 * Add assignment template functionality (@kcranston, #105)
 * Fix RTD build to ensure API reference and other docs build properly (#113, #114, @lwasser)

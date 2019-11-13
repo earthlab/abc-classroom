@@ -22,8 +22,13 @@ def make_clone_dir(clone_dir, course_dir):
         abspath.mkdir()
 
 
-def clone_or_update_repo(organization, slug, clone_dir, skip_existing):
-    destination_dir = Path(clone_dir, slug)
+def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
+    """
+    Tries to clone the repository 'repo' from the organization. If the local
+    repository already exists, pulls instead of cloning (unless the skip flag
+    is set, in which case it does nothing).
+    """
+    destination_dir = Path(clone_dir, repo)
     if destination_dir.is_dir():
         # if path exists, then pull instead of clone (unless skip_existing)
         if skip_existing:
@@ -35,7 +40,7 @@ def clone_or_update_repo(organization, slug, clone_dir, skip_existing):
             return
         github.pull_from_github(destination_dir)
     else:
-        github.clone_repo(organization, slug, clone_dir)
+        github.clone_repo(organization, repo, clone_dir)
 
 
 def clone_student_repos(args):
@@ -60,10 +65,10 @@ def clone_student_repos(args):
             for row in reader:
                 student = row["github_username"]
                 # expected columns are identifier,github_username,github_id,name
-                slug = "{}-{}".format(assignment, student)
+                repo = "{}-{}".format(assignment, student)
                 try:
                     clone_or_update_repo(
-                        organization, slug, clone_dir, skip_existing
+                        organization, repo, clone_dir, skip_existing
                     )
                 except RuntimeError as err:
                     missing.append(student)
