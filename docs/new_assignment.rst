@@ -1,7 +1,8 @@
 Create A New Assignment Git Repo
 --------------------------------
 
-If you are working in GitHub classroom, you will need to
+If you are working in GitHub classroom, you will need to:
+
 1. Create a template repository for each student assignment. This is the repo that each student will get a copy of when you release the assignment for them to work on.
 2. Push that template repository to your GitHub organization that is setup with a classroom, for distribution.
 
@@ -17,12 +18,26 @@ files into
 a new repository on GitHub that you can use as a template for a GitHub
 classroom assignment.
 
+.. note::
+   If you are using nbgrader you will want to 1. run ``$ nbgrader quickstart nbgrader``
+   to setup the nbgrader directory structure within your new course created with
+   ``abc-classroom quickstart course-name-here``. Note that we suggest that you name
+   your nbgrader course ``nbgrader-coursename`` to make the directory structure
+   a bit cleaner. Once that is setup: 2. Create an nbgrader assignment using
+   ``nbgrader generate_assignment assignment1``. This step will move the
+   assignments created in the source/ nbgrader directory over to a ``release/``
+   directory. abc-classroom will look for that release/ directory to find
+   assignment files each time you run ``abc-assignment-template``. Once you have
+   created and released the assignment with nbgrader, you can then
+   create the assignment template using abc-classroom which will generate a new
+   template GitHub repo that you can use with GitHub classroom.
+
 How To Create A New Assignment Template repository
 ==================================================
 
 Creating a new assignment using ``abc-assignment-template`` requires you to first
 update your config.yml file. Be sure to read the documentation about updating the config
-before followign the steps below <TODO: add link to that documentation>.
+before following the steps below <TODO: add link to that documentation>.
 
 To create a new assignment git repo:
 
@@ -80,7 +95,7 @@ Creating an assignment uses these settings from ``config.yml``:
 
 * ``template_dir`` : the directory where the local git repository will be created.
 * ``organization`` : the GitHub organization where the new remote repository will be created
-* ``course_name`` : (optional) If set, the name of the local git repository and remote github repository will be ``course_name-assignment-template``. If ``short_coursename`` is not set, you must set course_name.
-* ``short_coursename`` : (optional) If set, the the name of the local git repository and remote github repository will be ``short_coursename-assignment-template``.
+* ``course_name`` : (optional) If set, the name of the local git repository and remote GitHub repository will be ``course_name-assignment-template``. If ``short_coursename`` is not set, you must set course_name.
+* ``short_coursename`` : (optional) If set, the the name of the local git repository and remote GitHub repository will be ``short_coursename-assignment-template``.
 * ``nbgrader_dir`` : the path to the local nbgrader directory.
 * ``extra_files`` : (optional) Any extra files that you want to add to the repo, such as .gitignore or README
