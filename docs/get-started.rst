@@ -98,7 +98,7 @@ This will
 3. Creates a sample ``config.yml`` file that can be modified to run the program for your classroom. ``abc-quickstart`` has two arguments that can be used to modify its functionality.
 
 Flags
-~~~~~
+^^^^^
  1. ``--course_name course-directory-custom-name-here`` This argument will allow you to modify the name of the main
  directory ``abc-quickstart`` will create.
  2. ``-f`` This argument will allow you to override an existing output from ``abc-quickstart``. Doing this will
