@@ -128,10 +128,11 @@ Config.yml check
 ~~~~~~~~~~~~~~~~~
 
 You can tell ``abc-classroom`` where your assignment directory is located using the
-``config.yml`` file. The ``nbgrader_dir`` parameter in that file can be changed to 
+``config.yml`` file. The ``nbgrader_dir`` parameter in that file can be changed to
 any location on your computer that contains your assignments.
 
 .. code-block:: yaml
+
   # Path to the nbgrader directory. Assumed to be relative to course_dir unless
   # you enter an absolute path (i.e. starting with '/' on Linux or OS X or with
   # 'C:' on Windows).

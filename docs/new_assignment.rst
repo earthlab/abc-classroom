@@ -67,7 +67,7 @@ To create a GitHub classroom homework assignment template repo:
 
 To push that repo to github as a template use:
 
-* ``abc-update-template` : this will both update the template repo with any files that you updated in the release/assignment directory.
+* ``abc-update-template`` : this will both update the template repo with any files that you updated in the release/assignment directory.
 * create a new repository on GitHub with the name ``assignment1-template``
 * add and commit the local files, and push the contents to GitHub
 
