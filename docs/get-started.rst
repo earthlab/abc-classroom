@@ -102,8 +102,8 @@ Flags
 
 * ``-f`` This argument will allow you to overwrite an existing output directory from ``abc-quickstart``. Doing this will delete anything currently in your course directory, but will allow you to start over fresh.
 
-Optional but Required
-~~~~~~~~~~~~~~~~~~~~~
+Optional But Required Directory Structure for the Time Being
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  ``abc-classroom`` does not depend upon ``nbgrader`` but does require a ``nbgrader``
  directory structure in its early stages of development. We suggest that you
@@ -123,3 +123,16 @@ Your final directory will look something like this:
     nbgrader/
       release/
     config.yml
+
+Config.yml check
+~~~~~~~~~~~~~~~~~
+
+You can tell ``abc-classroom`` where your assignment directory is located using the
+``config.yml`` file. The ``nbgrader_dir`` parameter in that file can be changed to 
+any location on your computer that contains your assignments.
+
+.. code-block:: yaml
+  # Path to the nbgrader directory. Assumed to be relative to course_dir unless
+  # you enter an absolute path (i.e. starting with '/' on Linux or OS X or with
+  # 'C:' on Windows).
+  nbgrader_dir: nbgrader
