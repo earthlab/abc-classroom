@@ -49,7 +49,7 @@ def init():
     yaml file, and if there isn't one, create a valid file.
     """
 
-    gh_auth = get_github_auth()
+    gh_auth = cf.get_github_auth()
 
     # check the token we have is still valid by attempting to login with
     # the token we have if this fails we need a new one
@@ -420,8 +420,10 @@ def author():
 
 def clone():
     """
-    Clone the student repositories for the assignment into the clone_dir
-    directory, as specified in config.yml. Requires that filename of roster
+    Clone the student repositories for the assignment and (optionall) copies notebook files into the nbgrader 'submitted' directory. Clones into the clone_dir
+    directory, as specified in config.yml.
+
+    Requires that you have filename of student roster
     defined in config.yml and that the roster file exists.
 
     By default, if a local directory with the name of the repo already exists,
