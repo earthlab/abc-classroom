@@ -76,9 +76,9 @@ def clone_student_repos(args):
         if len(missing) == 0:
             print("All successful; no missing repos")
         else:
-            print("Could not clone following repos: ")
+            print("Could not clone or update the following repos: ")
             for r in missing:
-                print(r)
+                print(" {}".format(r))
 
     except FileNotFoundError as err:
         print("Cannot find roster file".format(roster_filename))
