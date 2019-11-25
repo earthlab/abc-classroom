@@ -72,11 +72,13 @@ def clone_student_repos(args):
                             clone_dir, nbgrader_dir, student, assignment
                         )
                 except RuntimeError as err:
-                    missing.append(student)
+                    missing.append(repo)
         if len(missing) == 0:
             print("All successful; no missing repos")
         else:
-            print("Missing repositories for these students: ", missing)
+            print("Could not clone following repos: ")
+            for r in missing:
+                print(r)
 
     except FileNotFoundError as err:
         print("Cannot find roster file".format(roster_filename))
