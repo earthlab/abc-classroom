@@ -32,7 +32,7 @@ def new_update_template(args):
     github.init_and_commit(template_repo_path, args.custom_message)
 
     # create / append assignment entry in config
-    course_dir = cf.get_config_option(config, "course_dir", True)
+    course_dir = cf.get_config_option(config, "course_directory", True)
     cf.set_config_option(
         config,
         "assignments",
