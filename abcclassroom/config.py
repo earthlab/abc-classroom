@@ -67,8 +67,9 @@ def get_config(configpath=None):
             config = yaml.load(f)
         return config
     except FileNotFoundError as err:
+        configpath.resolve()
         print(
-            "Oops! I can't seem to find a config.yml file in {}. "
+            "Oops! I can't seem to find a config.yml file at {}. "
             "Are you in the top-level directory for the course? If you don't have a course directory and config file "
             "setup yet, you can create one using abc-quickstart"
             ".\n".format(configpath)
@@ -82,6 +83,7 @@ def write_config(config, configpath=None):
         configpath = Path("config.yml")
     else:
         configpath = Path(configpath, "config.yml")
+    print("Writing config to {}".format(configpath))
     with open(configpath, "w") as f:
         yaml.dump(config, f)
 
@@ -117,12 +119,11 @@ def set_config_option(
     existing_value = get_config_option(config, option, required=False)
     if append_value == True and existing_value is not None:
         if isinstance(existing_value, list):
-            print("appending {} to {}".format(value, existing_value))
             existing_value.append(value)
             value = existing_value
-            print("new value is {}".format(value))
         else:
             value = [existing_value, value]
     config[option] = value
+    print("Writing new config at {}".format(configpath))
     write_config(config, configpath)
     return config
