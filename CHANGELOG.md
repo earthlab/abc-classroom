@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.0.12]
+* Change template functionality so that assignment name provided by user is not modified by abc-classroom (no longer add coursename as prefix) (@kcranston, #137)
+* Add each new assignment to an `assignments` section of the config (@kcranston, #138)
 * Fix config.yml to ensure ``gitignore`` file has a period at the beginning, update docs (@lwasser, #124)
 * Add assignment template functionality (@kcranston, #105)
 * Fix RTD build to ensure API reference and other docs build properly (#113, #114, @lwasser)
