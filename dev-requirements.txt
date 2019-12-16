@@ -1,5 +1,5 @@
 m2r==0.2.1
-sphinx==2.2.2
+sphinx==2.3.0
 sphinx-autobuild==0.7.1
 sphinx_rtd_theme==0.4.3
 codecov==2.0.15
