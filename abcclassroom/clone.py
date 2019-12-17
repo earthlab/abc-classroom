@@ -16,7 +16,7 @@ from . import utils
 
 def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
     """
-    Tries to clone the repository 'repo' from the organization. If the local
+    Tries to clone the single repository 'repo' from the organization. If the local
     repository already exists, pulls instead of cloning (unless the skip flag
     is set, in which case it does nothing).
     """
@@ -52,7 +52,7 @@ def clone_student_repos(args):
 
     if nbgrader_dir is None:
         print(
-            "nbgrader_dir is not set in config.yml. Will not copy any assignment files."
+            "No nbgrader_dir set in config.yml. Will clone repositories but will not copy any assignment files."
         )
     try:
         Path(course_dir, clone_dir).mkdir(exist_ok=True)
@@ -68,9 +68,7 @@ def clone_student_repos(args):
                         organization, repo, clone_dir, skip_existing
                     )
                     if nbgrader_dir is not None:
-                        copy_assignment_files(
-                            clone_dir, nbgrader_dir, student, assignment
-                        )
+                        copy_assignment_files(config, student, assignment)
                 except RuntimeError as err:
                     missing.append(repo)
         if len(missing) == 0:
@@ -85,13 +83,23 @@ def clone_student_repos(args):
         print(err)
 
 
-def copy_assignment_files(clone_dir, nbgrader_dir, student, assignment):
-    # make sure the nbgrader directory exists
-
+def copy_assignment_files(config, student, assignment):
+    """Copies all notebook files from clone_dir to nbgrader_dir/submitted. Will overwrite any existing files with the same name."""
+    print("Am I getting any output?")
+    course_dir = cf.get_config_option(config, "course_directory", True)
+    nbgrader_dir = cf.get_config_option(config, "nbgrader_dir", False)
+    clone_dir = cf.get_config_option(config, "clone_dir", True)
     repo = "{}-{}".format(assignment, student)
-    files = Path(clone_dir, repo).glob("*.ipynb")
-    destination = Path(nbgrader_dir, "submitted", student, assignment)
+    files = Path(course_dir, clone_dir, repo).glob("*.ipynb")
+    destination = Path(
+        course_dir, nbgrader_dir, "submitted", student, assignment
+    )
     destination.mkdir(parents=True, exist_ok=True)
+    print(
+        "Copying files from {} to {}".format(
+            Path(clone_dir, repo), destination
+        )
+    )
     for f in files:
         print("copying {} to {}".format(f, destination))
         copy(f, destination)
