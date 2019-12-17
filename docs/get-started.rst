@@ -88,30 +88,30 @@ ABC-Classroom Quickstart
 
 To set up the directory structure needed for abc-classroom, run:
 
-     $ abc-quickstart course-name-here
+     ``$ abc-quickstart course-name-here``
 
-This will
+This will:
 
-1. create a course directory for you that is named whatever you called your ``course-name-here`` variable
+1. Create a course directory for you that is named whatever you called your ``course-name-here`` variable
 2. Create several other directories required to store homework assignment folders
    and cloned student repositories.
 3. Creates a sample ``config.yml`` file that can be modified to run the program for your classroom. ``abc-quickstart`` has two arguments that can be used to modify its functionality.
 
 Flags
 ~~~~~
- 1. ``--course_name course-directory-custom-name-here`` This argument will allow you to modify the name of the main
- directory ``abc-quickstart`` will create.
- 2. ``-f`` This argument will allow you to override an existing output from ``abc-quickstart``. Doing this will
- delete anything currently in your course directory, but will allow you to start over fresh.
 
- ## Optional but Required for Now
- ``abc-classroom`` does not fully depend upon ``nbgrader`` but does require a ``nbgrader``
- directory structure in it's early stages of development. We suggest that you
+* ``-f`` This argument will allow you to overwrite an existing output directory from ``abc-quickstart``. Doing this will delete anything currently in your course directory, but will allow you to start over fresh.
+
+Optional But Required Directory Structure for the Time Being
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ ``abc-classroom`` does not depend upon ``nbgrader`` but does require a ``nbgrader``
+ directory structure in its early stages of development. We suggest that you
  setup an ``nbgrader`` directory within the quickstart directory that you created
- above by:
+ above using abc-classroom by:
 
- 1. Installing nbgrader and then running
- 2. $ nbgrader quickstart course-name-here
+ 1. Installing ``nbgrader`` and then running
+ 2. ``$ nbgrader quickstart nbgrader``: this will create a nbgrader quickstart directory called **nbgrader**.
 
 Your final directory will look something like this:
 
@@ -123,3 +123,17 @@ Your final directory will look something like this:
     nbgrader/
       release/
     config.yml
+
+Config.yml check
+~~~~~~~~~~~~~~~~~
+
+You can tell ``abc-classroom`` where your assignment directory is located using the
+``config.yml`` file. The ``nbgrader_dir`` parameter in that file can be changed to
+any location on your computer that contains your assignments.
+
+.. code-block:: yaml
+
+  # Path to the nbgrader directory. Assumed to be relative to course_dir unless
+  # you enter an absolute path (i.e. starting with '/' on Linux or OS X or with
+  # 'C:' on Windows).
+  nbgrader_dir: nbgrader

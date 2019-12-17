@@ -1,11 +1,11 @@
 m2r==0.2.1
-sphinx==2.2.0
+sphinx==2.2.2
 sphinx-autobuild==0.7.1
 sphinx_rtd_theme==0.4.3
 codecov==2.0.15
 bumpversion==0.5.3
 pre-commit==1.18.3
-pytest==5.3.0
+pytest==5.3.1
 pytest-vcr==1.0.2
 pytest-cov==2.8.1
 tox==3.14.0
