@@ -19,7 +19,7 @@ def path_to_example(dataset):
     ----------
     dataset: string
         Name of a dataset to access (e.g., "config.yml")
-            
+
     Returns
     -------
     string
@@ -58,8 +58,8 @@ def create_dir_struct(course_name="course_dir", f=False):
     if os.path.isdir(main_dir):
         raise ValueError(
             """
-            Ooops! It looks like the directory {} already exists on your computer. You might have already 
-            run quickstart in this directory. Consider using another course name or deleting the existing directory 
+            Ooops! It looks like the directory {} already exists on your computer. You might have already
+            run quickstart in this directory. Consider using another course name or deleting the existing directory
             if you do not need it.""".format(
                 course_name
             )
@@ -80,9 +80,6 @@ def create_dir_struct(course_name="course_dir", f=False):
                 "/Users/karen/awesome-course", main_dir
             )
             filedata = filedata.replace(
-                "earth-analytics-bootcamp", course_name
-            )
-            filedata = filedata.replace(
                 "/Users/me/awesome-course/cloned_dirs",
                 os.path.join(main_dir, "student-cloned-repos"),
             )
@@ -94,8 +91,8 @@ def create_dir_struct(course_name="course_dir", f=False):
             file.write(filedata)
     print(
         """
-        Directory structure created to begin using abc-classroom at {}. 
-        All directories needed and a configuration file to modify have been created. To proceed, please 
+        Directory structure created to begin using abc-classroom at {}.
+        All directories needed and a configuration file to modify have been created. To proceed, please
         move your sample roster and nbgrader directory into {} created by quickstart.""".format(
             main_dir, course_name
         )

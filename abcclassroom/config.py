@@ -6,7 +6,7 @@ abc-classroom.config
 
 import os
 import sys
-
+from pathlib import Path
 import os.path as op
 
 from ruamel.yaml import YAML
@@ -56,20 +56,36 @@ def set_github_auth(auth_info):
         yaml.dump(config, f)
 
 
-def get_config():
+def get_config(configpath=None):
     yaml = YAML()
     try:
-        with open("config.yml") as f:
+        if configpath is None:
+            configpath = Path("config.yml")
+        else:
+            configpath = Path(configpath, "config.yml")
+        with open(configpath) as f:
             config = yaml.load(f)
         return config
     except FileNotFoundError as err:
+        configpath.resolve()
         print(
-            "Oops! I can't seem to find a config.yml file in this "
-            "directory. Are you in the top-level directory for the course? If you don't have a course directory and config file "
+            "Oops! I can't seem to find a config.yml file at {}. "
+            "Are you in the top-level directory for the course? If you don't have a course directory and config file "
             "setup yet, you can create one using abc-quickstart"
-            ".\n"
+            ".\n".format(configpath)
         )
         sys.exit(1)
+
+
+def write_config(config, configpath=None):
+    yaml = YAML()
+    if configpath is None:
+        configpath = Path("config.yml")
+    else:
+        configpath = Path(configpath, "config.yml")
+    print("Writing config to {}".format(configpath))
+    with open(configpath, "w") as f:
+        yaml.dump(config, f)
 
 
 # TODO: allow for nested gets, e.g. config[a][b]
@@ -84,7 +100,7 @@ def get_config_option(config, option, required=True):
     except KeyError as err:
         if required == True:
             print(
-                "Did not find required option {} in config; exciting".format(
+                "Did not find required option {} in config; exiting".format(
                     option
                 )
             )
@@ -93,7 +109,21 @@ def get_config_option(config, option, required=True):
             return None
 
 
-def set_config(config):
-    yaml = YAML()
-    with open(P("config.yml"), "w") as f:
-        yaml.dump(config, f)
+def set_config_option(
+    config, option, value, append_value=False, configpath=None
+):
+    """
+    Sets a config option. If option already exists and append_value is False, replaces existing value. If option exists and append_value is true, adds new value to list of existing values. Writes the new config (overwriting the existing file) and returns new config dict.
+    """
+
+    existing_value = get_config_option(config, option, required=False)
+    if append_value == True and existing_value is not None:
+        if isinstance(existing_value, list):
+            existing_value.append(value)
+            value = existing_value
+        else:
+            value = [existing_value, value]
+    config[option] = value
+    print("Writing new config at {}".format(configpath))
+    write_config(config, configpath)
+    return config

@@ -9,8 +9,6 @@ def default_config():
     """
     config = {
         "template_dir": "test_template",
-        "short_coursename": "tc",
-        "course_name": "Test_course",
         "nbgrader_dir": "nbgrader",
         "extra_files": {
             "testfile.txt": ["line1", "line2"],
