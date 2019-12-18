@@ -11,6 +11,7 @@ Submodules
 
 .. toctree::
 
+   abcclassroom.clone
    abcclassroom.config
    abcclassroom.distribute
    abcclassroom.github

@@ -98,20 +98,20 @@ This will:
 3. Creates a sample ``config.yml`` file that can be modified to run the program for your classroom. ``abc-quickstart`` has two arguments that can be used to modify its functionality.
 
 Flags
-~~~~~
+^^^^^
+ 1. ``--course_name course-directory-custom-name-here`` This argument will allow you to modify the name of the main
+ directory ``abc-quickstart`` will create.
+ 2. ``-f`` This argument will allow you to override an existing output from ``abc-quickstart``. Doing this will
+ delete anything currently in your course directory, but will allow you to start over fresh.
 
-* ``-f`` This argument will allow you to overwrite an existing output directory from ``abc-quickstart``. Doing this will delete anything currently in your course directory, but will allow you to start over fresh.
-
-Optional But Required Directory Structure for the Time Being
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
- ``abc-classroom`` does not depend upon ``nbgrader`` but does require a ``nbgrader``
- directory structure in its early stages of development. We suggest that you
+ ## Optional but Required for Now
+ ``abc-classroom`` does not fully depend upon ``nbgrader`` but does require a ``nbgrader``
+ directory structure in it's early stages of development. We suggest that you
  setup an ``nbgrader`` directory within the quickstart directory that you created
  above using abc-classroom by:
 
  1. Installing ``nbgrader`` and then running
- 2. ``$ nbgrader quickstart nbgrader``: this will create a nbgrader quickstart directory called **nbgrader**.
+ 2. ``$ nbgrader quickstart nbgrader``: this will create a nbgrader course directory called **nbgrader**.
 
 Your final directory will look something like this:
 

@@ -19,6 +19,7 @@ from . import config as cf
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
 from .quickstart import create_dir_struct
+from .clone import clone_student_repos
 from . import github
 from .utils import copytree, P, input_editor, write_file, valid_date
 from argparse import ArgumentParser
@@ -48,7 +49,7 @@ def init():
     yaml file, and if there isn't one, create a valid file.
     """
 
-    gh_auth = get_github_auth()
+    gh_auth = cf.get_github_auth()
 
     # check the token we have is still valid by attempting to login with
     # the token we have if this fails we need a new one
@@ -415,6 +416,33 @@ def author():
         "Inspect `{}/` to check it looks as you "
         "expect.".format(P("student"))
     )
+
+
+def clone():
+    """
+    Clone the student repositories for the assignment and (optionall) copies notebook files into the nbgrader 'submitted' directory. Clones into the clone_dir
+    directory, as specified in config.yml.
+
+    Requires that you have filename of student roster
+    defined in config.yml and that the roster file exists.
+
+    By default, if a local directory with the name of the repo already exists,
+    pulls from github to update. Use the --skip-existing flag if you don't want
+    to update existing repos.
+    """
+    parser = argparse.ArgumentParser(description=clone.__doc__)
+    parser.add_argument(
+        "assignment",
+        help="Name of assignment. Must match name in nbgrader release directory",
+    )
+    parser.add_argument(
+        "--skip-existing",
+        action="store_true",
+        help="Do not attempt to update repositories that have already been cloned.",
+    )
+    args = parser.parse_args()
+
+    clone_student_repos(args)
 
 
 def new_template():
