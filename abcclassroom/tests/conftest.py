@@ -9,8 +9,6 @@ def default_config():
     """
     config = {
         "template_dir": "test_template",
-        "short_coursename": "tc",
-        "course_name": "Test_course",
         "nbgrader_dir": "nbgrader",
         "clone_dir": "student-cloned-repos",
         "extra_files": {

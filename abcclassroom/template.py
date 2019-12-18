@@ -16,6 +16,8 @@ from . import utils
 def new_update_template(args):
     """
     Creates or updates an assignment template repository. Implementation of both the new_template and update_template console scripts (which perform the same basic functions but with different command line arguments and defaults).
+
+    Creates an assignment entry in the config file if one does not already exist.
     """
     print("Loading configuration from config.yml")
     config = cf.get_config()
@@ -28,6 +30,16 @@ def new_update_template(args):
     copy_assignment_files(config, template_repo_path, assignment)
     create_extra_files(config, template_repo_path, assignment)
     github.init_and_commit(template_repo_path, args.custom_message)
+
+    # create / append assignment entry in config
+    course_dir = cf.get_config_option(config, "course_directory", True)
+    cf.set_config_option(
+        config,
+        "assignments",
+        assignment,
+        append_value=True,
+        configpath=course_dir,
+    )
 
     # optional github steps
     if args.github:
@@ -84,18 +96,7 @@ def create_template_dir(config, assignment, mode="fail"):
         )
         os.mkdir(parent_path)
 
-    # Set up the name of the template repo and create the dir
-    # if there is a shortname defined, use that in path
-    course_name = cf.get_config_option(config, "short_coursename")
-    if course_name is None:
-        course_name = cf.get_config_option(config, "course_name")
-    if course_name is None:
-        print(
-            "Error: One of course_name or short_coursename must be set in config.yml"
-        )
-        sys.exit(1)
-
-    repo_name = course_name + "-" + assignment + "-template"
+    repo_name = assignment + "-template"
     template_path = Path(parent_path, repo_name)
     dir_exists = template_path.is_dir()
     if not dir_exists:
@@ -177,9 +178,8 @@ def create_extra_files(config, template_repo, assignment):
         if len(contents) > 0:
             if file == "README.md":
                 firstline = ""
-                coursename = cf.get_config_option(config, "course_name", False)
-                if assignment and coursename:
-                    first_line = "# {}: {}".format(coursename, assignment)
+                if assignment:
+                    first_line = "# {}".format(assignment)
                 else:
                     first_line = "# README"
                 contents.insert(0, first_line)
