@@ -4,7 +4,7 @@ abc-classroom.feedback
 
 """
 
-from Pathlib import Path
+from pathlib import Path
 import csv
 
 from . import config as cf
