@@ -52,6 +52,7 @@ setup(
             "abc-quickstart = abcclassroom.__main__:quickstart",
             "abc-new-template = abcclassroom.__main__:new_template",
             "abc-update-template = abcclassroom.__main__:update_template",
+            "abc-clone = abcclassroom.__main__:clone",
             "abc-feedback = abcclassroom.__main__:feedback",
         ]
     },
