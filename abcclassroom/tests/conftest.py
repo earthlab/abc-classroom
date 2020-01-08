@@ -9,7 +9,7 @@ def default_config():
     """
     config = {
         "template_dir": "test_template",
-        "materials_dir": "nbgrader",
+        "course_materials": "nbgrader",
         "clone_dir": "student-cloned-repos",
         "extra_files": {
             "testfile.txt": ["line1", "line2"],

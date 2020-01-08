@@ -87,7 +87,6 @@ def clone_student_repos(args):
 
 def copy_assignment_files(config, student, assignment):
     """Copies all notebook files from clone_dir to course_materials/submitted. Will overwrite any existing files with the same name."""
-    print("Am I getting any output?")
     course_dir = cf.get_config_option(config, "course_directory", True)
     materials_dir = cf.get_config_option(config, "course_materials", False)
     clone_dir = cf.get_config_option(config, "clone_dir", True)

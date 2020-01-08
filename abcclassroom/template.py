@@ -146,12 +146,12 @@ def copy_assignment_files(config, template_repo, assignment):
 
     print("Getting assignment files")
     course_dir = cf.get_config_option(config, "course_directory", True)
-    nbgrader_dir = cf.get_config_option(config, "course_material", True)
-    parent_path = utils.get_abspath(nbgrader_dir, course_dir)
+    materials_dir = cf.get_config_option(config, "course_materials", True)
+    parent_path = utils.get_abspath(materials_dir, course_dir)
     release_dir = os.path.join(parent_path, "release", assignment)
     if not os.path.exists(release_dir):
         print(
-            "nbgrader release directory {} does not exist; exiting\n".format(
+            "release directory {} does not exist; exiting\n".format(
                 release_dir
             )
         )

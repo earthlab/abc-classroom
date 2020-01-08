@@ -102,7 +102,7 @@ def test_copy_assignment_files(default_config, tmp_path):
     assignment = "assignment1"
     # first, set up the test course materials directory
     nbpath = Path(
-        tmp_path, default_config["course_materialsr"], "release", assignment
+        tmp_path, default_config["course_materials"], "release", assignment
     )
     nbpath.mkdir(parents=True)
     # create some temporary files
