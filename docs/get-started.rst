@@ -105,13 +105,13 @@ Flags
  delete anything currently in your course directory, but will allow you to start over fresh.
 
  ## Optional but Required for Now
- ``abc-classroom`` does not fully depend upon ``nbgrader`` but does require a ``nbgrader``
- directory structure in it's early stages of development. We suggest that you
- setup an ``nbgrader`` directory within the quickstart directory that you created
- above using abc-classroom by:
+ ``abc-classroom`` does not fully depend upon ``nbgrader`` but does require a
+ course_materials directory that follows the nbgrader directory structure. We
+ suggest that you setup an course_materials directory within the quickstart
+ directory that you created above by:
 
  1. Installing ``nbgrader`` and then running
- 2. ``$ nbgrader quickstart nbgrader``: this will create a nbgrader course directory called **nbgrader**.
+ 2. ``$ nbgrader quickstart course_materials``: this will create a nbgrader course directory called **course_materials**.
 
 Your final directory will look something like this:
 
@@ -120,7 +120,7 @@ Your final directory will look something like this:
   course-name-here/
     cloned-files/
     template-files/
-    nbgrader/
+    course_materials/
       release/
     config.yml
 
@@ -128,12 +128,13 @@ Config.yml check
 ~~~~~~~~~~~~~~~~~
 
 You can tell ``abc-classroom`` where your assignment directory is located using the
-``config.yml`` file. The ``nbgrader_dir`` parameter in that file can be changed to
-any location on your computer that contains your assignments.
+``config.yml`` file. Change the ``course_materials`` parameter in that file to
+the location on your computer that contains your assignments (if you used the
+nbgrader quickstart, above, then use the directory created by nbgrader).
 
 .. code-block:: yaml
 
-  # Path to the nbgrader directory. Assumed to be relative to course_dir unless
+  # Path to the course_materials directory. Assumed to be relative to course_dir unless
   # you enter an absolute path (i.e. starting with '/' on Linux or OS X or with
   # 'C:' on Windows).
-  nbgrader_dir: nbgrader
+  course_materials: course_materials

@@ -13,7 +13,7 @@ This repo should have all of the files that a student will need to complete the 
 The ``abc-new-template`` and ``abc-update-template`` commands allow you to create and update template repositories.
 
 .. note::
-   The current version abc-classroom assumes that you are using nbgrader and therefore have the student version of assignment files in the ``nbgrader_dir/release/assignment_name`` directory (where ``nbgrader_dir`` is defined in the abc-classroom ``config.yml``). See :doc:`get-started` for more details about abc-classroom and nbgrader setup.
+   The current version abc-classroom assumes that you have the student version of assignment files in the ``course_materials/release/assignment_name`` directory (where ``course_materials`` is defined in the abc-classroom ``config.yml``). This mirrors the structure of an nbgrader course. See :doc:`get-started` for more details about abc-classroom and nbgrader setup.
 
 How To Create and Update Template Repositories
 ==============================================
@@ -37,7 +37,7 @@ To create a GitHub classroom homework assignment template repo:
 
 * get the name of the `template_dir` directory from the config file
 * create a local directory in ``template_dir`` called ``assignment1-template`` and initialize as a git repository
-* copy files from the ``nbgrader/release/assignment1`` directory
+* copy files from the ``course_materials/release/assignment1`` directory
 * create any extra files as listed in ``config.yml``
 * git add and git commit the local files
 * (optionally, if using ``--github`` flag) create a new repository on GitHub with the name ``assignment1-template`` and push the contents of the local repo to GitHub
@@ -56,7 +56,7 @@ Run ``abc-new-template -h`` to see the options. The output is reproduced below::
     commit message if custom message requested.
 
     positional arguments:
-      assignment            Name of assignment. Must match name in nbgrader
+      assignment            Name of assignment. Must match name in course_materials
                             release directory
 
     optional arguments:
@@ -83,7 +83,7 @@ To update an existing template repository (for example, if you change assignment
 
 will:
 
-* copy any files in ``nbgrader/release/assignment1`` to ``template_dir/assignment1-template`` (overwriting any existing files with the same name; use the ``-delete`` mode if you want to erase the existing template before starting)
+* copy any files in ``course_materials/release/assignment1`` to ``template_dir/assignment1-template`` (overwriting any existing files with the same name; use the ``-delete`` mode if you want to erase the existing template before starting)
 * git add and git commit the changes
 * push the changes to GitHub
 
@@ -99,7 +99,7 @@ is reproduced here::
     for commit message.
 
     positional arguments:
-      assignment            Name of assignment. Must match name in nbgrader
+      assignment            Name of assignment. Must match name in course_materials
                             release directory
 
     optional arguments:
@@ -119,5 +119,5 @@ Creating an assignment uses these settings from ``config.yml``:
 
 * ``template_dir`` : the directory where the local git repository will be created.
 * ``organization`` : the GitHub organization where the new remote repository will be created
-* ``nbgrader_dir`` : the path to the local nbgrader directory.
+* ``materials_dir`` : the path to the local directory where you are storing course materials (the top-level nbgrader dir if you are using nbgrader).
 * ``extra_files`` : (optional) Any extra files that you want to add to the repo, such as .gitignore or README

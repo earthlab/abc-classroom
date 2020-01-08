@@ -100,9 +100,9 @@ def test_copy_assignment_files(default_config, tmp_path):
     # test that contents are the same for target and source directory
     default_config["course_directory"] = tmp_path
     assignment = "assignment1"
-    # first, set up the test nbgrader directory
+    # first, set up the test course materials directory
     nbpath = Path(
-        tmp_path, default_config["nbgrader_dir"], "release", assignment
+        tmp_path, default_config["course_materialsr"], "release", assignment
     )
     nbpath.mkdir(parents=True)
     # create some temporary files
@@ -116,7 +116,7 @@ def test_copy_assignment_files(default_config, tmp_path):
 
 
 def test_copy_assignment_files_fails_nodir(default_config, tmp_path):
-    # test that fails if nbgrader dir does not exist
+    # test that fails if course_materials dir does not exist
     default_config["course_directory"] = tmp_path
     assignment = "assignment1"
     template_repo = abctemplate.create_template_dir(default_config, assignment)

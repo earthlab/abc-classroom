@@ -93,7 +93,7 @@ def create_dir_struct(course_name="course_dir", f=False):
         """
         Directory structure created to begin using abc-classroom at {}.
         All directories needed and a configuration file to modify have been created. To proceed, please
-        move your sample roster and nbgrader directory into {} created by quickstart.""".format(
+        move your sample roster and course_materials directory into {} created by quickstart.""".format(
             main_dir, course_name
         )
     )
