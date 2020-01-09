@@ -8,13 +8,14 @@ import sys
 import tempfile
 
 import os.path as op
-
+from argparse import ArgumentParser
 from getpass import getpass
 
 import github3 as gh3
 
 from . import ok
 from . import template
+from . import feedback
 from . import config as cf
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
@@ -22,7 +23,6 @@ from .quickstart import create_dir_struct
 from .clone import clone_student_repos
 from . import github
 from .utils import copytree, P, input_editor, write_file, valid_date
-from argparse import ArgumentParser
 
 
 def quickstart():
@@ -443,6 +443,24 @@ def clone():
     args = parser.parse_args()
 
     clone_student_repos(args)
+
+
+def feedback():
+    """
+    Copies feedback reports to local student repositories and (optionally) pushes to github. Assumes files are in the directory nbgrader_dir/feedback/student/assignment. Copies all files in the source directory.
+    """
+    parser = argparse.ArgumentParser(description=feedback.__doc__)
+    parser.add_argument(
+        "assignment",
+        help="Name of assignment. Must match name in nbgrader release directory",
+    )
+    parser.add_argument(
+        "--github",
+        action="store_true",
+        help="Also pushes files to student repositories on GitHub (default = False; only copies files to local repos)",
+    )
+    args = parser.parse_args()
+    feedback.copy_feedback(args)
 
 
 def new_template():

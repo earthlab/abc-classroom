@@ -49,13 +49,11 @@ setup(
     entry_points={
         "console_scripts": [
             "abc-init = abcclassroom.__main__:init",
-            "abc-grade = abcclassroom.__main__:grade",
-            "abc-author = abcclassroom.__main__:author",
-            "abc-distribute = abcclassroom.__main__:distribute",
             "abc-quickstart = abcclassroom.__main__:quickstart",
             "abc-new-template = abcclassroom.__main__:new_template",
             "abc-update-template = abcclassroom.__main__:update_template",
             "abc-clone = abcclassroom.__main__:clone",
+            "abc-feedback = abcclassroom.__main__:feedback",
         ]
     },
     url="https://github.com/earthlab/abc-classroom",
