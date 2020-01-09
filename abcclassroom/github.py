@@ -170,7 +170,7 @@ def init_and_commit(directory, custom_message=False):
         print("No changes to local repository.")
 
 
-def push_to_github(directory, branch):
+def push_to_github(directory, branch="master"):
     """Push `branch` back to GitHub"""
     try:
         _call_git(
