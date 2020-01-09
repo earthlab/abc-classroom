@@ -6,7 +6,6 @@ Creating a new assignment involves:
 1. Creating a template repository for each student assignment. This is the repo containing assignment files that each student will get a copy of when you release the assignment for them to work on.
 2. Pushing that template repository to your GitHub organization that is setup with a classroom, for distribution.
 
-
 The GitHub classroom assignment can be linked to a template git repo that is on GitHub.
 This repo should have all of the files that a student will need to complete the assignment.
 
@@ -111,6 +110,32 @@ is reproduced here::
                             overwrite existing files add new files (Default =
                             merge).
 
+
+  .. note::
+    If you are using nbgrader, then the files needed to distribute and grade each assignment
+    live in a sub directory of **nbgrader** called **releases**.
+
+    The ``abc-assignment-template`` command will pull files from the releases directory
+    and create a new assignment template directory that is also initialized as a git
+    repository.
+
+    If you are using nbgrader you will want to
+
+    1. run ``$ nbgrader quickstart nbgrader``
+    to setup the nbgrader directory structure within your new course created with
+    ``abc-classroom quickstart course-name-here``. Note that we suggest that you name
+    your nbgrader course ``nbgrader-coursename`` to make the directory structure
+    a bit cleaner. Once that is setup:
+    2. Change your directory to the newly created nbgrader directory ``$ cd nbgrader``
+    3. Create and release an nbgrader assignment using.
+    ``nbgrader generate_assignment assignment1`` generates assignment1 from the
+    nbgrader source directory. This step will move the
+    assignments created in the **source/** nbgrader directory over to a **release/**
+    directory. abc-classroom will look for that release/ directory to find
+    assignment files each time you run ``abc-assignment-template``. Once you have
+    created and released the assignment with nbgrader, you can then
+    create the assignment template using abc-classroom which will generate a new
+    template GitHub repo that you can use with GitHub classroom.
 
 Configuration settings
 ======================
