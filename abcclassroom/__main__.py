@@ -420,8 +420,9 @@ def author():
 
 def clone():
     """
-    Clone the student repositories for the assignment and (optionall) copies notebook files into the nbgrader 'submitted' directory. Clones into the clone_dir
-    directory, as specified in config.yml.
+    Clone the student repositories for the assignment and (optionall) copies
+    notebook files into the course_materials 'submitted' directory. Clones into
+    the clone_dir directory, as specified in config.yml.
 
     Requires that you have filename of student roster
     defined in config.yml and that the roster file exists.
@@ -433,7 +434,7 @@ def clone():
     parser = argparse.ArgumentParser(description=clone.__doc__)
     parser.add_argument(
         "assignment",
-        help="Name of assignment. Must match name in nbgrader release directory",
+        help="Name of assignment. Must match assignment name in course_materials directories",
     )
     parser.add_argument(
         "--skip-existing",
@@ -473,7 +474,7 @@ def new_template():
     parser = argparse.ArgumentParser(description=new_template.__doc__)
     parser.add_argument(
         "assignment",
-        help="Name of assignment. Must match name in nbgrader release directory",
+        help="Name of assignment. Must match name in course_materials/release directory",
     )
     parser.add_argument(
         "--custom-message",
@@ -504,7 +505,7 @@ def update_template():
     parser = argparse.ArgumentParser(description=update_template.__doc__)
     parser.add_argument(
         "assignment",
-        help="Name of assignment. Must match name in nbgrader release directory",
+        help="Name of assignment. Must match name in course_materials/release directory",
     )
     parser.add_argument(
         "--mode",

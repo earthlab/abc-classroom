@@ -37,7 +37,9 @@ def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
 
 def clone_student_repos(args):
     """Iterates through the student roster, clones each repo for this
-    assignment into the directory specified in the config, and then copies the notebook files into the nbgrader 'submitted' directory, if nbgrader_dir set in config.yml."""
+    assignment into the directory specified in the config, and then copies the
+    notebook files into the 'course_materials/submitted' directory, based on
+    course_materials set in config.yml."""
 
     assignment = args.assignment
     skip_existing = args.skip_existing
@@ -48,11 +50,11 @@ def clone_student_repos(args):
     course_dir = cf.get_config_option(config, "course_directory", True)
     clone_dir = cf.get_config_option(config, "clone_dir", True)
     organization = cf.get_config_option(config, "organization", True)
-    nbgrader_dir = cf.get_config_option(config, "nbgrader_dir", False)
+    materials_dir = cf.get_config_option(config, "course_materials", False)
 
-    if nbgrader_dir is None:
+    if materials_dir is None:
         print(
-            "No nbgrader_dir set in config.yml. Will clone repositories but will not copy any assignment files."
+            "No course_materials directory set in config.yml. Will clone repositories but will not copy any assignment files."
         )
     try:
         Path(course_dir, clone_dir).mkdir(exist_ok=True)
@@ -67,7 +69,7 @@ def clone_student_repos(args):
                     clone_or_update_repo(
                         organization, repo, clone_dir, skip_existing
                     )
-                    if nbgrader_dir is not None:
+                    if materials_dir is not None:
                         copy_assignment_files(config, student, assignment)
                 except RuntimeError as err:
                     missing.append(repo)
@@ -84,15 +86,14 @@ def clone_student_repos(args):
 
 
 def copy_assignment_files(config, student, assignment):
-    """Copies all notebook files from clone_dir to nbgrader_dir/submitted. Will overwrite any existing files with the same name."""
-    print("Am I getting any output?")
+    """Copies all notebook files from clone_dir to course_materials/submitted. Will overwrite any existing files with the same name."""
     course_dir = cf.get_config_option(config, "course_directory", True)
-    nbgrader_dir = cf.get_config_option(config, "nbgrader_dir", False)
+    materials_dir = cf.get_config_option(config, "course_materials", False)
     clone_dir = cf.get_config_option(config, "clone_dir", True)
     repo = "{}-{}".format(assignment, student)
     files = Path(course_dir, clone_dir, repo).glob("*.ipynb")
     destination = Path(
-        course_dir, nbgrader_dir, "submitted", student, assignment
+        course_dir, materials_dir, "submitted", student, assignment
     )
     destination.mkdir(parents=True, exist_ok=True)
     print(

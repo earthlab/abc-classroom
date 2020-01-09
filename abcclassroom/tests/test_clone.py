@@ -43,8 +43,8 @@ def test_files(default_config, tmp_path):
 
 
 def test_copy_assignment_files(default_config, test_files):
-    nbgrader_dir = Path(
-        default_config["course_directory"], default_config["nbgrader_dir"]
+    materials_dir = Path(
+        default_config["course_directory"], default_config["course_materials"]
     )
     assignment = test_data["assignment"]
     students = test_data["students"]
@@ -52,9 +52,11 @@ def test_copy_assignment_files(default_config, test_files):
         abcclone.copy_assignment_files(default_config, s, assignment)
 
         assert Path(
-            nbgrader_dir, "submitted", s, assignment, "nb1.ipynb"
+            materials_dir, "submitted", s, assignment, "nb1.ipynb"
         ).exists()
         assert (
-            Path(nbgrader_dir, "submitted", s, assignment, "junk.csv").exists()
+            Path(
+                materials_dir, "submitted", s, assignment, "junk.csv"
+            ).exists()
             == False
         )

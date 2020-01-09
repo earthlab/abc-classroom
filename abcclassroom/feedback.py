@@ -13,7 +13,7 @@ from . import github
 
 def feedback(args):
     """
-    Copies feedback reports to local student repositories, commits the changes, and (optionally) pushes to github. Assumes files are in the directory nbgrader_dir/feedback/student/assignment. Copies all files in the source directory.
+    Copies feedback reports to local student repositories, commits the changes, and (optionally) pushes to github. Assumes files are in the directory course_materials/feedback/student/assignment. Copies all files in the source directory.
     """
     assignment = args.assignment
     do_github = args.github
@@ -26,10 +26,10 @@ def feedback(args):
     course_dir = cf.get_config_option(config, "course_directory", True)
     clone_dir = cf.get_config_option(config, "clone_dir", True)
     organization = cf.get_config_option(config, "organization", True)
-    nbgrader_dir = cf.get_config_option(config, "nbgrader_dir", True)
+    materials_dir = cf.get_config_option(config, "course_materials", True)
 
     try:
-        feedback_dir = Path(course_dir, nbgrader_dir, "feedback")
+        feedback_dir = Path(course_dir, materials_dir, "feedback")
         with open(roster_filename, newline="") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:

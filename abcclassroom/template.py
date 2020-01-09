@@ -140,18 +140,18 @@ def create_template_dir(config, assignment, mode="fail"):
 
 
 def copy_assignment_files(config, template_repo, assignment):
-    """Copy all of the files from the nbgrader release directory for the
+    """Copy all of the files from the course_materials/release directory for the
     assignment into the template repo directory.
     """
 
     print("Getting assignment files")
     course_dir = cf.get_config_option(config, "course_directory", True)
-    nbgrader_dir = cf.get_config_option(config, "nbgrader_dir", True)
-    parent_path = utils.get_abspath(nbgrader_dir, course_dir)
+    materials_dir = cf.get_config_option(config, "course_materials", True)
+    parent_path = utils.get_abspath(materials_dir, course_dir)
     release_dir = os.path.join(parent_path, "release", assignment)
     if not os.path.exists(release_dir):
         print(
-            "nbgrader release directory {} does not exist; exiting\n".format(
+            "release directory {} does not exist; exiting\n".format(
                 release_dir
             )
         )
