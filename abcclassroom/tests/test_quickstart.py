@@ -1,7 +1,5 @@
 import os
 import pytest
-
-# from shutil import rmtree
 from abcclassroom.quickstart import create_dir_struct as quickstart
 
 
@@ -22,7 +20,6 @@ def test_quickstart_default(tmp_path):
         )
     assert os.path.isdir(os.path.join(main_dir, "template_dir"))
     assert os.path.isdir(os.path.join(main_dir, "clone_dir"))
-    # rmtree(main_dir)
 
 
 def test_quickstart_custom_name(tmp_path):
