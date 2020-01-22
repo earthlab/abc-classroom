@@ -53,7 +53,6 @@ def test_quickstart_remake_existing(tmp_path):
     Test that abc-quickstart fails when using the same name for a course twice.
     """
     quickstart("python_test_dir_custom_name", working_dir=tmp_path)
-    main_dir = os.path.join(tmp_path, "python_test_dir_custom_name")
     with pytest.raises(ValueError, match="Ooops! "):
         quickstart("python_test_dir_custom_name", working_dir=tmp_path)
 
