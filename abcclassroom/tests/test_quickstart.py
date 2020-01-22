@@ -4,24 +4,24 @@ from shutil import rmtree
 from abcclassroom.quickstart import create_dir_struct as quickstart
 
 
-def test_quickstart_default():
+def test_quickstart_default(tmp_path):
     """
-    Test that the standard run of abc-quickstart creates all expected folders and outputs.
+    Test that abc-quickstart without arguments creates the default
+    "course_dir" main directory and all expected folders and outputs.
     """
-    quickstart()
-    main_dir = os.path.join(os.getcwd(), "course_dir")
+    quickstart(working_dir=tmp_path)
+    main_dir = os.path.join(tmp_path, "course_dir")
+    # main_dir = os.path.join(os.getcwd(), "course_dir")
+    assert os.path.isdir(main_dir)
+    assert os.path.isfile(os.path.join(main_dir, "config.yml"))
     with open(os.path.join(main_dir, "config.yml")) as data:
         assert (
-            os.path.isdir(main_dir)
-            and os.path.isdir(
-                os.path.join(main_dir, "assignment-template-repos")
-            )
-            and os.path.isdir(os.path.join(main_dir, "student-cloned-repos"))
-            and os.path.isfile(os.path.join(main_dir, "config.yml"))
-            and "course-name"
-            and "assignment-template-repos"
-            and "student-cloned-repos" in data.read()
+            "course_directory"
+            and "template_dir"
+            and "clone_dir" in data.read()
         )
+    assert os.path.isdir(os.path.join(main_dir, "template_dir"))
+    assert os.path.isdir(os.path.join(main_dir, "clone_dir"))
     rmtree(main_dir)
 
 
@@ -29,19 +29,18 @@ def test_quickstart_custom_name():
     """
     Test that abc-quickstart works with a custom name.
     """
-    quickstart("python_test_dir_custom_name")
-    main_dir = os.path.join(os.getcwd(), "python_test_dir_custom_name")
+    custom_name = "pytest_dir_custom_name"
+    quickstart(custom_name)
+    main_dir = os.path.join(os.getcwd(), custom_name)
     with open(os.path.join(main_dir, "config.yml")) as data:
         assert (
             os.path.isdir(main_dir)
-            and os.path.isdir(
-                os.path.join(main_dir, "assignment-template-repos")
-            )
-            and os.path.isdir(os.path.join(main_dir, "student-cloned-repos"))
+            and os.path.isdir(os.path.join(main_dir, "template_dir"))
+            and os.path.isdir(os.path.join(main_dir, "clone_dir"))
             and os.path.isfile(os.path.join(main_dir, "config.yml"))
             and "python_test_dir_custom_name"
-            and "assignment-template-repos"
-            and "student-cloned-repos" in data.read()
+            and "template_dir"
+            and "clone_dir" in data.read()
         )
     rmtree(main_dir)
 
@@ -75,13 +74,11 @@ def test_quickstart_remove_existing():
     with open(os.path.join(main_dir, "config.yml")) as data:
         assert (
             os.path.isdir(main_dir)
-            and os.path.isdir(
-                os.path.join(main_dir, "assignment-template-repos")
-            )
-            and os.path.isdir(os.path.join(main_dir, "student-cloned-repos"))
+            and os.path.isdir(os.path.join(main_dir, "template_dir"))
+            and os.path.isdir(os.path.join(main_dir, "clone_dir"))
             and os.path.isfile(os.path.join(main_dir, "config.yml"))
             and "course-name"
-            and "assignment-template-repos"
-            and "student-cloned-repos" in data.read()
+            and "template_dir"
+            and "clone_dir" in data.read()
         )
     rmtree(main_dir)
