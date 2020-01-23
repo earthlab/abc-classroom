@@ -9,15 +9,18 @@ def test_quickstart_default(tmp_path):
     "course_dir" main directory and all expected folders and outputs.
     """
     quickstart(working_dir=tmp_path)
+    # check that main dir and config created
     main_dir = os.path.join(tmp_path, "course_dir")
     assert os.path.isdir(main_dir)
     assert os.path.isfile(os.path.join(main_dir, "config.yml"))
+    # check contents of config
     with open(os.path.join(main_dir, "config.yml")) as data:
         assert (
             "course_directory"
             and "template_dir"
             and "clone_dir" in data.read()
         )
+    # check that subdirectories created
     assert os.path.isdir(os.path.join(main_dir, "template_dir"))
     assert os.path.isdir(os.path.join(main_dir, "clone_dir"))
 
