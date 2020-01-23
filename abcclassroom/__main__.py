@@ -90,7 +90,7 @@ def init():
     try:
         auth = gh.authorize(user, password, scopes, note, note_url)
 
-        set_github_auth({"token": auth.token, "id": auth.id})
+        cf.set_github_auth({"token": auth.token, "id": auth.id})
 
     except gh3.exceptions.UnprocessableEntity:
         print(
