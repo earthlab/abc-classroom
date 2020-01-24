@@ -6,8 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-* Add console script for cloning student repos (@kcranston)
-* Add feedback script to push reports to student repos (@kcranston)
+
+## [0.0.13]
+* Add console script for cloning student repos (@kcranston, new functionality)
+* Add feedback script to push reports to student repos (@kcranston, new functionality)
 * quickstart tests create directories using pytest tmp_path fixture (@kcranston, #151)
 * Codacy checks ignore assert statements used in tests (@kcranston, #158)
 * Fix abc-init to reflect new location of github auth functions (@kcranston, #163)
