@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 * Add console script for cloning student repos (@kcranston)
+* Add feedback script to push reports to student repos (@kcranston)
+* quickstart tests create directories using pytest tmp_path fixture (@kcranston, #151)
+* Codacy checks ignore assert statements used in tests (@kcranston, #158)
+* Fix abc-init to reflect new location of github auth functions (@kcranston, #163)
+* Replace nbgrader with generic course_materials name in config and code (@kcranston, #133)
 
 ## [0.0.12]
 * Change template functionality so that assignment name provided by user is not modified by abc-classroom (no longer add coursename as prefix) (@kcranston, #137)
