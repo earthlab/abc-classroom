@@ -1,7 +1,7 @@
 Previous functionality
 ======================
 
-ABC-classroom is going through a significant refactoring starting in October 2019. This documentation pertains to the pre-refactoring functionality.
+ABC-classroom started a significant refactoring in October 2019. This documentation pertains to the pre-refactoring functionality. Nothing here is current, and much of it describes functionality that is probably broken. Kept for reference purposes only. 
 
 Links
 -----
