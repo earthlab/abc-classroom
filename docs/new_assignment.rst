@@ -1,3 +1,5 @@
+.. _new_assignment:
+
 Create A New Assignment Template Repo For GitHub Classroom
 ----------------------------------------------------------
 
