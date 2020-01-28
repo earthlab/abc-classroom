@@ -18,6 +18,8 @@ and autograding Jupyter notebooks.
 
    get-started
    overview
+   configuration
+   course-materials
    new_assignment
    clone
    feedback
