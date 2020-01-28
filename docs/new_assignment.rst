@@ -15,7 +15,7 @@ This repo should have all of the files that a student will need to complete the 
 The ``abc-new-template`` and ``abc-update-template`` commands allow you to create and update template repositories.
 
 .. note::
-   The current version abc-classroom assumes that you have the student version of assignment files in the ``course_materials/release/assignment_name`` directory (where ``course_materials`` is defined in the abc-classroom ``config.yml``). This mirrors the structure of an nbgrader course. See :doc:`get-started` for more details about abc-classroom and nbgrader setup.
+   The current version **abc-classroom** assumes that you have the student version of assignment files in the ``course_materials/release/assignment_name`` directory (where ``course_materials`` is defined in the **abc-classroom** ``config.yml``). This mirrors the structure of an nbgrader course. See :doc:`get-started` for more details about **abc-classroom** and nbgrader setup.
 
 How To Create and Update Template Repositories
 ==============================================

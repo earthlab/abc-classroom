@@ -7,7 +7,7 @@ classroom. To create repositories on GitHub using ABC-Classroom, you will
 need to first authenticate with GitHub by creating a token. You only
 need to create this token once.
 
-To begin, you can install abc-classroom using:
+To begin, you can install **abc-classroom** using:
 
 ``pip install abc-classroom``
 
@@ -19,8 +19,8 @@ install directly from this repository by running:
 Setup GitHub Authentication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Once abc-classroom is installed, you are ready to setup GitHub Authentication.
-Below it is assumed that you have already installed ``abc-classroom`` on your computer.
+Once **abc-classroom** is installed, you are ready to setup GitHub Authentication.
+Below it is assumed that you have already installed **abc-classroom** on your computer.
 
 Follow the steps below to create your GitHub token.
 
@@ -63,7 +63,7 @@ The token name is: **ABC-classroom workflow helper**.
 Where Does Abc-Classroom Store the Token Information?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The token created by abc-classroom is stored in a yaml file called ``.abc-classroom.tokens.yml``
+The token created by **abc-classroom** is stored in a yaml file called ``.abc-classroom.tokens.yml``
 in your home directory called. This is the file that ``abc-init`` will create after it's
 created your GitHub token. Once the token is created, ``abc-init`` will simply check to
 ensure that the ``.abc-classroom.tokens.yml`` file exists on your computer.
@@ -72,7 +72,7 @@ ensure that the ``.abc-classroom.tokens.yml`` file exists on your computer.
    If there is already a token file present in your home directory,
    ``abc-init`` will will provide a message that tells you that the GitHub token is
    present and valid. If you
-   wish to use abc-classroom with another account, then you will have to delete or move this
+   wish to use **abc-classroom** with another account, then you will have to delete or move this
    token file. You can then run ``abc-init`` and re-authenticate with a different username.
 
 Once you have your authentication with GitHub Setup, you are ready to setup
@@ -86,7 +86,7 @@ ABC-Classroom Quickstart
     eventually have other git repositories inside of it, and it is best to avoid creating repositories inside of
     existing repositories.
 
-To set up the directory structure needed for abc-classroom, run:
+To set up the directory structure needed for **abc-classroom**, run:
 
      ``$ abc-quickstart course-name-here``
 
@@ -105,19 +105,19 @@ Flags
  delete anything currently in your course directory, but will allow you to start over fresh.
 
  ## Optional but Required for Now
- ``abc-classroom`` does not fully depend upon ``nbgrader`` but does require a
+ **abc-classroom** does not fully depend upon ``nbgrader`` but does require a
  course_materials directory that follows the nbgrader directory structure. We
  suggest that you setup an course_materials directory within the quickstart
  directory that you created above by:
 
  1. Installing ``nbgrader`` and then running
- 2. ``$ nbgrader quickstart course_materials``: this will create a nbgrader course directory called **course_materials**.
+ 2. ``$ nbgrader quickstart course_name``: this will create a nbgrader course directory called ``course_name``.
 
 Your final directory will look something like this:
 
 .. code-block:: bash
 
-  course-name-here/
+  course-name/
     cloned-files/
     template-files/
     course_materials/
@@ -127,7 +127,7 @@ Your final directory will look something like this:
 Config.yml check
 ~~~~~~~~~~~~~~~~~
 
-You can tell ``abc-classroom`` where your assignment directory is located using the
+You can tell **abc-classroom** where your assignment directory is located using the
 ``config.yml`` file. Change the ``course_materials`` parameter in that file to
 the location on your computer that contains your assignments (if you used the
 nbgrader quickstart, above, then use the directory created by nbgrader).

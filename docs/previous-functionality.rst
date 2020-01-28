@@ -5,7 +5,7 @@ ABC-classroom started a significant refactoring in October 2019. This documentat
 
 Links
 -----
-Some of the documentation about abc-classroom lives outside of this repo.
+Some of the documentation about **abc-classroom** lives outside of this repo.
 
 * `hackmd documentation <https://hackmd.io/0ZbGctpuSdqYK2OdPI51dw?view/>`_ for setting up a new course
 * `autograding course starter repo <https://github.com/betatim/autograded-course-starter/>`_ (contains `sample config file <https://github.com/betatim/autograded-course-starter/blob/master/config.yml/>`_)
@@ -59,7 +59,7 @@ Update steps:
 * create new branch, add, commit
 * push branch to github and create pull request
 
-(Current abc-classroom setup is one repo per student for whole course,
+(Current **abc-classroom** setup is one repo per student for whole course,
 which is why we need to clone, edit, and push for each assignment)
 
 When called with --template flag, only runs the Create steps.
