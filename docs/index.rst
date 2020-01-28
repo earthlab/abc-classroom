@@ -17,7 +17,7 @@ and autograding Jupyter notebooks.
    :caption: Contents:
 
    get-started
-   abc-overview
+   overview
    new_assignment
    clone
    feedback

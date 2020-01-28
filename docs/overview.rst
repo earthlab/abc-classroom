@@ -1,4 +1,4 @@
-Overview of **abc-classroom**
+Overview of abc-classroom
 -------------------------
 
 The **abc-classroom** package is designed for course instructors who are developing / marking course material locally but using GitHub Classroom to distribute material to students and collect submitted materials from students.
