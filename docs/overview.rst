@@ -3,7 +3,9 @@ Overview of abc-classroom
 
 The **abc-classroom** package is designed for course instructors who are developing / marking course material locally but using GitHub Classroom to distribute material to students and collect submitted materials from students.
 
-abc-classroom is implemented as a set of command-line scripts
+**abc-classroom** is implemented as a set of command-line scripts. Not all of the
+steps can be completed using **abc-classroom** - some steps require that you use
+the GitHub classroom web interface.
 
 General Workflow
 ================
@@ -26,9 +28,8 @@ General Workflow
 Directory structure
 ===================
 
-**abc-classroom** expects a specific directory structure. You don't need to create
-any of these directories yourself. ``abc-quickstart`` sets up the basics, and
-other **abc-classroom** scripts create directories as needed. The names of these
+Each **abc-classroom** course is a separate directory, with a specific structure. Running ``abc-quickstart`` sets up the basics, and
+other **abc-classroom** scripts create directories as needed. The only one you need to create and manage yourself is the course_materials, and there are more details in :doc`course-materials`. The names of these
 directories are configurable in ``config.yml``:
 
 ::

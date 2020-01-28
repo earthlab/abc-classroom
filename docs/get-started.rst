@@ -1,6 +1,6 @@
 
-Get Started with abc-classroom
-------------------------------
+Getting started with abc-classroom
+----------------------------------
 
 These instructions will lead you through installing **abc-classroom**, setting
 up authentication with GitHub, and creating

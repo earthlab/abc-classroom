@@ -1,16 +1,17 @@
 .. _new_assignment:
 
-Create A New Assignment Template Repo For GitHub Classroom
-----------------------------------------------------------
+Creating a new assignment template repo
+---------------------------------------
 
-Creating a new assignment involves:
+Once you have your course materials ready, you can create a template repository
+for distributing the materials to students. Creating a new assignment template
+involves:
 
-1. Creating a template repository for each student assignment. This is the repo containing assignment files that each student will get a copy of when you release the assignment for them to work on.
+1. Creating a template repository for the assignment. This is the repo containing assignment files that each student will get a copy of when you release the assignment for them to work on.
 2. Pushing that template repository to your GitHub organization that is setup with a classroom, for distribution.
 
-
-The GitHub classroom assignment can be linked to a template git repo that is on GitHub.
-This repo should have all of the files that a student will need to complete the assignment.
+On GitHub classroom, you link the assignment to the template git repo, which
+contains all of the files that a student will need to complete the assignment.
 
 The ``abc-new-template`` and ``abc-update-template`` commands allow you to create and update template repositories.
 
