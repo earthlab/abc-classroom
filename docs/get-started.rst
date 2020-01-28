@@ -4,7 +4,7 @@ Get Started with abc-classroom
 
 These instructions will lead you through installing **abc-classroom**, setting
 up authentication with GitHub, and creating
-a new **abc-classroom** course. It is also helpful to read through the :doc:` </overview>` to understand the **abc-classroom** workflow.
+a new **abc-classroom** course. It is also helpful to read through the :doc:`overview` to understand the **abc-classroom** workflow.
 
 Installing abc-classroom
 ========================
@@ -21,8 +21,8 @@ Setup GitHub Authentication
 ===========================
 
 In order to interact with GitHub (to create template repositories or push to
-student repositories), **abc-classroom** uses a `personal access tokens
-<https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line>`.
+student repositories), **abc-classroom** uses a `personal access token
+<https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line/>`_.
 Follow the steps below to create your GitHub token for **abc-classroom**. You
 only need to create this token once.
 
