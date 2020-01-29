@@ -12,7 +12,7 @@ General Workflow
 
 **For each course:**
 
-* create a new local course in **abc-classroom**
+* :ref:`create a new local course <quickstart-label>` in **abc-classroom**
 * create a new GitHub Classroom course
 
 **For each assignment:**
@@ -28,15 +28,25 @@ General Workflow
 Directory structure
 ===================
 
-Each **abc-classroom** course is a separate directory, with a specific structure. Running ``abc-quickstart`` sets up the basics, and
-other **abc-classroom** scripts create directories as needed. The only one you need to create and manage yourself is the course_materials, and there are more details in :doc`course-materials`. The names of these
-directories are configurable in ``config.yml``:
+Each **abc-classroom** course is a separate directory, with a specific structure:
 
-::
+.. code-block:: bash
 
   course_directory/ (created by quickstart)
   |-- config.yml
   |-- roster.csv (student list)
-  |-- course_materials/ (where you develop / mark your course files)
-  |-- template_repos/ (location of GitHub Classroom template repositories)
-  |-- clone_dir/ (destination for cloned student repositories)
+  |-- course_materials (where you develop / mark your course files)
+  |    |--- release (materials to be given to students)
+  |        |--- assignment1
+  |        |--- assignment2
+  |    |--- submitted (collected from students)
+  |        |--- student1
+  |        |--- student2
+  |    |--- feedback (reports to be given to students)
+  |-- template_repos (location of GitHub Classroom template repositories)
+  |-- clone_dir (destination for cloned student repositories)
+
+
+Running ``abc-quickstart`` sets up the basics, and
+other **abc-classroom** scripts create directories as needed. The only directory you need to create and manage yourself is the course_materials, and there are more details about that in :doc:`course-materials`. The names of
+directories are configurable in ``config.yml`` - see :doc:`configuration`.

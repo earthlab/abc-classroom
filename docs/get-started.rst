@@ -56,6 +56,8 @@ Running ``abc-init`` if you already have a token simply checks that the ``.abc-c
    wish to use **abc-classroom** with a different GitHub account, then you will have to delete or move this
    token file. You can then run ``abc-init`` and re-authenticate with a different username.
 
+.. _quickstart-label:
+
 Creating a new abc-classroom course
 ===================================
 
@@ -79,41 +81,4 @@ This will:
 
 Run ``abc-quickstart -h`` to see options. If you already have a directory called ``course-name``, then ``abc-quickstart`` will fail. If you want to overwrite this directory, run ``abc-quickstart -f course-name``.
 
-
-Installing nbgrader (Optional)
-==============================
-
- ## Optional but Required for Now
- **abc-classroom** does not fully depend upon ``nbgrader`` but does require a
- course_materials directory that follows the nbgrader directory structure. We
- suggest that you setup an course_materials directory within the quickstart
- directory that you created above by:
-
- 1. Installing ``nbgrader`` and then running
- 2. ``$ nbgrader quickstart course_name``: this will create a nbgrader course directory called ``course_name``.
-
-Your final directory will look something like this:
-
-.. code-block:: bash
-
-  course-name/
-    cloned-files/
-    template-files/
-    course_materials/
-      release/
-    config.yml
-
-Config.yml check
-~~~~~~~~~~~~~~~~~
-
-You can tell **abc-classroom** where your assignment directory is located using the
-``config.yml`` file. Change the ``course_materials`` parameter in that file to
-the location on your computer that contains your assignments (if you used the
-nbgrader quickstart, above, then use the directory created by nbgrader).
-
-.. code-block:: yaml
-
-  # Path to the course_materials directory. Assumed to be relative to course_dir unless
-  # you enter an absolute path (i.e. starting with '/' on Linux or OS X or with
-  # 'C:' on Windows).
-  course_materials: course_materials
+Now, you can set up the directory where you manage your course materials: :doc:`course-materials`.

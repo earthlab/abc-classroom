@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 * Add console script for cloning student repos (@kcranston)
+* Major update to documentation (@kcranston)
 
 ## [0.0.12]
 * Change template functionality so that assignment name provided by user is not modified by abc-classroom (no longer add coursename as prefix) (@kcranston, #137)

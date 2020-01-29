@@ -5,18 +5,17 @@ Creating a new assignment template repo
 
 Once you have your course materials ready, you can create a template repository
 for distributing the materials to students. Creating a new assignment template
-involves:
+in **abc-classroom** involves:
 
-1. Creating a template repository for the assignment. This is the repo containing assignment files that each student will get a copy of when you release the assignment for them to work on.
-2. Pushing that template repository to your GitHub organization that is setup with a classroom, for distribution.
+1. Ensuring that the materials to be distributed to students are in the `course_materials/release/assignment_name` directory.
+1. Copying files from `course_materials/release/assignment_name` to `template_repos/assignment_name`.
+1. Setting up `template_repos/assignment_name` as a git repository.
+1. Pushing the template repository to your GitHub Classroom organization.
 
-On GitHub classroom, you link the assignment to the template git repo, which
+Then, on GitHub classroom, you link the assignment to the template git repo, which
 contains all of the files that a student will need to complete the assignment.
 
-The ``abc-new-template`` and ``abc-update-template`` commands allow you to create and update template repositories.
-
-.. note::
-   The current version **abc-classroom** assumes that you have the student version of assignment files in the ``course_materials/release/assignment_name`` directory (where ``course_materials`` is defined in the **abc-classroom** ``config.yml``). This mirrors the structure of an nbgrader course. See :doc:`get-started` for more details about **abc-classroom** and nbgrader setup.
+The ``abc-new-template`` and ``abc-update-template`` scripts allow you to create and update template repositories.
 
 How To Create and Update Template Repositories
 ==============================================
@@ -32,7 +31,7 @@ To create a GitHub classroom homework assignment template repo:
 
 1. In the terminal, navigate to the course directory that you created using ``abc-quickstart`` (TODO: add link to quickstart page).
 
-2. To create a new assignment template called **assignment1** run:
+2. To create a new assignment template called `assignment1` run:
 
   ``$ abc-new-template assignment1``
 
@@ -122,5 +121,5 @@ Creating an assignment uses these settings from ``config.yml``:
 
 * ``template_dir`` : the directory where the local git repository will be created.
 * ``organization`` : the GitHub organization where the new remote repository will be created
-* ``materials_dir`` : the path to the local directory where you are storing course materials (the top-level nbgrader dir if you are using nbgrader).
+* ``course_materials`` : the path to the local directory where you are storing course materials (the top-level nbgrader dir if you are using nbgrader).
 * ``extra_files`` : (optional) Any extra files that you want to add to the repo, such as .gitignore or README
