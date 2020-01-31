@@ -77,6 +77,25 @@ def get_config(configpath=None):
         sys.exit(1)
 
 
+def print_config(config=None, configpath=None):
+    """
+    Print configuration. Can supply as dictionary parameter, or specify a path
+    to look for config.yml. If neither option specified, looks for config.yml
+    in current working directory. If both specified, prints dictionary, not
+    from file.
+    """
+    configtoprint = {}
+    if config is None:
+        if configpath is None:
+            configpath = Path("config.yml")
+        else:
+            configpath = Path(configpath, "config.yml")
+    else:
+        configtoprint = config
+    print("Current configuration:\n")
+    print(config)
+
+
 def write_config(config, configpath=None):
     yaml = YAML()
     if configpath is None:
