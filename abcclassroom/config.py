@@ -91,7 +91,7 @@ def print_config(config=None, configpath=None):
     else:
         configtoprint = config
     print("Current configuration:\n")
-    pprint.pprint(config)
+    pprint.pprint(configtoprint)
 
 
 def write_config(config, configpath=None):
@@ -129,9 +129,12 @@ def set_config_option(
     config, option, value, append_value=False, configpath=None
 ):
     """
-    Sets a config option. If option already exists and append_value is False, replaces existing value. If option exists and append_value is true, adds new value to list of existing values. Will not add a duplicate value.
+    Sets a config option. If option already exists and append_value is False,
+    replaces existing value. If option exists and append_value is true, adds
+    new value to list of existing values. Will not add a duplicate value.
 
-    Writes the new config (overwriting the existing file) and returns new config dict.
+    Writes the new config (overwriting the existing file) and returns new
+    config dict.
     """
 
     existing_value = get_config_option(config, option, required=False)
