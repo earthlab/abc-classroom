@@ -6,6 +6,7 @@ abc-classroom.config
 
 import os
 import sys
+import pprint
 from pathlib import Path
 import os.path as op
 
@@ -86,14 +87,11 @@ def print_config(config=None, configpath=None):
     """
     configtoprint = {}
     if config is None:
-        if configpath is None:
-            configpath = Path("config.yml")
-        else:
-            configpath = Path(configpath, "config.yml")
+        configtoprint = get_config(configpath)
     else:
         configtoprint = config
     print("Current configuration:\n")
-    print(config)
+    pprint.pprint(config)
 
 
 def write_config(config, configpath=None):

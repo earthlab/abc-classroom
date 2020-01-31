@@ -6,6 +6,7 @@ abc-classroom.template
 import os
 import sys
 import shutil
+import copy
 from pathlib import Path
 
 from . import config as cf
@@ -33,6 +34,7 @@ def new_update_template(args):
 
     # create / append assignment entry in config
     course_dir = cf.get_config_option(config, "course_directory", True)
+    cf.print_config(config)
     cf.set_config_option(
         config,
         "assignments",
@@ -170,17 +172,18 @@ def copy_assignment_files(config, template_repo, assignment):
 
 def create_extra_files(config, template_repo, assignment):
     """Create any extra files as specified in the config """
-    extra_files = cf.get_config_option(config, "extra_files", False)
+    extra_files = copy.deepcopy(
+        cf.get_config_option(config, "extra_files", False)
+    )
     nfiles = len(extra_files)
     print("Creating {} extra files".format(nfiles))
-    for file in extra_files:
-        contents = config["extra_files"][file]
+    for file, contents in extra_files.items():
         if len(contents) > 0:
             if file == "README.md":
                 firstline = ""
                 if assignment:
-                    first_line = "# {}".format(assignment)
+                    first_line = "# {}\n".format(assignment)
                 else:
-                    first_line = "# README"
+                    first_line = "# README\n"
                 contents.insert(0, first_line)
             utils.write_file(template_repo, file, contents)
