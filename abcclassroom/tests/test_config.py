@@ -53,6 +53,7 @@ def test_get_config_option(default_config):
 
 def test_set_config_option(default_config, tmp_path):
     abcconfig.write_config(default_config, configpath=tmp_path)
+
     # test writing new value
     config = abcconfig.set_config_option(
         default_config, "pie", "apple", configpath=tmp_path
@@ -61,12 +62,9 @@ def test_set_config_option(default_config, tmp_path):
 
     # test replacing existing value
     config = abcconfig.set_config_option(
-        default_config, "pie", "pecan", configpath=tmp_path
+        default_config, "pie", "peach", configpath=tmp_path
     )
     assert abcconfig.get_config_option(config, "pie") == "peach"
-    # assert abcconfig.get_config_option(config, "template_dir") == "templates"
-    # config = abcconfig.get_config(configpath=tmp_path)
-    # assert abcconfig.get_config_option(config, "template_dir") == "templates"
 
     # test adding values to existing single value
     config = abcconfig.set_config_option(
@@ -76,18 +74,20 @@ def test_set_config_option(default_config, tmp_path):
         append_value=True,
         configpath=tmp_path,
     )
-    assert abcconfig.get_config_option(config, "pie") == ["apple", "pumpkin"]
-    print(config)
+    assert "peach" in abcconfig.get_config_option(config, "pie")
+    assert "pumpkin" in abcconfig.get_config_option(config, "pie")
+
     # test adding values to existing list
     config = abcconfig.set_config_option(
-        default_config, "pie", "peach", append_value=True, configpath=tmp_path
+        default_config, "pie", "pecan", append_value=True, configpath=tmp_path
     )
-    print(config)
-    assert abcconfig.get_config_option(config, "pie") == [
-        "apple",
-        "pumpkin",
-        "peach",
-    ]
+    assert "pecan" in abcconfig.get_config_option(config, "pie")
+
+    # test that we don't add duplicates
+    config = abcconfig.set_config_option(
+        default_config, "pie", "pecan", append_value=True, configpath=tmp_path
+    )
+    assert abcconfig.get_config_option(config, "pie").count("pecan") == 1
 
     # test replacing existing list
     pie_list = ["pecan", "sugar"]
@@ -98,4 +98,5 @@ def test_set_config_option(default_config, tmp_path):
         append_value=False,
         configpath=tmp_path,
     )
-    assert abcconfig.get_config_option(config, "pie") == ["pecan", "sugar"]
+    assert len(abcconfig.get_config_option(config, "pie")) == 2
+    assert "sugar" in abcconfig.get_config_option(config, "pie")
