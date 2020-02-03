@@ -3,12 +3,13 @@ Overview of abc-classroom
 
 The **abc-classroom** package is designed for course instructors who are developing / marking course material locally but using GitHub Classroom to distribute material to students and collect submitted materials from students.
 
-**abc-classroom** is implemented as a set of command-line scripts. Not all of the
-steps can be completed using **abc-classroom** - some steps require that you use
-the GitHub classroom web interface.
-
 General Workflow
 ================
+
+Here is the general workflow for each new course and for each new assignment.
+Not all of the steps can be completed using **abc-classroom** - some steps
+require that you use the GitHub classroom web interface (due to lack of API
+for GitHub classroom).
 
 **For each course:**
 
@@ -24,6 +25,19 @@ General Workflow
 * students accept assignment, complete work, and submit by pushing to their github repo
 * :doc:`clone student repos and copy submitted files </clone>` into course materials directory
 * :doc:`copy feedback reports from course materials to student repos </feedback>` and push back to students
+
+abc-classroom scripts
+=====================
+
+**abc-classroom** is implemented as a set of command-line scripts. A summary of
+each script, with links to more documentation:
+
+* `abc-init` : sets up token-based access to GitHub
+* `abc-quickstart` : sets up a new course
+* `abc-new-template` : creates a git repository from a directory of course materials and pushes the repo to your GitHub organization to be used as an assignment template
+* `abc-update-template` : updates an existing template repository based on local changes to course materials
+* `abc-clone` : clones each of the student repositories and copies submitted assignments into your course materials directory
+* `abc-feedback` : copies feedback reports from your course materials directory into local student repositories and then pushes to GitHub
 
 Directory structure
 ===================
