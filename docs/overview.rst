@@ -37,7 +37,7 @@ each script, with links to more documentation:
 * ``abc-new-template`` : creates a git repository from a directory of course materials and pushes the repo to your GitHub organization to be used as an assignment template; see :ref:`abc-new-template`
 * ``abc-update-template`` : updates an existing template repository based on local changes to course materials; see :ref:`abc-update-template`
 * ``abc-clone`` : clones each of the student repositories and copies submitted assignments into your course materials directory; see :ref:`abc-clone`
-* `abc-feedback` : copies feedback reports from your course materials directory into local student repositories and then pushes to GitHub
+* `abc-feedback` : copies feedback reports from your course materials directory into local student repositories and then pushes to GitHub; see :ref:`abc-feedback`
 
 Directory structure
 ===================

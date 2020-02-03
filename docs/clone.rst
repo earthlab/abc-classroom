@@ -4,8 +4,11 @@ Collecting materials from students
 ----------------------------------
 
 Once the students have pushed their completed assignments to their GitHub
-repositories, the `abc-clone` script retrieves the materials. There are two
-steps: cloning the repos, then copying the files.
+repositories, the `abc-clone` script retrieves the materials::
+
+  $ abc-clone assignment-name
+
+This does two things - cloning the repos, then copying the files.
 
 **Cloning the repositories**
 
@@ -30,7 +33,7 @@ from ``clone_dir/assignment-student`` into:
     ``course_materials/submitted/student/assignment``
 
 where ``course_materials`` is defined in ``config.yml``. Will create
-subdirectories of ``course_materials`` as needed. 
+subdirectories of ``course_materials`` as needed.
 
 Command-line arguments
 ======================
