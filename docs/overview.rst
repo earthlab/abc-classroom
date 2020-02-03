@@ -13,7 +13,7 @@ for GitHub classroom).
 
 **For each course:**
 
-* :ref:`create a new local course <quickstart-label>` in **abc-classroom**
+* :ref:`create a new local course <abc-quickstart>` in **abc-classroom**
 * create a new GitHub Classroom course
 
 **For each assignment:**
@@ -32,10 +32,10 @@ abc-classroom scripts
 **abc-classroom** is implemented as a set of command-line scripts. A summary of
 each script, with links to more documentation:
 
-* `abc-init` : sets up token-based access to GitHub
-* `abc-quickstart` : sets up a new course
-* `abc-new-template` : creates a git repository from a directory of course materials and pushes the repo to your GitHub organization to be used as an assignment template
-* `abc-update-template` : updates an existing template repository based on local changes to course materials
+* ``abc-init`` : sets up token-based access to GitHub; see :ref:`abc-init`
+* ``abc-quickstart`` : sets up a new course; see :ref:`abc-quickstart`
+* ``abc-new-template`` : creates a git repository from a directory of course materials and pushes the repo to your GitHub organization to be used as an assignment template; see :ref:`abc-new-template`
+* ``abc-update-template`` : updates an existing template repository based on local changes to course materials; see :ref:`abc-update-template`
 * `abc-clone` : clones each of the student repositories and copies submitted assignments into your course materials directory
 * `abc-feedback` : copies feedback reports from your course materials directory into local student repositories and then pushes to GitHub
 

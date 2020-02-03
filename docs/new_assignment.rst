@@ -1,4 +1,4 @@
-.. _new_assignment:
+.. _assignment_template:
 
 Creating a new assignment template repo
 ---------------------------------------
@@ -20,9 +20,21 @@ The ``abc-new-template`` and ``abc-update-template`` scripts allow you to create
 How To Create and Update Template Repositories
 ==============================================
 
-There are two template scripts : `abc-new-template` and `abc-update-template`. The 'new' script is for first-time creation of a new assignment template repository from a directory of assignment files. The 'update' script allows you to quickly update the local and remote repositories after making changes to assignment files.
+There are two template scripts : `abc-new-template` and `abc-update-template`.
+The 'new' script is for first-time creation of a new assignment template
+repository from a directory of assignment files. The 'update' script allows you
+to quickly update the local and remote repositories after making changes to
+assignment files.
+
+.. note::
+    The 'update' script is simply a convenience function - both
+    scripts call the same code, but with different default command line parameters
+    (i.e. you can replicate the behavior of 'update' by choosing the parameters of
+    'new').
 
 Make sure you have updated your ``config.yml`` before running the template scripts. See the Configuration section below for details.
+
+.. _abc-new-template:
 
 Creating a New Template repository
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -75,6 +87,9 @@ Run ``abc-new-template -h`` to see the options. The output is reproduced below::
                             (except .git directory); merge = keep existing dir,
                             overwrite existing files, add new files (Default =
                             fail).
+
+
+.. _abc-update-template:
 
 Updating an existing template repository
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

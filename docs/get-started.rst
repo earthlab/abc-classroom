@@ -17,6 +17,8 @@ If you want the development version, you can install directly from GitHub:
 
 ``$ pip install git+git://github.com/earthlab/abc-classroom``
 
+.. _abc-init:
+
 Setup GitHub Authentication
 ===========================
 
@@ -56,7 +58,7 @@ Running ``abc-init`` if you already have a token simply checks that the ``.abc-c
    wish to use **abc-classroom** with a different GitHub account, then you will have to delete or move this
    token file. You can then run ``abc-init`` and re-authenticate with a different username.
 
-.. _quickstart-label:
+.. _abc-quickstart:
 
 Creating a new abc-classroom course
 ===================================
