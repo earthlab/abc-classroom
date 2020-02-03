@@ -61,6 +61,33 @@ To run only the subset of the tests in (for example) `singlefile.py`, use:
 
     $ pytest abcclassroom/tests/singlefile.py
 
+Deploying
+=========
+
+A reminder for the maintainers on how to deploy.
+Make sure all your changes are committed, then run::
+
+    $ bumpversion patch # possible: major / minor / patch
+
+This will increment the version according to a major release (e.g., 0.1.0 to
+1.0.0), a minor release (e.g., 0.1.0 to 0.2.0), or a patch (e.g., 0.1.0 to
+0.1.1), following the guidelines for semantic versioning: https://semver.org/.
+
+
+Bumpversion updates the version number throughout the
+package, and generates a git commit along with an associated git tag for the
+new version.
+For more on bumpversion, see: https://github.com/peritus/bumpversion
+
+To deploy EarthPy, push the commit and the version tags::
+
+    $ git push
+    $ git push --tags
+
+Travis will then deploy to PyPI if the build succeeds.
+Travis will only deploy to PyPI on tagged commits, so remember to push the tags.
+Once that is done, create a release on GitHub for the new version.
+
 Optional: Install nbgrader
 ==========================
 
