@@ -1,4 +1,4 @@
-# abc-classroom Release Notes
+# Release Notes
 
 All notable changes to this project will be documented in this file.
 
@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 * Fix bug with adding assignments to config (@kcranston, #161)
+* Fix feedback bug reported on slack (@kcranston)
+* Major update to documentation (@kcranston)
 
 ## [0.0.13]
 * Add console script for cloning student repos (@kcranston, new functionality)
