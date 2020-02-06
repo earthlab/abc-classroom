@@ -132,12 +132,12 @@ def clone():
 
 def feedback():
     """
-    Copies feedback reports to local student repositories and (optionally) pushes to github. Assumes files are in the directory nbgrader_dir/feedback/student/assignment. Copies all files in the source directory.
+    Copies feedback reports to local student repositories and (optionally) pushes to github. Assumes files are in the directory course_materials/feedback/student/assignment. Copies all files in the source directory.
     """
     parser = argparse.ArgumentParser(description=feedback.__doc__)
     parser.add_argument(
         "assignment",
-        help="Name of assignment. Must match name in nbgrader release directory",
+        help="Name of assignment. Must match name in course_materials feedback directory",
     )
     parser.add_argument(
         "--github",
