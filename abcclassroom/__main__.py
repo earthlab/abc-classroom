@@ -15,7 +15,7 @@ import github3 as gh3
 
 from . import ok
 from . import template
-from . import feedback
+from . import feedback as fdback
 from . import config as cf
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
@@ -145,7 +145,7 @@ def feedback():
         help="Also pushes files to student repositories on GitHub (default = False; only copies files to local repos)",
     )
     args = parser.parse_args()
-    feedback.copy_feedback(args)
+    fdback.copy_feedback(args)
 
 
 def new_template():

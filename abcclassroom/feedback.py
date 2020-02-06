@@ -6,12 +6,13 @@ abc-classroom.feedback
 
 from pathlib import Path
 import csv
+import shutil
 
 from . import config as cf
 from . import github
 
 
-def feedback(args):
+def copy_feedback(args):
     """
     Copies feedback reports to local student repositories, commits the changes, and (optionally) pushes to github. Assumes files are in the directory course_materials/feedback/student/assignment. Copies all files in the source directory.
     """
@@ -37,19 +38,19 @@ def feedback(args):
                 source_files = Path(feedback_dir, student, assignment).glob(
                     "*"
                 )
-                if len(source_files) == 0:
-                    print(
-                        "No feedback files found for student {}".format(
-                            student
-                        )
-                    )
-                    continue
+                # if len(list(source_files)) == 0:
+                #     print(
+                #         "No feedback files found for student {}".format(
+                #             student
+                #         )
+                #     )
+                #     continue
                 # if there are files, copy them and do git / github stuff
                 repo = "{}-{}".format(assignment, student)
                 destination_dir = Path(clone_dir, repo)
-                for f in files:
-                    print("copying {} to {}".format(f, destination))
-                    copy(f, destination)
+                for f in source_files:
+                    print("copying {} to {}".format(f, destination_dir))
+                    shutil.copy(f, destination_dir)
                 github.commit_all_changes(
                     destination_dir,
                     msg="Adding feedback for assignment {}".format(assignment),
