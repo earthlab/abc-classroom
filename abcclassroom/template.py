@@ -27,7 +27,6 @@ def new_update_template(args):
     # create the local git repository
     assignment = args.assignment
     template_repo_path = create_template_dir(config, assignment, args.mode)
-    print("repo path: {}".format(template_repo_path))
     copy_assignment_files(config, template_repo_path, assignment)
     create_extra_files(config, template_repo_path, assignment)
     github.init_and_commit(template_repo_path, args.custom_message)
@@ -87,42 +86,46 @@ def create_template_dir(config, assignment, mode="fail"):
     """
     course_dir = cf.get_config_option(config, "course_directory", True)
     template_parent_dir = cf.get_config_option(config, "template_dir", True)
-    parent_path = utils.get_abspath(template_parent_dir, course_dir)
+    parent_path = Path(utils.get_abspath(template_parent_dir, course_dir))
 
     # check that parent directory for templates exists, and create it if it does not
-    if not os.path.isdir(parent_path):
+    if not parent_path.is_dir():
         print(
             "Creating new directory for template repos at {}".format(
-                parent_path
+                parent_path.relative_to(course_dir)
             )
         )
-        os.mkdir(parent_path)
+        parent_path.mkdir()
 
     repo_name = assignment + "-template"
     template_path = Path(parent_path, repo_name)
     dir_exists = template_path.is_dir()
     if not dir_exists:
         template_path.mkdir()
-        print("Creating new template repo at {}".format(template_path))
+        print(
+            "Creating new template repo at {}".format(
+                template_path.relative_to(course_dir)
+            )
+        )
     else:
         if mode == "fail":
             print(
                 "Directory {} already exists; re-run with '--mode merge' or '--mode delete', or delete / move directory before re-running".format(
-                    template_path
+                    template_path.relative_to(course_dir)
                 )
             )
             sys.exit(1)
         elif mode == "merge":
             print(
                 "Template directory {} already exists; will keep directory but overwrite existing files with same names".format(
-                    template_path
+                    template_path.relative_to(course_dir)
                 )
             )
         else:
             # mode == delete
             print(
                 "Template directory {} already exists; deleting existing files but keeping .git directory, if exists.".format(
-                    template_path
+                    template_path.relative_to(course_dir)
                 )
             )
             # temporarily move the .git dir to the parent of the template_path
