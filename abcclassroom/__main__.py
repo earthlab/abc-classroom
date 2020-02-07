@@ -15,7 +15,7 @@ import github3 as gh3
 
 from . import ok
 from . import template
-from . import feedback
+from . import feedback as fdback
 from . import config as cf
 from .distribute import find_notebooks, render_circleci_template
 from .notebook import split_notebook
@@ -132,12 +132,12 @@ def clone():
 
 def feedback():
     """
-    Copies feedback reports to local student repositories and (optionally) pushes to github. Assumes files are in the directory nbgrader_dir/feedback/student/assignment. Copies all files in the source directory.
+    Copies feedback reports to local student repositories and (optionally) pushes to github. Assumes files are in the directory course_materials/feedback/student/assignment. Copies all files in the source directory.
     """
     parser = argparse.ArgumentParser(description=feedback.__doc__)
     parser.add_argument(
         "assignment",
-        help="Name of assignment. Must match name in nbgrader release directory",
+        help="Name of assignment. Must match name in course_materials feedback directory",
     )
     parser.add_argument(
         "--github",
@@ -145,7 +145,7 @@ def feedback():
         help="Also pushes files to student repositories on GitHub (default = False; only copies files to local repos)",
     )
     args = parser.parse_args()
-    feedback.copy_feedback(args)
+    fdback.copy_feedback(args)
 
 
 def new_template():
