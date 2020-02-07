@@ -1,4 +1,4 @@
-# ABC-Classroom Code of Conduct
+# abc-classroom Code of Conduct
 
 ## Our Pledge
 

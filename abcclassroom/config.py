@@ -6,6 +6,7 @@ abc-classroom.config
 
 import os
 import sys
+import pprint
 from pathlib import Path
 import os.path as op
 
@@ -77,13 +78,28 @@ def get_config(configpath=None):
         sys.exit(1)
 
 
+def print_config(config=None, configpath=None):
+    """
+    Print configuration. Can supply as dictionary parameter, or specify a path
+    to look for config.yml. If neither option specified, looks for config.yml
+    in current working directory. If both specified, prints dictionary, not
+    from file.
+    """
+    configtoprint = {}
+    if config is None:
+        configtoprint = get_config(configpath)
+    else:
+        configtoprint = config
+    print("Current configuration:\n")
+    pprint.pprint(configtoprint)
+
+
 def write_config(config, configpath=None):
     yaml = YAML()
     if configpath is None:
         configpath = Path("config.yml")
     else:
         configpath = Path(configpath, "config.yml")
-    print("Writing config to {}".format(configpath))
     with open(configpath, "w") as f:
         yaml.dump(config, f)
 
@@ -113,7 +129,12 @@ def set_config_option(
     config, option, value, append_value=False, configpath=None
 ):
     """
-    Sets a config option. If option already exists and append_value is False, replaces existing value. If option exists and append_value is true, adds new value to list of existing values. Writes the new config (overwriting the existing file) and returns new config dict.
+    Sets a config option. If option already exists and append_value is False,
+    replaces existing value. If option exists and append_value is true, adds
+    new value to list of existing values. Will not add a duplicate value.
+
+    Writes the new config (overwriting the existing file) and returns new
+    config dict.
     """
 
     existing_value = get_config_option(config, option, required=False)
@@ -123,6 +144,8 @@ def set_config_option(
             value = existing_value
         else:
             value = [existing_value, value]
+        # eliminate duplicates
+        value = list(set(value))
     config[option] = value
     print("Writing new config at {}".format(configpath))
     write_config(config, configpath)
