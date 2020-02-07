@@ -33,8 +33,8 @@ def new_update_template(args):
     github.init_and_commit(template_repo_path, args.custom_message)
 
     # create / append assignment entry in config
+    print("Updating assignment list in config")
     course_dir = cf.get_config_option(config, "course_directory", True)
-    cf.print_config(config)
     cf.set_config_option(
         config,
         "assignments",
@@ -143,15 +143,16 @@ def create_template_dir(config, assignment, mode="fail"):
 
 def copy_assignment_files(config, template_repo, assignment):
     """Copy all of the files from the course_materials/release directory for the
-    assignment into the template repo directory.
+    assignment into the template repo directory. Ignores any subdirectories of
+    release, as well as contents of subdirectories.
     """
 
     print("Getting assignment files")
     course_dir = cf.get_config_option(config, "course_directory", True)
     materials_dir = cf.get_config_option(config, "course_materials", True)
     parent_path = utils.get_abspath(materials_dir, course_dir)
-    release_dir = os.path.join(parent_path, "release", assignment)
-    if not os.path.exists(release_dir):
+    release_dir = Path(parent_path, "release", assignment)
+    if not release_dir.exists():
         print(
             "release directory {} does not exist; exiting\n".format(
                 release_dir
@@ -159,14 +160,20 @@ def copy_assignment_files(config, template_repo, assignment):
         )
         sys.exit(1)
     nfiles = 0
-    all_files = os.listdir(release_dir)
+    # all_contents = os.listdir(release_dir)
     # matched_files = match_patterns(all_files, patterns)
-    for file in all_files:
-        fpath = os.path.join(release_dir, file)
-        print("copying {} to {}".format(fpath, template_repo))
-        # overwrites if fpath exists in template_repo
-        shutil.copy(fpath, template_repo)
-        nfiles += 1
+
+    for item in release_dir.iterdir():
+        if item.is_file():
+            # fpath = os.path.join(release_dir, item)
+            print(
+                "copying {} to {}".format(
+                    item.name, template_repo.relative_to(course_dir)
+                )
+            )
+            # overwrites if fpath exists in template_repo
+            shutil.copy(item, template_repo)
+            nfiles += 1
     print("Copied {} files".format(nfiles))
 
 

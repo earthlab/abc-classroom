@@ -112,7 +112,27 @@ def test_copy_assignment_files(default_config, tmp_path):
     abctemplate.copy_assignment_files(
         default_config, template_repo, assignment
     )
-    assert os.listdir(nbpath) == os.listdir(template_repo)
+    assert os.listdir(nbpath).sort() == os.listdir(template_repo).sort()
+
+
+def test_copy_assignment_files_skip_dir(default_config, tmp_path):
+    # test that contents are the same for target and source directory
+    default_config["course_directory"] = tmp_path
+    assignment = "assignment1"
+    # first, set up the test course materials directory
+    nbpath = Path(
+        tmp_path, default_config["course_materials"], "release", assignment
+    )
+    nbpath.mkdir(parents=True)
+    # create some temporary files
+    nbpath.joinpath("file1.txt").touch()
+    nbpath.joinpath("file2.txt").touch()
+    Path(nbpath, "do-not-copy").mkdir()
+    template_repo = abctemplate.create_template_dir(default_config, assignment)
+    abctemplate.copy_assignment_files(
+        default_config, template_repo, assignment
+    )
+    assert os.listdir(nbpath).sort() == os.listdir(template_repo).sort()
 
 
 def test_copy_assignment_files_fails_nodir(default_config, tmp_path):
