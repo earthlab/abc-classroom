@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+* Skip subdirectories in release dir when creating template repo (@kcranston, #171)
+* Print relative, not absolute paths when creating template repo (@kcranston, #107)
 
 ## [0.0.14]
 * Fix bug with adding assignments to config (@kcranston, #161)
