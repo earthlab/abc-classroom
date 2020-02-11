@@ -63,8 +63,8 @@ def create_dir_struct(course_name="abc_course", force=False, working_dir=None):
         )
     if working_dir is None:
         working_dir = os.getcwd()
-    # main_dir = os.path.join(working_dir, course_name)
     main_dir = Path(working_dir, course_name)
+
     # Check if the main_dir doesn't exist already
     if main_dir.is_dir():
         if force:
@@ -95,32 +95,6 @@ def create_dir_struct(course_name="abc_course", force=False, working_dir=None):
     Path(main_dir, clone_dir).mkdir()
     Path(main_dir, template_dir).mkdir()
 
-    # Making all the needed directories and subdirectories, and creating the
-    # configuration file.
-    # dir_paths = [
-    #     main_dir,
-    #     Path(main_dir, "clone_dir"),
-    #     Path(main_dir, "template_dir"),
-    # ]
-    # for directory in dir_paths:
-    #     directory.mkdir()
-    # copy(config, main_dir)
-    # if course_name:
-    #     with open(os.path.join(main_dir, "config.yml"), "r") as file:
-    #         filedata = file.read()
-    #         filedata = filedata.replace(
-    #             "/Users/karen/awesome-course", main_dir
-    #         )
-    #         filedata = filedata.replace(
-    #             "/Users/me/awesome-course/cloned_dirs",
-    #             os.path.join(main_dir, "clone_dir"),
-    #         )
-    #         filedata = filedata.replace(
-    #             "/Users/me/awesome-course/assignment_repos",
-    #             os.path.join(main_dir, "template_dir"),
-    #         )
-    #     with open(os.path.join(main_dir, "config.yml"), "w") as file:
-    #         file.write(filedata)
     print(
         """
         Created abc-classroom directory structure in '{}',
