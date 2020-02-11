@@ -30,29 +30,28 @@ def path_to_example(dataset):
     abcclassroom_path = Path(__file__).parent
     dataset_path = Path(abcclassroom_path, "example-data", dataset)
     if not dataset_path.exists():
-        raise FileNotFoundError(
-            dataset + " not found in abc-classroom example-data directory."
-        )
+        raise FileNotFoundError(dataset_path)
     return dataset_path
 
 
-def create_dir_struct(course_name="course_dir", force=False, working_dir=None):
+def create_dir_struct(course_name="abc_course", force=False, working_dir=None):
     """
     Create a directory structure that can be used to start an abc-classroom
     course. This includes a main directory, two sub directories for templates
     and cloned files, and a start to a configuration file.
 
-    This is the tmplementation of athe bc-quickstart script; it is called
+    This is the tmplementation of the abc-quickstart script; it is called
     directly from main.
     """
     # Making sure the sample configuration file is where it's supposed to be.
-    config = path_to_example("config.yml")
-    if not os.path.exists(config):
-        raise ValueError(
-            """Sample config.yml configuration file can't be located at {},
-            please ensure abc-classroom has been installed
-            correctly""".format(
-                config
+    try:
+        config_path = path_to_example("config.yml")
+    except FileNotFoundError as err:
+        print(
+            """Sample config.yml configuration file cannot be located at {},
+        please ensure abc-classroom has been installed
+        correctly""".format(
+                err
             )
         )
     # Assigning the custom folder name if applicable
@@ -64,51 +63,69 @@ def create_dir_struct(course_name="course_dir", force=False, working_dir=None):
         )
     if working_dir is None:
         working_dir = os.getcwd()
-    main_dir = os.path.join(working_dir, course_name)
-    if force and os.path.isdir(main_dir):
-        rmtree(main_dir)
-    # Make sure that the main_dir doesn't exist already
-    if os.path.isdir(main_dir):
-        raise ValueError(
-            """
-            Ooops! It looks like the directory {} already exists on your
-            computer. You might have already run quickstart in this directory.
-            Consider using a different course name, deleting the existing
-            directory, or running quikstart with the -f flag to force overwrite
-            the existing directory.""".format(
-                course_name
+    # main_dir = os.path.join(working_dir, course_name)
+    main_dir = Path(working_dir, course_name)
+    # Check if the main_dir doesn't exist already
+    if main_dir.is_dir():
+        if force:
+            rmtree(main_dir)
+        else:
+            raise FileExistsError(
+                """
+                Ooops! It looks like the directory {} already exists on your
+                computer. You might have already run quickstart in this directory.
+                Consider using a different course name, deleting the existing
+                directory, or running quikstart with the -f flag to force overwrite
+                the existing directory.""".format(
+                    course_name
+                )
             )
-        )
-    # Making all the needed directories and subdirectories, and creating the configuration file.
-    dir_names = [
-        main_dir,
-        os.path.join(main_dir, "clone_dir"),
-        os.path.join(main_dir, "template_dir"),
-    ]
-    for directories in dir_names:
-        os.mkdir(directories)
-    copy(config, main_dir)
-    if course_name:
-        with open(os.path.join(main_dir, "config.yml"), "r") as file:
-            filedata = file.read()
-            filedata = filedata.replace(
-                "/Users/karen/awesome-course", main_dir
-            )
-            filedata = filedata.replace(
-                "/Users/me/awesome-course/cloned_dirs",
-                os.path.join(main_dir, "clone_dir"),
-            )
-            filedata = filedata.replace(
-                "/Users/me/awesome-course/assignment_repos",
-                os.path.join(main_dir, "template_dir"),
-            )
-        with open(os.path.join(main_dir, "config.yml"), "w") as file:
-            file.write(filedata)
+    # make the main course directory and copy the config file there
+    main_dir.mkdir()
+    copy(config_path, main_dir)
+
+    # now we can use config functions to read / write config
+    config = cf.get_config(main_dir)
+    config["course_directory"] = str(main_dir)
+    cf.write_config(config, main_dir)
+    clone_dir = cf.get_config_option(config, "clone_dir")
+    template_dir = cf.get_config_option(config, "template_dir")
+
+    # make the required subdirectories
+    Path(main_dir, clone_dir).mkdir()
+    Path(main_dir, template_dir).mkdir()
+
+    # Making all the needed directories and subdirectories, and creating the
+    # configuration file.
+    # dir_paths = [
+    #     main_dir,
+    #     Path(main_dir, "clone_dir"),
+    #     Path(main_dir, "template_dir"),
+    # ]
+    # for directory in dir_paths:
+    #     directory.mkdir()
+    # copy(config, main_dir)
+    # if course_name:
+    #     with open(os.path.join(main_dir, "config.yml"), "r") as file:
+    #         filedata = file.read()
+    #         filedata = filedata.replace(
+    #             "/Users/karen/awesome-course", main_dir
+    #         )
+    #         filedata = filedata.replace(
+    #             "/Users/me/awesome-course/cloned_dirs",
+    #             os.path.join(main_dir, "clone_dir"),
+    #         )
+    #         filedata = filedata.replace(
+    #             "/Users/me/awesome-course/assignment_repos",
+    #             os.path.join(main_dir, "template_dir"),
+    #         )
+    #     with open(os.path.join(main_dir, "config.yml"), "w") as file:
+    #         file.write(filedata)
     print(
         """
         Created abc-classroom directory structure in '{}',
-        including template and cloning directories and a configuration file,
-        'config.yml'. To proceed, please create / move your sample roster
+        including template and clone directories and a configuration file,
+        'config.yml'. To proceed, please create / move your course roster
         and course_materials directory into '{}' and check the config file
         settings.""".format(
             main_dir, course_name
