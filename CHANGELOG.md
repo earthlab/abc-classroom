@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+* Update quickstart to use sample config and config functions (@kcranston, #160, #142)
 
 ## [0.0.14]
 * Fix bug with adding assignments to config (@kcranston, #161)
