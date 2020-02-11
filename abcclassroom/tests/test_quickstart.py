@@ -1,4 +1,3 @@
-import os
 import pytest
 from pathlib import Path
 import abcclassroom.quickstart as quickstart
@@ -9,6 +8,9 @@ def test_path_to_example():
     # with filename that should exist
     filename = "config.yml"
     config_path = quickstart.path_to_example(filename)
+    # don't check the full path here because the code uses __file__, which
+    # won't be the same when running tests
+    assert Path(config_path).name == filename
 
     # with filename that doesn't exist
     filename = "filethatdoesntexist.txt"
