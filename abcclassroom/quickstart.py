@@ -5,6 +5,7 @@ abc-classroom.quickstart
 """
 
 import os
+from pathlib import Path
 from shutil import copy, rmtree
 from . import config as cf
 from abcclassroom import __file__
@@ -12,9 +13,9 @@ from abcclassroom import __file__
 
 def path_to_example(dataset):
     """
-    Construct a file path to an example dataset.
-    This file defines helper functions to access data files in this directory,
-    to support examples. Adapted from the PySAL package.
+    Construct a file path to an example dataset, assuming the dataset is
+    contained in the 'example-data' directory of the abc-classroom package.
+    Adapted from the PySAL package.
 
     Parameters
     ----------
@@ -23,24 +24,26 @@ def path_to_example(dataset):
 
     Returns
     -------
-    string
-        A file path (string) to the dataset
+    Path object
+        A concrete Path object to the dataset
     """
-    abcclassroom_path = os.path.split(__file__)[0]
-    data_dir = os.path.join(abcclassroom_path, "example-data")
-    data_files = os.listdir(data_dir)
-    if dataset not in data_files:
-        raise KeyError(dataset + " not found in abc-classroom example data.")
-    return os.path.join(data_dir, dataset)
+    abcclassroom_path = Path(__file__).parent
+    dataset_path = Path(abcclassroom_path, "example-data", dataset)
+    if not dataset_path.exists():
+        raise FileNotFoundError(
+            dataset + " not found in abc-classroom example-data directory."
+        )
+    return dataset_path
 
 
-def create_dir_struct(course_name="course_dir", f=False, working_dir=None):
+def create_dir_struct(course_name="course_dir", force=False, working_dir=None):
     """
     Create a directory structure that can be used to start an abc-classroom
     course. This includes a main directory, two sub directories for templates
     and cloned files, and a start to a configuration file.
 
-    Implementation of abc-quickstart script; called directly from main.
+    This is the tmplementation of athe bc-quickstart script; it is called
+    directly from main.
     """
     # Making sure the sample configuration file is where it's supposed to be.
     config = path_to_example("config.yml")
@@ -62,7 +65,7 @@ def create_dir_struct(course_name="course_dir", f=False, working_dir=None):
     if working_dir is None:
         working_dir = os.getcwd()
     main_dir = os.path.join(working_dir, course_name)
-    if f and os.path.isdir(main_dir):
+    if force and os.path.isdir(main_dir):
         rmtree(main_dir)
     # Make sure that the main_dir doesn't exist already
     if os.path.isdir(main_dir):
@@ -71,8 +74,8 @@ def create_dir_struct(course_name="course_dir", f=False, working_dir=None):
             Ooops! It looks like the directory {} already exists on your
             computer. You might have already run quickstart in this directory.
             Consider using a different course name, deleting the existing
-            directory, or running quikstart with the -f flag to overwrite the
-            existing directory if you do not need it.""".format(
+            directory, or running quikstart with the -f flag to force overwrite
+            the existing directory.""".format(
                 course_name
             )
         )
@@ -106,7 +109,7 @@ def create_dir_struct(course_name="course_dir", f=False, working_dir=None):
         Created abc-classroom directory structure in '{}',
         including template and cloning directories and a configuration file,
         'config.yml'. To proceed, please create / move your sample roster
-        and course_materials directory into '{}' and check the config file 
+        and course_materials directory into '{}' and check the config file
         settings.""".format(
             main_dir, course_name
         )
