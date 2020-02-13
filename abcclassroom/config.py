@@ -108,7 +108,7 @@ def write_config(config, configpath=None):
 def get_config_option(config, option, required=True):
     """
     Get an option (value of key) from provided config dictionary. If the key
-    does not exist, exit with KeyError (required=True) or return None  (required=False).
+    does not exist, exit with KeyError (required=True) or return None (required=False).
     """
     try:
         value = config[option]
