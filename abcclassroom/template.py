@@ -155,6 +155,9 @@ def copy_assignment_files(config, template_repo, assignment):
     materials_dir = cf.get_config_option(config, "course_materials", True)
     parent_path = utils.get_abspath(materials_dir, course_dir)
     release_dir = Path(parent_path, "release", assignment)
+
+    extras_dir = Path(materials_dir, "extra-files")
+
     if not release_dir.exists():
         print(
             "release directory {} does not exist; exiting\n".format(
@@ -166,6 +169,24 @@ def copy_assignment_files(config, template_repo, assignment):
     # all_contents = os.listdir(release_dir)
     # matched_files = match_patterns(all_files, patterns)
 
+    # If there are extra files, move them too
+    nfiles = 0
+    if os.path.isdir(extras_dir):
+        for item in extras_dir.iterdir():
+            # if item.is_file():
+            # fpath = os.path.join(release_dir, item)
+            # print(
+            #    "copying {} to {}".format(
+            #        item.name, template_repo.relative_to(course_dir)
+            #    )
+            # )
+            # overwrites if fpath exists in template_repo
+            shutil.copytree(item, template_repo)
+            nfiles += 1
+        print("Copied {} files".format(nfiles))
+
+    # This could become a little helper function to add files and we can call
+    # it twice?
     for item in release_dir.iterdir():
         if item.is_file():
             # fpath = os.path.join(release_dir, item)
