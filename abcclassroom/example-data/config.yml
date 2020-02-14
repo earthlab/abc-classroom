@@ -22,7 +22,7 @@ course_materials: nbgrader
 # Assumed to be relative to course_dir unless you enter an absolute path
 # (i.e. starting with '/' on Linux or OS X or with 'C:' on Windows). None of
 # the parent directories of clone_dir should be git repositories.
-clone_dir: cloned_dirs
+clone_dir: cloned_repos
 
 # Path to the assignment template repositories. Again, none of
 # the parent directories should be a git repo. Assumed to be relative to
