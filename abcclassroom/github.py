@@ -144,15 +144,21 @@ def get_commit_message():
 
 
 def commit_all_changes(directory, msg=None):
+    """Run git add, git commit on a given directory. Checks git status
+    first and does nothing if no changes.
+    """
     if msg is None:
         raise ValueError("Commit message can not be empty.")
-
-    _call_git("add", "*", directory=directory)
-    _call_git("commit", "-a", "-m", msg, directory=directory)
+    if repo_changed(directory):
+        _call_git("add", "*", directory=directory)
+        _call_git("commit", "-a", "-m", msg, directory=directory)
+    else:
+        print("No changes in repository {}; doing nothing".format(directory))
 
 
 def init_and_commit(directory, custom_message=False):
-    """Run git init, git add, git commit on given directory.
+    """Run git init, git add, git commit on given directory. Checks git status
+    first and does nothing if no changes.
     """
     # local git things - initialize, add, commit
     # note that running git init on an existing repo is safe, so no need

@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 * Skip subdirectories in release dir when creating template repo (@kcranston, #171)
 * Print relative, not absolute paths when creating template repo (@kcranston, #107)
+* Check whether local repo has uncommitted changes before trying to commit (@kcranston, #182)
+* Update quickstart to use sample config and config functions (@kcranston, #160, #142)
 
 ## [0.0.14]
 * Fix bug with adding assignments to config (@kcranston, #161)

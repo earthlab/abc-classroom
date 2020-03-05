@@ -77,10 +77,12 @@ To create a new course:
 This will:
 
 1. Create a course directory named whatever you called your ``course-name`` variable
-2. Create several other directories required to store homework assignment folders
+2. Create two other directories required to store template repositories
    and cloned student repositories.
-3. Creates a sample ``config.yml`` file that can be modified to run the program for your classroom. ``abc-quickstart`` has two arguments that can be used to modify its functionality.
+3. Creates a sample ``config.yml`` file that can be modified to run the program for your classroom.
 
-Run ``abc-quickstart -h`` to see options. If you already have a directory called ``course-name``, then ``abc-quickstart`` will fail. If you want to overwrite this directory, run ``abc-quickstart -f course-name``.
+If you already have a directory called ``course-name``, then ``abc-quickstart`` will fail. If you want to overwrite this directory, run ``abc-quickstart -f course-name``.
+
+Run ``abc-quickstart -h`` to see options.
 
 Now, you can set up the directory where you manage your course materials: :doc:`course-materials`.

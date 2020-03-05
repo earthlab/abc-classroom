@@ -38,18 +38,21 @@ def copy_feedback(args):
                 source_files = Path(feedback_dir, student, assignment).glob(
                     "*"
                 )
-                # if len(list(source_files)) == 0:
-                #     print(
-                #         "No feedback files found for student {}".format(
-                #             student
-                #         )
-                #     )
-                #     continue
-                # if there are files, copy them and do git / github stuff
                 repo = "{}-{}".format(assignment, student)
                 destination_dir = Path(clone_dir, repo)
+                if not destination_dir.is_dir():
+                    print(
+                        "Local student repository {} does not exist; skipping student".format(
+                            destination_dir
+                        )
+                    )
+                    continue
                 for f in source_files:
-                    print("copying {} to {}".format(f, destination_dir))
+                    print(
+                        "Copying {} to {}".format(
+                            f.relative_to(course_dir), destination_dir
+                        )
+                    )
                     shutil.copy(f, destination_dir)
                 github.commit_all_changes(
                     destination_dir,
@@ -59,5 +62,5 @@ def copy_feedback(args):
                     github.push_to_github(destination_dir)
 
     except FileNotFoundError as err:
-        print("Cannot find roster file".format(roster_filename))
-        print(err)
+        print("Missing file or directory:")
+        print(" ", err)
