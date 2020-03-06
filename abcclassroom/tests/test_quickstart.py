@@ -1,49 +1,62 @@
-import os
 import pytest
-from shutil import rmtree
-from abcclassroom.quickstart import create_dir_struct as quickstart
+from pathlib import Path
+import abcclassroom.quickstart as quickstart
+import abcclassroom.config as cf
 
 
-def test_quickstart_default():
+def test_path_to_example():
+    # with filename that should exist
+    filename = "config.yml"
+    config_path = quickstart.path_to_example(filename)
+    # don't check the full path here because the code uses __file__, which
+    # won't be the same when running tests
+    assert Path(config_path).name == filename
+
+    # with filename that doesn't exist
+    filename = "filethatdoesntexist.txt"
+    with pytest.raises(FileNotFoundError):
+        config_path = quickstart.path_to_example(filename)
+
+
+def test_quickstart_default(tmp_path):
     """
-    Test that the standard run of abc-quickstart creates all expected folders and outputs.
+    Test that abc-quickstart without arguments creates the default
+    "abc_course" main directory, config file and two subdirectories.
     """
-    quickstart()
-    main_dir = os.path.join(os.getcwd(), "course_dir")
-    with open(os.path.join(main_dir, "config.yml")) as data:
-        assert (
-            os.path.isdir(main_dir)
-            and os.path.isdir(
-                os.path.join(main_dir, "assignment-template-repos")
-            )
-            and os.path.isdir(os.path.join(main_dir, "student-cloned-repos"))
-            and os.path.isfile(os.path.join(main_dir, "config.yml"))
-            and "course-name"
-            and "assignment-template-repos"
-            and "student-cloned-repos" in data.read()
-        )
-    rmtree(main_dir)
+    quickstart.create_dir_struct(working_dir=tmp_path)
+    # check that main dir and config created
+    main_dir = Path(tmp_path, "abc_course")
+    assert main_dir.is_dir()
+    assert Path(main_dir, "config.yml").is_file()
+    # check contents of config
+    config = cf.get_config(main_dir)
+    assert cf.get_config_option(config, "course_directory") == str(main_dir)
+
+    # check that subdirectories created
+    template_dir = cf.get_config_option(config, "template_dir")
+    assert Path(main_dir, template_dir).is_dir()
+    clone_dir = cf.get_config_option(config, "clone_dir")
+    assert Path(main_dir, clone_dir).is_dir()
 
 
-def test_quickstart_custom_name():
+def test_quickstart_custom_name(tmp_path):
     """
     Test that abc-quickstart works with a custom name.
     """
-    quickstart("python_test_dir_custom_name")
-    main_dir = os.path.join(os.getcwd(), "python_test_dir_custom_name")
-    with open(os.path.join(main_dir, "config.yml")) as data:
-        assert (
-            os.path.isdir(main_dir)
-            and os.path.isdir(
-                os.path.join(main_dir, "assignment-template-repos")
-            )
-            and os.path.isdir(os.path.join(main_dir, "student-cloned-repos"))
-            and os.path.isfile(os.path.join(main_dir, "config.yml"))
-            and "python_test_dir_custom_name"
-            and "assignment-template-repos"
-            and "student-cloned-repos" in data.read()
-        )
-    rmtree(main_dir)
+    custom_name = "pytest_dir_custom_name"
+    quickstart.create_dir_struct(custom_name, working_dir=tmp_path)
+    main_dir = Path(tmp_path, custom_name)
+    assert main_dir.is_dir()
+    assert Path(main_dir, "config.yml").is_file()
+    # check contents of config
+    config = cf.get_config(main_dir)
+    assert cf.get_config_option(config, "course_directory") == str(main_dir)
+
+    # check that subdirectories created
+    template_dir = cf.get_config_option(config, "template_dir")
+    assert Path(main_dir, template_dir).is_dir()
+    clone_dir = cf.get_config_option(config, "clone_dir")
+    assert Path(main_dir, clone_dir).is_dir()
 
 
 def test_quickstart_bad_name():
@@ -51,37 +64,30 @@ def test_quickstart_bad_name():
     Test that abc-quickstart fails with a improperly formatted name.
     """
     with pytest.raises(ValueError, match="Spaces not"):
-        quickstart("bad name")
+        quickstart.create_dir_struct("bad name")
 
 
-def test_quickstart_remake_existing():
+def test_quickstart_remake_existing(tmp_path):
     """
     Test that abc-quickstart fails when using the same name for a course twice.
     """
-    quickstart("python_test_dir_custom_name")
-    main_dir = os.path.join(os.getcwd(), "python_test_dir_custom_name")
-    with pytest.raises(ValueError, match="Ooops! "):
-        quickstart("python_test_dir_custom_name")
-    rmtree(main_dir)
-
-
-def test_quickstart_remove_existing():
-    """
-    Test that abc-quickstart doesn't fail when using the same name for a course twice and the -f argument.
-    """
-    quickstart("python_test_dir_custom_name")
-    quickstart("python_test_dir_custom_name", True)
-    main_dir = os.path.join(os.getcwd(), "python_test_dir_custom_name")
-    with open(os.path.join(main_dir, "config.yml")) as data:
-        assert (
-            os.path.isdir(main_dir)
-            and os.path.isdir(
-                os.path.join(main_dir, "assignment-template-repos")
-            )
-            and os.path.isdir(os.path.join(main_dir, "student-cloned-repos"))
-            and os.path.isfile(os.path.join(main_dir, "config.yml"))
-            and "course-name"
-            and "assignment-template-repos"
-            and "student-cloned-repos" in data.read()
+    quickstart.create_dir_struct(
+        "python_test_dir_custom_name", working_dir=tmp_path
+    )
+    with pytest.raises(FileExistsError, match="Ooops! "):
+        quickstart.create_dir_struct(
+            "python_test_dir_custom_name", working_dir=tmp_path
         )
-    rmtree(main_dir)
+
+
+def test_quickstart_remove_existing(tmp_path):
+    """
+    Test that abc-quickstart doesn't fail when using the same name for a course
+    twice with the -f argument.
+    """
+    custom_name = "python_test_dir_custom_name"
+    quickstart.create_dir_struct(custom_name, working_dir=tmp_path)
+    quickstart.create_dir_struct(custom_name, True, working_dir=tmp_path)
+    main_dir = Path(tmp_path, custom_name)
+    assert main_dir.is_dir()
+    assert Path(main_dir, "config.yml").is_file()

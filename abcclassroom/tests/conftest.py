@@ -9,9 +9,8 @@ def default_config():
     """
     config = {
         "template_dir": "test_template",
-        "short_coursename": "tc",
-        "course_name": "Test_course",
-        "nbgrader_dir": "nbgrader",
+        "course_materials": "nbgrader",
+        "clone_dir": "cloned-repos",
         "extra_files": {
             "testfile.txt": ["line1", "line2"],
             "README.md": ["line1", "line2"],

@@ -24,9 +24,8 @@ setup(
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
-    version="0.0.11",
+    version="0.0.14",
     license="BSD",
-    author="Earth Lab, University of Colorado -- Boulder",
     packages=["abcclassroom"],
     install_requires=[
         "nbclean",
@@ -50,11 +49,11 @@ setup(
     entry_points={
         "console_scripts": [
             "abc-init = abcclassroom.__main__:init",
-            "abc-grade = abcclassroom.__main__:grade",
-            "abc-author = abcclassroom.__main__:author",
-            "abc-distribute = abcclassroom.__main__:distribute",
             "abc-quickstart = abcclassroom.__main__:quickstart",
-            "abc-assignment-template = abcclassroom.__main__:assignment_template",
+            "abc-new-template = abcclassroom.__main__:new_template",
+            "abc-update-template = abcclassroom.__main__:update_template",
+            "abc-clone = abcclassroom.__main__:clone",
+            "abc-feedback = abcclassroom.__main__:feedback",
         ]
     },
     url="https://github.com/earthlab/abc-classroom",
