@@ -6,19 +6,17 @@ abc-classroom.clone
 
 import csv
 from pathlib import Path
-import glob
 from shutil import copy
 
 from . import config as cf
 from . import github
-from . import utils
 
 
 def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
     """
-    Tries to clone the single repository 'repo' from the organization. If the local
-    repository already exists, pulls instead of cloning (unless the skip flag
-    is set, in which case it does nothing).
+    Tries to clone the single repository 'repo' from the organization. If the
+    local repository already exists, pulls instead of cloning (unless the
+    skip flag is set, in which case it does nothing).
     """
     destination_dir = Path(clone_dir, repo)
     if destination_dir.is_dir():
@@ -54,7 +52,8 @@ def clone_student_repos(args):
 
     if materials_dir is None:
         print(
-            "No course_materials directory set in config.yml. Will clone repositories but will not copy any assignment files."
+            "No course_materials directory set in config.yml. Will clone "
+            "repositories but will not copy any assignment files."
         )
     try:
         Path(course_dir, clone_dir).mkdir(exist_ok=True)
@@ -63,7 +62,7 @@ def clone_student_repos(args):
             reader = csv.DictReader(csvfile)
             for row in reader:
                 student = row["github_username"]
-                # expected columns are identifier,github_username,github_id,name
+                # expected columns: identifier,github_username,github_id,name
                 repo = "{}-{}".format(assignment, student)
                 try:
                     clone_or_update_repo(
@@ -71,7 +70,7 @@ def clone_student_repos(args):
                     )
                     if materials_dir is not None:
                         copy_assignment_files(config, student, assignment)
-                except RuntimeError as err:
+                except RuntimeError:
                     missing.append(repo)
         if len(missing) == 0:
             print("All successful; no missing repos")
@@ -86,7 +85,8 @@ def clone_student_repos(args):
 
 
 def copy_assignment_files(config, student, assignment):
-    """Copies all notebook files from clone_dir to course_materials/submitted. Will overwrite any existing files with the same name."""
+    """Copies all notebook files from clone_dir to course_materials/submitted.
+    Will overwrite any existing files with the same name."""
     course_dir = cf.get_config_option(config, "course_directory", True)
     materials_dir = cf.get_config_option(config, "course_materials", False)
     clone_dir = cf.get_config_option(config, "clone_dir", True)
