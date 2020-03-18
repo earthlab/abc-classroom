@@ -1,6 +1,6 @@
 # Example data for abc-classroom
 
-This directory contains two files.
+This directory contains two files and a directory.
 
 ## config.yml
 
@@ -11,3 +11,10 @@ The template config file. When you run `abc-quickstart`, it copies this config i
 ## sample_roster.csv
 
 A sample course roster (matching the format downloaded from [GitHub classroom](https://classroom.github.com/)). This file is not used by **abc-classroom** directly. It is only provided here for reference.
+
+## extra-files
+
+This directory gets copied to your `course_materials` directory. Then, any files
+placed in `course_materials/extra-files` will be copied into new assignment
+template directories. By default, this directory contains a `.gitignore` file and
+a `readme.md`. 
