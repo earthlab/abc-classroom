@@ -12,9 +12,9 @@ The template config file. When you run `abc-quickstart`, it copies this config i
 
 A sample course roster (matching the format downloaded from [GitHub classroom](https://classroom.github.com/)). This file is not used by **abc-classroom** directly. It is only provided here for reference.
 
-## extra-files
+## extra_files
 
 This directory gets copied to your `course_materials` directory. Then, any files
-placed in `course_materials/extra-files` will be copied into new assignment
+placed in `course_materials/extra_files` will be copied into new assignment
 template directories. By default, this directory contains a `.gitignore` file and
-a `readme.md`. 
+a `readme.md`.
