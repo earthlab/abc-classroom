@@ -208,5 +208,6 @@ def create_extra_files(config, template_repo, assignment):
 def add_assignment_to_readme(path_to_readme, assignment):
     with open(path_to_readme) as readme:
         lines = readme.readlines()
-        lines[0] = "# Assignment {}\n".format(assignment)
-        utils.write_file(path_to_readme, lines)
+        if len(lines) > 0:
+            lines[0] = "# Assignment {}\n".format(assignment)
+            utils.write_file(path_to_readme, lines)
