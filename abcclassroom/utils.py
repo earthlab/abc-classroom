@@ -6,13 +6,11 @@ abc-classroom.utils
 
 
 import os
-import datetime
 import subprocess
 import sys
 import tempfile
 import textwrap
 from contextlib import contextmanager
-from functools import lru_cache
 from shutil import copystat, copy2
 
 from IPython import get_ipython
@@ -133,24 +131,6 @@ def get_editor():
     return os.environ.get("VISUAL") or os.environ.get("EDITOR") or "vi"
 
 
-@lru_cache(1)
-def TOP():
-    """Path to the top level of the repository we are in"""
-    try:
-        ret = _call_git("rev-parse", "--show-toplevel")
-    except RuntimeError as e:
-        print(" ".join(e.args))
-        sys.exit(1)
-
-    return ret.stdout.decode("utf-8").strip()
-
-
-def P(*paths):
-    """Construct absolute path inside the repository from `paths`"""
-    path = os.path.join(*paths)
-    return os.path.join(TOP(), path)
-
-
 def get_abspath(testpath, coursepath):
     """
     Create an absoluate path of testpath inside coursepath if testpath is
@@ -162,15 +142,15 @@ def get_abspath(testpath, coursepath):
         return os.path.join(coursepath, testpath)
 
 
-def write_file(dir, filename, contents):
-    """Write a new file called filename to directory dir.
+def write_file(filepath, contents):
+    """Write a new file with the given path.
     Each item in contents is a line in the file.
     """
-    filepath = os.path.join(dir, filename)
+    # filepath = os.path.join(dir, filename)
     try:
         with open(filepath, "w") as f:
             for line in contents:
-                f.write("{}\n".format(line))
+                f.write("{}".format(line))
 
     except OSError as err:
         print("Cannot open file: {0}".format(err))
@@ -181,12 +161,13 @@ def flush_inline_matplotlib_plots():
     Flush matplotlib plots immediately, rather than asynchronously.
     Basically, the inline backend only shows the plot after the entire
     cell executes, which means we can't easily use a contextmanager to
-    suppress displaying it. See https://github.com/jupyter-widgets/ipywidgets/issues/1181/
+    suppress displaying it.
+    See https://github.com/jupyter-widgets/ipywidgets/issues/1181/
     and https://github.com/ipython/ipython/issues/10376 for more details. This
     function displays flushes any pending matplotlib plots if we are using
     the inline backend.
 
-    Stolen from https://github.com/jupyter-widgets/ipywidgets/blob/4cc15e66d5e9e69dac8fc20d1eb1d7db825d7aa2/ipywidgets/widgets/interaction.py#L35
+    Stolen from https://github.com/jupyter-widgets/ipywidgets/blob/4cc15e66d5e9e69dac8fc20d1eb1d7db825d7aa2/ipywidgets/widgets/interaction.py#L35 # noqa: E501
     """
     if "matplotlib" not in sys.modules:
         # matplotlib hasn't been imported, nothing to do.
@@ -200,14 +181,6 @@ def flush_inline_matplotlib_plots():
 
     if mpl.get_backend() == "module://ipykernel.pylab.backend_inline":
         flush_figures()
-
-
-def valid_date(s):
-    try:
-        return datetime.datetime.strptime(s, "%Y-%m-%d").date()
-    except ValueError:
-        msg = "Not a valid date: '{0}'.".format(s)
-        raise argparse.ArgumentTypeError(msg)
 
 
 @contextmanager
@@ -244,3 +217,31 @@ def chdir(path):
             yield
         finally:
             os.chdir(old_dir)
+
+
+#################################################################
+# Unused code from before the refactor that is causing the
+# linters to fail
+
+# def P(*paths):
+#     """Construct absolute path inside the repository from `paths`"""
+#     path = os.path.join(*paths)
+#     return os.path.join(TOP(), path)
+
+# @lru_cache(1)
+# def TOP():
+#     """Path to the top level of the repository we are in"""
+#     try:
+#         ret = _call_git("rev-parse", "--show-toplevel")
+#     except RuntimeError as e:
+#         print(" ".join(e.args))
+#         sys.exit(1)
+#
+#     return ret.stdout.decode("utf-8").strip()
+
+# def valid_date(s):
+#     try:
+#         return datetime.datetime.strptime(s, "%Y-%m-%d").date()
+#     except ValueError:
+#         msg = "Not a valid date: '{0}'.".format(s)
+#         raise argparse.ArgumentTypeError(msg)
