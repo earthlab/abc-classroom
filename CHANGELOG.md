@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+* Copy / create extra files from an extra_files directory rather than having them specified in config (@kcranston, #195)
 * Check whether local repo has uncommitted changes before trying to commit (@kcranston, #182)
 * Update quickstart to use sample config and config functions (@kcranston, #160, #142)
 
