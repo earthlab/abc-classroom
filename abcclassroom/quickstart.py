@@ -73,9 +73,9 @@ def create_dir_struct(course_name="abc_course", force=False, working_dir=None):
         else:
             raise FileExistsError(
                 """
-                Ooops! It looks like the directory {} already exists on your
-                computer. You might have already run quickstart in this
-                directory. Consider using a different course name, deleting the
+                Ooops! It looks like the directory {} already exists in this
+                directory. You might have already run quickstart here.
+                Consider using a different course name, deleting the
                 existing directory, or running quikstart with the -f flag to
                 force overwrite the existing directory.""".format(
                     course_name
@@ -102,11 +102,15 @@ def create_dir_struct(course_name="abc_course", force=False, working_dir=None):
 
     print(
         """
-        Created abc-classroom directory structure in '{}',
-        including template and clone directories and a configuration file,
-        'config.yml'. To proceed, please create / move your course roster
-        and course_materials directory into '{}' and check the config file
-        settings.""".format(
+        Created new abc-classroom directory structure at:
+        '{}',
+        including a configuration file, directories for template repos
+        and cloned repos.template and clone directories and a directory
+        for extra files needed for all assignments.
+
+        To proceed, please create / move your course roster and course
+        materials directory into '{}' and check the settings in the
+        config file, 'config.yml'.""".format(
             main_dir, course_name
         )
     )

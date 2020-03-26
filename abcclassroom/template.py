@@ -164,12 +164,11 @@ def copy_assignment_files(config, template_repo, assignment):
     assignment into the template repo directory.
     """
 
-    print("Getting assignment files")
     course_dir = cf.get_config_option(config, "course_directory", True)
     materials_dir = cf.get_config_option(config, "course_materials", True)
     parent_path = utils.get_abspath(materials_dir, course_dir)
-    release_dir = os.path.join(parent_path, "release", assignment)
-    if not os.path.exists(release_dir):
+    release_dir = Path(parent_path, "release", assignment)
+    if not release_dir.is_dir():
         print(
             "release directory {} does not exist; exiting\n".format(
                 release_dir
@@ -180,9 +179,14 @@ def copy_assignment_files(config, template_repo, assignment):
     nfiles = 0
     all_files = os.listdir(release_dir)
 
+    print(
+        "Copying assignment files to {}: ".format(
+            template_repo.relative_to(course_dir)
+        )
+    )
     for file in all_files:
-        fpath = os.path.join(release_dir, file)
-        print("copying {} to {}".format(fpath, template_repo))
+        fpath = Path(release_dir, file)
+        print(" {}".format(fpath.relative_to(course_dir)))
         # overwrites if fpath exists in template_repo
         shutil.copy(fpath, template_repo)
         nfiles += 1
@@ -194,9 +198,9 @@ def create_extra_files(config, template_repo, assignment):
     course_dir = cf.get_config_option(config, "course_directory", True)
     extra_path = Path(course_dir, "extra_files")
     if extra_path.is_dir():
-        print("Copying extra files")
+        print("Copying extra files: ")
         for f in extra_path.iterdir():
-            print("copying {}".format(f))
+            print(" {}".format(f.relative_to(course_dir)))
             shutil.copy(f, template_repo)
 
         # modify the readme with the assignment name

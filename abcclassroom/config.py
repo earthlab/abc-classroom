@@ -4,7 +4,6 @@ abc-classroom.config
 
 """
 
-import os
 import sys
 import pprint
 from pathlib import Path
@@ -36,8 +35,8 @@ def get_github_auth():
 
 def set_github_auth(auth_info):
     """
-    Set the github authentication information. Put the token and id authentication
-    information into a yaml file if it doesn't already exist.
+    Set the github authentication information. Put the token and id
+    authentication information into a yaml file if it doesn't already exist.
 
     Parameters
     ----------
@@ -67,11 +66,12 @@ def get_config(configpath=None):
         with open(configpath) as f:
             config = yaml.load(f)
         return config
-    except FileNotFoundError as err:
+    except FileNotFoundError:
         configpath.resolve()
         print(
             "Oops! I can't seem to find a config.yml file at {}. "
-            "Are you in the top-level directory for the course? If you don't have a course directory and config file "
+            "Are you in the top-level directory for the course? If you don't "
+            "have a course directory and config file "
             "setup yet, you can create one using abc-quickstart"
             ".\n".format(configpath)
         )
@@ -108,13 +108,14 @@ def write_config(config, configpath=None):
 def get_config_option(config, option, required=True):
     """
     Get an option (value of key) from provided config dictionary. If the key
-    does not exist, exit with KeyError (required=True) or return None (required=False).
+    does not exist, exit with KeyError (required=True) or return None
+    (required=False).
     """
     try:
         value = config[option]
         return value
-    except KeyError as err:
-        if required == True:
+    except KeyError:
+        if required:
             print(
                 "Did not find required option {} in config; exiting".format(
                     option
@@ -138,7 +139,7 @@ def set_config_option(
     """
 
     existing_value = get_config_option(config, option, required=False)
-    if append_value == True and existing_value is not None:
+    if append_value and existing_value is not None:
         if isinstance(existing_value, list):
             existing_value.append(value)
             value = existing_value
@@ -147,6 +148,6 @@ def set_config_option(
         # eliminate duplicates
         value = list(set(value))
     config[option] = value
-    print("Writing new config at {}".format(configpath))
+    print("Writing modified config at {}".format(configpath))
     write_config(config, configpath)
     return config
