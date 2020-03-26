@@ -76,7 +76,7 @@ def test_create_template_dir_delete_when_exists(default_config, tmp_path):
 
 def test_move_git_dir(default_config, tmp_path):
     """
-    Tests that we correctly move (and moce back) a .git directory in the
+    Tests that we correctly move (and move back) a .git directory in the
     template repo when running in delete mode.
     """
     default_config["course_directory"] = tmp_path
