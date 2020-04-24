@@ -24,7 +24,7 @@ setup(
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
-    version="0.0.14",
+    version="0.0.15",
     license="BSD",
     packages=["abcclassroom"],
     install_requires=[
