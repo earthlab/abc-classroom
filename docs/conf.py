@@ -39,7 +39,6 @@ release = "0.0.15"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "m2r",  # Markdown sphinx docs support
     "sphinx.ext.napoleon",  # numpy style doc strings for autodoc
     "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
