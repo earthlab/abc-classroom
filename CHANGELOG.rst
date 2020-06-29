@@ -9,6 +9,9 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 [Unreleased]
 ------------
 
+-  Changed markdown documents to rst to remove ``m2r`` as a dependency
+   (@nkorinek, #210)
+
 [0.0.15]
 --------
 
