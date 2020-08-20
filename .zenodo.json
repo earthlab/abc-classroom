@@ -16,7 +16,8 @@
   ],
   "keywords": [
     "GitHub Classroom",
-    "education"
+    "education",
+    "autograde",
   ],
   "license": "BSD-3-Clause",
   "upload_type": "software"
