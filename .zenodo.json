@@ -1,0 +1,23 @@
+{
+  "creators": [
+    {
+      "affiliation": "Earth Lab, University of Colorado - Boulder",
+      "name": "Wasser, Leah",
+      "orcid": "0000-0002-8177-6550"
+    },
+    {
+      "name": "Cranston, Karen"
+    },
+    {
+      "affiliation": "Wild Tree Tech",
+      "name": "Head, Tim",
+      "orcid": "0000-0003-0931-3698"
+    }
+  ],
+  "keywords": [
+    "JupyterHub",
+    "education"
+  ],
+  "license": "BSD-3-Clause",
+  "upload_type": "software"
+}
