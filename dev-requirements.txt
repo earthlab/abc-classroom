@@ -7,4 +7,4 @@ pre-commit==2.5.1
 pytest==5.4.3
 pytest-vcr==1.0.2
 pytest-cov==2.10.0
-tox==3.16.1
+tox==3.20.0
