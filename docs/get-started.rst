@@ -79,7 +79,8 @@ This will:
 1. Create a course directory named whatever you called your ``course-name`` variable
 2. Create two other directories required to store template repositories
    and cloned student repositories.
-3. Creates a sample ``config.yml`` file that can be modified to run the program for your classroom.
+3. Create a sample ``config.yml`` file that can be modified to run the program for your classroom.
+4. Create an `extra_files` directory that contains files (like .gitignore and a readme) that will get added to every assignment template. You can modify the contents as you like. 
 
 If you already have a directory called ``course-name``, then ``abc-quickstart`` will fail. If you want to overwrite this directory, run ``abc-quickstart -f course-name``.
 

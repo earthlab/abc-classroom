@@ -1,28 +1,16 @@
 import argparse
-import datetime
-import glob
-import os
-import shutil
-import subprocess
 import sys
-import tempfile
 
-import os.path as op
 from argparse import ArgumentParser
 from getpass import getpass
 
 import github3 as gh3
 
-from . import ok
 from . import template
 from . import feedback as fdback
 from . import config as cf
-from .distribute import find_notebooks, render_circleci_template
-from .notebook import split_notebook
 from .quickstart import create_dir_struct
 from .clone import clone_student_repos
-from . import github
-from .utils import copytree, P, input_editor, write_file, valid_date
 
 
 def quickstart():
@@ -36,7 +24,8 @@ def quickstart():
     parser.add_argument(
         "-f",
         action="store_true",
-        help="Option to override the existing folder structure made by this function previously.",
+        help="""Option to override the existing folder structure made by this
+        function previously.""",
     )
     args = parser.parse_args()
     course_name = args.course_name
@@ -45,8 +34,8 @@ def quickstart():
 
 def init():
     """
-    Setup GitHub credentials for later. Make sure that there is a valid GitHub authentication
-    yaml file, and if there isn't one, create a valid file.
+    Setup GitHub credentials for later. Make sure that there is a valid
+    GitHub authentication yaml file, and if there isn't, create a valid file.
     """
 
     gh_auth = cf.get_github_auth()
@@ -118,12 +107,14 @@ def clone():
     parser = argparse.ArgumentParser(description=clone.__doc__)
     parser.add_argument(
         "assignment",
-        help="Name of assignment. Must match assignment name in course_materials directories",
+        help="""Name of assignment. Must match assignment name in
+        course_materials directories""",
     )
     parser.add_argument(
         "--skip-existing",
         action="store_true",
-        help="Do not attempt to update repositories that have already been cloned.",
+        help="""Do not attempt to update repositories that have already been
+        cloned.""",
     )
     args = parser.parse_args()
 
@@ -132,17 +123,22 @@ def clone():
 
 def feedback():
     """
-    Copies feedback reports to local student repositories and (optionally) pushes to github. Assumes files are in the directory course_materials/feedback/student/assignment. Copies all files in the source directory.
+    Copies feedback reports to local student repositories and (optionally)
+    pushes to github. Assumes files are in the directory
+    course_materials/feedback/student/assignment. Copies all files in the
+    source directory.
     """
     parser = argparse.ArgumentParser(description=feedback.__doc__)
     parser.add_argument(
         "assignment",
-        help="Name of assignment. Must match name in course_materials feedback directory",
+        help="""Name of assignment. Must match name in course_materials
+        feedback directory""",
     )
     parser.add_argument(
         "--github",
         action="store_true",
-        help="Also pushes files to student repositories on GitHub (default = False; only copies files to local repos)",
+        help="""Also pushes files to student repositories on GitHub
+        (default = False; only copies files to local repos)""",
     )
     args = parser.parse_args()
     fdback.copy_feedback(args)
@@ -151,30 +147,38 @@ def feedback():
 def new_template():
     """
     Create a new assignment template repository: creates local directory,
-    copy / create required files, intialize as git repo, and (optionally) create remote repo
-    on GitHub and push local repo to GitHub. Will open git editor to ask for
-    commit message if custom message requested.
+    copy / create required files, intialize as git repo, and (optionally)
+    create remote repo on GitHub and push local repo to GitHub. Will open
+    git editor to ask for commit message if custom message requested.
     """
     parser = argparse.ArgumentParser(description=new_template.__doc__)
     parser.add_argument(
         "assignment",
-        help="Name of assignment. Must match name in course_materials/release directory",
+        help="""Name of assignment. Must match name in
+        course_materials/release directory""",
     )
     parser.add_argument(
         "--custom-message",
         action="store_true",
-        help="Use a custom commit message for git. Will open the default git text editor for entry (if not set, uses default message 'Initial commit').",
+        help="""Use a custom commit message for git. Will open the default
+        git text editor for entry (if not set, uses default message 'Initial
+        commit').""",
     )
     parser.add_argument(
         "--github",
         action="store_true",
-        help="Also perform the GitHub operations (create remote repo on GitHub and push to remote (by default, only does local repository setup)",
+        help="""Also perform the GitHub operations (create remote repo on
+        GitHub and push to remote (by default, only does local repository
+        setup)""",
     )
     parser.add_argument(
         "--mode",
         choices=["delete", "fail", "merge"],
         default="fail",
-        help="Action if template directory already exists. Choices are: delete = delete contents before proceeding (except .git directory); merge = keep existing dir, overwrite existing files, add new files (Default = fail).",
+        help="""Action if template directory already exists. Choices are:
+        delete = delete contents before proceeding (except .git directory);
+        merge = keep existing dir, overwrite existing files, add new files
+        (Default = fail).""",
     )
     args = parser.parse_args()
 
@@ -183,23 +187,28 @@ def new_template():
 
 def update_template():
     """
-    Updates an existing assignment template repository: update / add new and  changed files, then push local changes to GitHub. Will open git editor to ask for
-    commit message.
+    Updates an existing assignment template repository: update / add new and
+    changed files, then push local changes to GitHub. Will open git editor
+    to ask for commit message.
     """
     parser = argparse.ArgumentParser(description=update_template.__doc__)
     parser.add_argument(
         "assignment",
-        help="Name of assignment. Must match name in course_materials/release directory",
+        help="""Name of assignment. Must match name in course_materials/release
+        directory""",
     )
     parser.add_argument(
         "--mode",
         choices=["delete", "merge"],
         default="merge",
-        help="What to do with existing contents of template directory. Choices are: delete = remove contents before proceeding (leaving .git directory); merge = overwrite existing files add new files (Default = merge).",
+        help="""What to do with existing contents of template directory.
+        Choices are: delete = remove contents before proceeding (leaving .git
+        directory); merge = overwrite existing files add new files
+        (Default = merge).""",
     )
     args = parser.parse_args()
-    # now set the additional args (so that it matches the keys in add_template and we can use the same implementation
-    # methods)
+    # now set the additional args (so that it matches the keys in add_template
+    # and we can use the same implementation methods)
     setattr(args, "github", True)
     setattr(args, "custom_message", True)
     template.new_update_template(args)
@@ -289,7 +298,9 @@ def update_template():
 #                 stderr=subprocess.PIPE,
 #             )
 #         except subprocess.CalledProcessError as err:
-#             print("Fetching work with '%s' failed:" % " ".join(fetch_command))
+#             print(
+#               "Fetching work with '%s' failed:" % " ".join(fetch_command)
+#             )
 #             print()
 #             print(err.stderr.decode("utf-8"))
 #             print()
@@ -341,7 +352,9 @@ def update_template():
 #
 # def distribute():
 #     """Create or update student repositories"""
-#     parser = argparse.ArgumentParser(description="Distribute work to students")
+#     parser = argparse.ArgumentParser(
+#         description="Distribute work to students"
+#         )
 #     parser.add_argument(
 #         "--template",
 #         action="store_true",
@@ -458,7 +471,9 @@ def update_template():
 #
 # def author():
 #     """Create student repository and autograding tests"""
-#     parser = argparse.ArgumentParser(description="Author student repository.")
+#     parser = argparse.ArgumentParser(
+#         description="Author student repository."
+#         )
 #     parser.add_argument(
 #         "--date",
 #         default=datetime.datetime.today().date(),
@@ -500,7 +515,12 @@ def update_template():
 #             shutil.rmtree(P("student", assignment, ".ipynb_checkpoints"))
 #
 #         for notebook in glob.glob(P("master/%s/*.ipynb" % assignment)):
-#             split_notebook(notebook, student_path, P("autograder", assignment))
+#            split_notebook(
+#                notebook,
+#                student_path,
+#                P("autograder",
+#                assignment)
+#            )
 #
 #     # Create additional files
 #     for target, source in config["extra_files"].items():

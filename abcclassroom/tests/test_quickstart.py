@@ -38,6 +38,10 @@ def test_quickstart_default(tmp_path):
     clone_dir = cf.get_config_option(config, "clone_dir")
     assert Path(main_dir, clone_dir).is_dir()
 
+    # check extra files
+    assert Path(main_dir, "extra_files").is_dir()
+    assert Path(main_dir, "extra_files", ".gitignore").is_file()
+
 
 def test_quickstart_custom_name(tmp_path):
     """

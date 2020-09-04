@@ -6,7 +6,6 @@ abc-classroom.template
 import os
 import sys
 import shutil
-import copy
 from pathlib import Path
 
 from . import config as cf
@@ -16,25 +15,30 @@ from . import utils
 
 def new_update_template(args):
     """
-    Creates or updates an assignment template repository. Implementation of both the new_template and update_template console scripts (which perform the same basic functions but with different command line arguments and defaults).
+    Creates or updates an assignment template repository. Implementation of
+    both the new_template and update_template console scripts (which perform
+    the same basic functions but with different command line arguments and
+    defaults).
 
-    Creates an assignment entry in the config file if one does not already exist.
+    Creates an assignment entry in the config file if one does not already
+    exist.
     """
     print("Loading configuration from config.yml")
     config = cf.get_config()
-    template_dir = cf.get_config_option(config, "template_dir", True)
 
-    # create the local git repository
+    # create the local directory; copy extra files first, because we use the
+    # .gitignore to filter the assignment files in copy_assignment_files
     assignment = args.assignment
     template_repo_path = create_template_dir(config, assignment, args.mode)
-    print("repo path: {}".format(template_repo_path))
     copy_assignment_files(config, template_repo_path, assignment)
     create_extra_files(config, template_repo_path, assignment)
+
+    # create the local git repository and commit changes
     github.init_and_commit(template_repo_path, args.custom_message)
 
     # create / append assignment entry in config
+    print("Updating assignment list in config")
     course_dir = cf.get_config_option(config, "course_directory", True)
-    cf.print_config(config)
     cf.set_config_option(
         config,
         "assignments",
@@ -66,7 +70,7 @@ def create_or_update_remote(
 
     try:
         github.add_remote(template_repo_path, organization, repo_name, token)
-    except RuntimeError as e:
+    except RuntimeError:
         print("Remote already added to local repository")
         pass
 
@@ -75,57 +79,75 @@ def create_or_update_remote(
         github.push_to_github(template_repo_path, "master")
     except RuntimeError as e:
         print(
-            "Push to github failed. This is usually because there are changes on the remote that you do not have locally. Here is the github error:"
+            """Push to github failed. This is usually because there are
+            changes on the remote that you do not have locally. Here is the
+            github error:"""
         )
         print(e)
 
 
 def create_template_dir(config, assignment, mode="fail"):
     """
-    Creates a new directory in template_dir that will become the
-    template repository for the assignment. If directory exists and mode is  merge, do nothing. If directory exists and mode is delete, remove contents but leave .git directory.
+    Creates a new directory in template_dir that will become the template
+    repository for the assignment. If directory exists and mode is merge,
+    do nothing. If directory exists and mode is delete, remove contents but
+    leave .git directory.
     """
     course_dir = cf.get_config_option(config, "course_directory", True)
     template_parent_dir = cf.get_config_option(config, "template_dir", True)
-    parent_path = utils.get_abspath(template_parent_dir, course_dir)
+    parent_path = Path(utils.get_abspath(template_parent_dir, course_dir))
 
-    # check that parent directory for templates exists, and create it if it does not
-    if not os.path.isdir(parent_path):
+    # check that parent directory for templates exists, and create it
+    # if it does not
+    if not parent_path.is_dir():
         print(
             "Creating new directory for template repos at {}".format(
-                parent_path
+                parent_path.relative_to(course_dir)
             )
         )
-        os.mkdir(parent_path)
+        parent_path.mkdir()
 
     repo_name = assignment + "-template"
     template_path = Path(parent_path, repo_name)
     dir_exists = template_path.is_dir()
     if not dir_exists:
         template_path.mkdir()
-        print("Creating new template repo at {}".format(template_path))
+        print(
+            "Creating new template repo at {}".format(
+                template_path.relative_to(course_dir)
+            )
+        )
     else:
         if mode == "fail":
             print(
-                "Directory {} already exists; re-run with '--mode merge' or '--mode delete', or delete / move directory before re-running".format(
-                    template_path
+                """Directory {} already exists for this course; re-run with
+                '--mode merge' or '--mode delete', or delete / move directory
+                before re-running""".format(
+                    template_path.relative_to(course_dir)
                 )
             )
             sys.exit(1)
         elif mode == "merge":
             print(
-                "Template directory {} already exists; will keep directory but overwrite existing files with same names".format(
-                    template_path
+                """Directory {} already exists for this course; will keep
+                directory but overwrite existing files with same
+                names""".format(
+                    template_path.relative_to(course_dir)
                 )
             )
         else:
             # mode == delete
             print(
-                "Template directory {} already exists; deleting existing files but keeping .git directory, if exists.".format(
-                    template_path
+                """Directory {} already exists for this course; deleting
+                existing files but keeping .git directory, if it
+                exists.""".format(
+                    template_path.relative_to(course_dir)
                 )
             )
-            # temporarily move the .git dir to the parent of the template_path
+            # Temporarily move the .git dir to the parent of the template_path
+            # We do this to avoid issues if the local repo has already been
+            # pushed to github (if we re-create a new repo, will get error
+            # about unrelated histories when pushing)
             gitdir = Path(template_path, ".git")
             if gitdir.exists():
                 target = Path(Path(template_path).parent, ".tempgit")
@@ -146,24 +168,29 @@ def copy_assignment_files(config, template_repo, assignment):
     assignment into the template repo directory.
     """
 
-    print("Getting assignment files")
     course_dir = cf.get_config_option(config, "course_directory", True)
     materials_dir = cf.get_config_option(config, "course_materials", True)
     parent_path = utils.get_abspath(materials_dir, course_dir)
-    release_dir = os.path.join(parent_path, "release", assignment)
-    if not os.path.exists(release_dir):
+    release_dir = Path(parent_path, "release", assignment)
+    if not release_dir.is_dir():
         print(
             "release directory {} does not exist; exiting\n".format(
                 release_dir
             )
         )
         sys.exit(1)
+
     nfiles = 0
     all_files = os.listdir(release_dir)
-    # matched_files = match_patterns(all_files, patterns)
+
+    print(
+        "Copying assignment files to {}: ".format(
+            template_repo.relative_to(course_dir)
+        )
+    )
     for file in all_files:
-        fpath = os.path.join(release_dir, file)
-        print("copying {} to {}".format(fpath, template_repo))
+        fpath = Path(release_dir, file)
+        print(" {}".format(fpath.relative_to(course_dir)))
         # overwrites if fpath exists in template_repo
         shutil.copy(fpath, template_repo)
         nfiles += 1
@@ -171,19 +198,24 @@ def copy_assignment_files(config, template_repo, assignment):
 
 
 def create_extra_files(config, template_repo, assignment):
-    """Create any extra files as specified in the config """
-    extra_files = copy.deepcopy(
-        cf.get_config_option(config, "extra_files", False)
-    )
-    nfiles = len(extra_files)
-    print("Creating {} extra files".format(nfiles))
-    for file, contents in extra_files.items():
-        if len(contents) > 0:
-            if file == "README.md":
-                firstline = ""
-                if assignment:
-                    first_line = "# {}\n".format(assignment)
-                else:
-                    first_line = "# README\n"
-                contents.insert(0, first_line)
-            utils.write_file(template_repo, file, contents)
+    """Copy any extra files that exist the extra_files directory """
+    course_dir = cf.get_config_option(config, "course_directory", True)
+    extra_path = Path(course_dir, "extra_files")
+    if extra_path.is_dir():
+        print("Copying extra files: ")
+        for f in extra_path.iterdir():
+            print(" {}".format(f.relative_to(course_dir)))
+            shutil.copy(f, template_repo)
+
+        # modify the readme with the assignment name
+        readme_path = Path(template_repo, "README.md")
+        if readme_path.exists():
+            add_assignment_to_readme(readme_path, assignment)
+
+
+def add_assignment_to_readme(path_to_readme, assignment):
+    with open(path_to_readme) as readme:
+        lines = readme.readlines()
+        if len(lines) > 0:
+            lines[0] = "# Assignment {}\n".format(assignment)
+            utils.write_file(path_to_readme, lines)

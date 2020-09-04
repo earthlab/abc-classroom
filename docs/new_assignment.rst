@@ -8,7 +8,8 @@ for distributing the materials to students. Creating a new assignment template
 in **abc-classroom** involves:
 
 1. Ensuring that the materials to be distributed to students are in the `course_materials/release/assignment_name` directory.
-1. Copying files from `course_materials/release/assignment_name` to `template_repos/assignment_name`.
+1. Copying specific for this assignment from `course_materials/release/assignment_name` to `template_repos/assignment_name`.
+1. Copying non-specific assignment files from `extra_files` to `template_repos/assignment_name`.
 1. Setting up `template_repos/assignment_name` as a git repository.
 1. Pushing the template repository to your GitHub Classroom organization.
 
