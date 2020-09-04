@@ -1,17 +1,30 @@
 .. _assignment_template:
 
-Creating a new assignment template repo
----------------------------------------
+Create A New Assignment Template GitHub Repository
+---------------------------------------------------
 
-Once you have your course materials ready, you can create a template repository
-for distributing the materials to students. Creating a new assignment template
-in **abc-classroom** involves:
+A template assignment github repo is what is used to create repositories for
+each student in GitHub Classroom. This repo  should have all of the files that
+the students need to complete their assignment. These files may include:
 
-1. Ensuring that the materials to be distributed to students are in the `course_materials/release/assignment_name` directory.
-1. Copying specific for this assignment from `course_materials/release/assignment_name` to `template_repos/assignment_name`.
-1. Copying non-specific assignment files from `extra_files` to `template_repos/assignment_name`.
-1. Setting up `template_repos/assignment_name` as a git repository.
-1. Pushing the template repository to your GitHub Classroom organization.
+* A jupyter  notebook (or rMarkdown file).
+* Any images required to load in the notebook
+* any other files that you want to distribute through github
+
+Once you have your assignment ready to share with students on GitHub Classroom,
+you can create a template GitHub repository. This is the repository that
+GitHub Classroom will use to share the assignment repo with each student in your
+class. To create a new assignment template, do the following:
+
+#. Make sure that all required assignment files are in the `course_materials/release/assignment_name` directory.
+#. Make sure that all general files such as a README.md or a .gitignore file are located in the `extra_files` directory.
+
+When you create a template abc-classroom will:
+
+#. Copy specific for this assignment from `course_materials/release/assignment_name` to `template_repos/assignment_name`.
+#. Copy any files that you want to have in all assignment repos to non-specific assignment files from `extra_files` to `template_repos/assignment_name`.
+#. Setting up `template_repos/assignment_name` as a git repository.
+#. Pushing the template repository to your GitHub Classroom organization.
 
 Then, on GitHub classroom, you link the assignment to the template git repo, which
 contains all of the files that a student will need to complete the assignment.
@@ -21,7 +34,7 @@ The ``abc-new-template`` and ``abc-update-template`` scripts allow you to create
 How To Create and Update Template Repositories
 ==============================================
 
-There are two template scripts : `abc-new-template` and `abc-update-template`.
+There are two template scripts : ```abc-new-template`` and ```abc-update-template``.
 The 'new' script is for first-time creation of a new assignment template
 repository from a directory of assignment files. The 'update' script allows you
 to quickly update the local and remote repositories after making changes to
@@ -40,7 +53,7 @@ Make sure you have updated your ``config.yml`` before running the template scrip
 Creating a New Template repository
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To create a GitHub classroom homework assignment template repo:
+To create a GitHub Classroom homework assignment template repository:
 
 1. In the terminal, navigate to the course directory that you created using ``abc-quickstart`` (TODO: add link to quickstart page).
 

@@ -1,7 +1,5 @@
-Overview of abc-classroom
--------------------------
-
-The **abc-classroom** package is designed for course instructors who are developing / marking course material locally but using GitHub Classroom to distribute material to students and collect submitted materials from students.
+abc-classroom Workflow
+-----------------------
 
 General Workflow
 ================
@@ -19,12 +17,12 @@ for GitHub classroom).
 **For each assignment:**
 
 * develop course materials
-* :doc:`create a template repository from the assignment materials </new_assignment>`
+* :doc:`create a template repository from the assignment materials </manage-assignments/new_assignment>`
 * create an assignment on GitHub Classroom and link the template repository to the GitHub Classroom assignment
 * give students the assignment link
 * students accept assignment, complete work, and submit by pushing to their github repo
 * :doc:`clone student repos and copy submitted files </clone>` into course materials directory
-* :doc:`copy feedback reports from course materials to student repos </feedback>` and push back to students
+* :doc:`copy feedback reports from course materials to student repos </manage-assignments/feedback>` and push back to students
 
 abc-classroom scripts
 =====================
@@ -33,7 +31,7 @@ abc-classroom scripts
 each script, with links to more documentation:
 
 * ``abc-init`` : sets up token-based access to GitHub; see :ref:`abc-init`
-* ``abc-quickstart`` : sets up a new course; see :ref:`abc-quickstart`
+* ``abc-quickstart`` : sets up a new course; see :doc:`create-course`
 * ``abc-new-template`` : creates a git repository from a directory of course materials and pushes the repo to your GitHub organization to be used as an assignment template; see :ref:`abc-new-template`
 * ``abc-update-template`` : updates an existing template repository based on local changes to course materials; see :ref:`abc-update-template`
 * ``abc-clone`` : clones each of the student repositories and copies submitted assignments into your course materials directory; see :ref:`abc-clone`
@@ -62,5 +60,5 @@ Each **abc-classroom** course is a separate directory, with a specific structure
 
 
 Running ``abc-quickstart`` sets up the basics, and
-other **abc-classroom** scripts create directories as needed. The only directory you need to create and manage yourself is the course_materials, and there are more details about that in :doc:`course-materials`. The names of
+other **abc-classroom** scripts create directories as needed. The only directory you need to create and manage yourself is the course_materials, and there are more details about that in :doc:`/manage-assignments/course-materials`. The names of
 directories are configurable in ``config.yml`` - see :doc:`configuration`.

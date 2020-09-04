@@ -1,13 +1,9 @@
 
-Getting started with abc-classroom
-----------------------------------
+Install abc-classroom & Setup GitHub Authentication
+---------------------------------------------------
 
-These instructions will lead you through installing **abc-classroom**, setting
-up authentication with GitHub, and creating
-a new **abc-classroom** course. It is also helpful to read through the :doc:`overview` to understand the **abc-classroom** workflow.
-
-Installing abc-classroom
-========================
+Installation Instructions
+==========================
 
 To install the release version of **abc-classroom**:
 
@@ -59,31 +55,3 @@ Running ``abc-init`` if you already have a token simply checks that the ``.abc-c
    token file. You can then run ``abc-init`` and re-authenticate with a different username.
 
 .. _abc-quickstart:
-
-Creating a new abc-classroom course
-===================================
-
-The ``abc-quickstart`` script creates a new **abc-classroom** course, including the necessary directory structure and configuration file.
-
-.. note::
-    When you run ``abc-quickstart``, ensure you are not in an existing git repository. The directory created will
-    eventually have other git repositories inside of it, and it is best to avoid creating repositories inside of
-    existing repositories. To check that you aren't in a git repo, run ``git status`` and look for the message ``fatal: not a git repository (or any of the parent directories): .git``.
-
-To create a new course:
-
-     ``$ abc-quickstart course-name``
-
-This will:
-
-1. Create a course directory named whatever you called your ``course-name`` variable
-2. Create two other directories required to store template repositories
-   and cloned student repositories.
-3. Create a sample ``config.yml`` file that can be modified to run the program for your classroom.
-4. Create an `extra_files` directory that contains files (like .gitignore and a readme) that will get added to every assignment template. You can modify the contents as you like. 
-
-If you already have a directory called ``course-name``, then ``abc-quickstart`` will fail. If you want to overwrite this directory, run ``abc-quickstart -f course-name``.
-
-Run ``abc-quickstart -h`` to see options.
-
-Now, you can set up the directory where you manage your course materials: :doc:`course-materials`.
