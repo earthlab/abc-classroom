@@ -16,13 +16,9 @@ and autograding Jupyter notebooks.
    :maxdepth: 1
    :caption: Contents:
 
-   get-started
-   overview
-   configuration
-   course-materials
-   new_assignment
+   Get Started <get-started/index>
+   manage-assignments/index
    clone
-   feedback
    contributing
    code-of-conduct
    change-log

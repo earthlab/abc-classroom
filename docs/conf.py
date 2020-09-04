@@ -19,8 +19,8 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "abc-classroom"
-copyright = "2019, Earth Lab"
+project = "Earth Lab GitHub Classroom & Autograding Tool"
+copyright = "2020, Earth Lab"
 author = "Leah Wasser, Karen Cranston"
 
 # The short X.Y version
@@ -48,6 +48,7 @@ extensions = [
     # "sphinx.ext.ifconfig",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
+    "sphinx_copybutton",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -82,7 +83,7 @@ exclude_patterns = [
 
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = None
+pygments_style = "sphinx"
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -90,7 +91,8 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_rtd_theme"
+html_theme = "pydata_sphinx_theme"
+html_logo = "_static/images/earth-lab-logo.png"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
