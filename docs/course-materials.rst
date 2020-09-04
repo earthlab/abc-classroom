@@ -37,6 +37,11 @@ You can call this directory anything you want. Modify the value of "course_mater
 
 Put the files that you want to distribute to students in the `release` directory before :doc:`creating a new template repository </new_assignment>`.
 
+Creating general files to be added to every assignment
+======================================================
+
+There are probably some files that you want added to each assignment repository. By default, these include a readme for the repository and a `.gitignore`. These files exist in `extra_files` directory. Whatever you place in here gets copied to each new assignment repo.
+
 Updating config.yml
 ===================
 

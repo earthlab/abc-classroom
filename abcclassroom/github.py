@@ -9,6 +9,7 @@ import logging
 import random
 import string
 import subprocess
+import sys
 
 import github3 as gh3
 
@@ -36,14 +37,13 @@ def _call_git(*args, directory=None):
 
 
 def remote_repo_exists(org, repository, token=None):
-    """Check if the remote repository exists for the organization.
-    """
+    """Check if the remote repository exists for the organization."""
 
     try:
         g = gh3.login(token=token)
         g.repository(org, repository)
 
-    except Exception as e:
+    except Exception:
         return False
 
     return True
@@ -75,15 +75,15 @@ def check_student_repo_exists(org, course, student, token=None):
 
 
 def clone_repo(organization, repo, dest_dir):
-    """Clone `repository` from `org` into a sub-directory in `directory`. Assumes you have ssh keys setup for github (rather than using GitHub API token).
-    """
+    """Clone `repository` from `org` into a sub-directory in `directory`.
+    Assumes you have ssh keys setup for github (rather than using GitHub API
+    token)."""
     url = "git@github.com:{}/{}.git".format(organization, repo)
     _call_git("-C", dest_dir, "clone", url)
 
 
 def create_repo(org, repository, token):
-    """Create a repository in the provided GitHub organization.
-    """
+    """Create a repository in the provided GitHub organization."""
     github_obj = gh3.login(token=token)
     organization = github_obj.organization(org)
     print(
@@ -93,7 +93,7 @@ def create_repo(org, repository, token):
     )
     try:
         organization.create_repository(repository)
-    except gh3.exceptions.UnprocessableEntity as err:
+    except gh3.exceptions.UnprocessableEntity:
         print(
             "Error: organization {} already has a repository named {}".format(
                 org, repository
@@ -170,7 +170,7 @@ def init_and_commit(directory, custom_message=False):
             message = get_commit_message()
             if not message:
                 print("Empty commit message, exiting.")
-                sys.exit(1)
+                sys.exit(1)  # sys is undefined - ask karen about this
         commit_all_changes(directory, message)
     else:
         print("No changes to local repository.")

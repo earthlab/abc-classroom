@@ -119,7 +119,7 @@ class OKTest:
     @classmethod
     def from_file(cls, path):
         """
-            Parse a ok test file & return an OKTest
+        Parse a ok test file & return an OKTest
         """
         # ok test files are python files, with a global 'test' defined
         test_globals = {}
@@ -174,7 +174,7 @@ class OKSuite:
                 else:
                     failed_tests.append(hint)
 
-        grade = len(passed_tests) / len(passed_tests + failed_tests)
+        # grade = len(passed_tests) / len(passed_tests + failed_tests)#not used
         return OKSuiteResult(
             (points_scored, max_total_points),
             passed_tests,
@@ -196,7 +196,8 @@ class OKSuiteResult:
     {% if grade[0] == grade[1] %}
         <p>All {{ tests|length }} tests passed! Points: {{ grade[0] }}.</p>
     {% else %}
-        <p>{{ passed_tests|length }} of {{ tests|length }} tests passed. Points: {{ grade[0] }} of {{ grade[1] }}.</p>
+        <p>{{ passed_tests|length }} of {{ tests|length }} tests passed.
+        Points: {{ grade[0] }} of {{ grade[1] }}.</p>
         {% if passed_tests %}
         <p> <strong>Tests passed:</strong>
             <ul>
