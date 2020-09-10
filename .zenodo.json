@@ -1,0 +1,35 @@
+{
+  "creators": [
+    {
+      "affiliation": "Earth Lab, University of Colorado - Boulder",
+      "name": "Wasser, Leah",
+      "orcid": "0000-0002-8177-6550"
+    },
+    {
+      "affiliation": "Biological Informatics Centre of Excellence Agriculture and Agri-food Canada",
+      "name": "Cranston, Karen",
+      "orcid": "0000-0002-4798-9499"
+    },
+  ],
+  "contributors": [
+    {
+      "type":"Other",
+      "affiliation": "Wild Tree Tech",
+      "name": "Head, Tim",
+      "orcid": "0000-0003-0931-3698"
+    },
+    {
+      "type":"Other",
+      "affiliation": "Earth Lab, University of Colorado - Boulder",
+      "name": "Korinek, Nathan",
+      "orcid": "0000-0003-0859-7246"
+    }
+  ],
+  "keywords": [
+    "educational",
+    "classroom",
+    "courses"
+  ],
+  "license": "BSD-3-Clause",
+  "upload_type": "software"
+}
