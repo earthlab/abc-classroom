@@ -10,14 +10,13 @@
       "name": "Cranston, Karen",
       "orcid": "0000-0002-4798-9499"
     },
-  ],
-  "contributors": [
     {
-      "type":"Other",
       "affiliation": "Wild Tree Tech",
       "name": "Head, Tim",
       "orcid": "0000-0003-0931-3698"
     },
+  ],
+  "contributors": [
     {
       "type":"Other",
       "affiliation": "Earth Lab, University of Colorado - Boulder",
