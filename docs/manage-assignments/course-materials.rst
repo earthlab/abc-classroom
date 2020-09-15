@@ -16,17 +16,17 @@ Manage Assignments Using nbgrader
 
 Assuming you have `installed nbgrader <https://nbgrader.readthedocs.io/en/stable/user_guide/installation.html>`_ ::
 
-    $ cd my-abc-classroom-course
-    $ nbgrader quickstart my-nbgrader-course : this will create a nbgrader course directory called ``nbgrader``
+    cd my-abc-classroom-course
+    nbgrader quickstart my-nbgrader-course : this will create a nbgrader course directory called ``nbgrader``
 
 Make sure the "course_materials" setting in `config.yml` matches the name of what you used for `my-nbgrader-course` (see below for config instructions).
 
 Develop your notebooks in the `my-nbgrader-course/source` directory, then to
 generate the student versions for an assignment called `assignment1`::
 
-    $ cd my-abc-classroom-course
-    $ cd my-nbgrader-course
-    $ nbgrader generate_assignment assignment1`
+    cd my-abc-classroom-course
+    cd my-nbgrader-course
+    nbgrader generate_assignment assignment1`
 
 This will generate the student versions of the assignment notebooks in `my-nbgrader-course/release`. You are now ready to :doc:`create the template repository <new_assignment>` for GitHub classroom.
 
@@ -36,15 +36,15 @@ Manage Assignments Manually
 Create a directory for course materials inside your **abc-classroom** course
 directory::
 
-    $ cd my-abc-classroom-course
-    $ mkdir course_materials
+    cd my-abc-classroom-course
+    mkdir course_materials
 
 You can call this directory anything you want. Modify the value of
 "course_materials" in `config.yml` (as described below) to match your chosen
 directory name. Then, create a `release` directory in your course materials
 dir (this _must_ be called `release`)::
 
-    $ mkdir course_materials/release
+    mkdir course_materials/release
 
 Put the files that you want to distribute to students in the `release` directory before :doc:`creating a new template repository <new_assignment>`.
 
