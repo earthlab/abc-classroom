@@ -9,6 +9,9 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 [Unreleased]
 ------------
 
+[0.0.16]
+--------
+
 -  Copy / create extra files from an `extra_files` directory rather than having
    them specified in config (@kcranston, #195)
 -  Changed markdown documents to rst to remove ``m2r`` as a dependency
