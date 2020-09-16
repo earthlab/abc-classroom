@@ -46,6 +46,15 @@ setup(
         "Operating System :: MacOS",
     ],
     include_package_data=True,
+    package_data={
+        DISTNAME: [
+            "example-data/readme.md",
+            "example-data/sample_roster.csv",
+            "example-data/config.yml",
+            "example-data/extra_files/README.md",
+            "example-data/extra_files/.gitignore",
+        ]
+    },
     entry_points={
         "console_scripts": [
             "abc-init = abcclassroom.__main__:init",
