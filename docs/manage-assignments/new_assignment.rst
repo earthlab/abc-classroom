@@ -7,7 +7,7 @@ A template assignment github repo is what is used to create repositories for
 each student in GitHub Classroom. This repo  should have all of the files that
 the students need to complete their assignment. These files may include:
 
-* A jupyter  notebook (or rMarkdown file).
+* A Jupyter Notebook (or rMarkdown file).
 * Any images required to load in the notebook
 * any other files that you want to distribute through github
 
@@ -16,14 +16,14 @@ you can create a template GitHub repository. This is the repository that
 GitHub Classroom will use to share the assignment repo with each student in your
 class. To create a new assignment template, do the following:
 
-#. Make sure that all required assignment files are in the `course_materials/release/assignment_name` directory.
-#. Make sure that all general files such as a README.md or a .gitignore file are located in the `extra_files` directory.
+#. Make sure that all required assignment files are in the ``course_materials/release/assignment_name`` directory.
+#. Make sure that all general files such as a ``README.md`` or a ``.gitignore file are located in the ``extra_files`` directory.
 
 When you create a template abc-classroom will:
 
-#. Copy specific for this assignment from `course_materials/release/assignment_name` to `template_repos/assignment_name`.
+#. Copy specific for this assignment from ``course_materials/release/assignment_name`` to ``template_repos/assignment_name``.
 #. Copy any files that you want to have in all assignment repos to non-specific assignment files from `extra_files` to `template_repos/assignment_name`.
-#. Setting up `template_repos/assignment_name` as a git repository.
+#. Setting up ``template_repos/assignment_name`` as a git repository.
 #. Pushing the template repository to your GitHub Classroom organization.
 
 Then, on GitHub classroom, you link the assignment to the template git repo, which
@@ -34,7 +34,7 @@ The ``abc-new-template`` and ``abc-update-template`` scripts allow you to create
 How To Create and Update Template Repositories
 ==============================================
 
-There are two template scripts : ```abc-new-template`` and ```abc-update-template``.
+There are two template scripts : ``abc-new-template`` and ``abc-update-template``.
 The 'new' script is for first-time creation of a new assignment template
 repository from a directory of assignment files. The 'update' script allows you
 to quickly update the local and remote repositories after making changes to
@@ -57,9 +57,9 @@ To create a GitHub Classroom homework assignment template repository:
 
 1. In the terminal, navigate to the course directory that you created using ``abc-quickstart`` (TODO: add link to quickstart page).
 
-2. To create a new assignment template called `assignment1` run:
+2. To create a new git repo containing the assignment template called `assignment1` run::
 
-  ``$ abc-new-template assignment1``
+    abc-new-template assignment1
 
 ``abc-new-template`` will then perform the following steps:
 
@@ -68,9 +68,21 @@ To create a GitHub Classroom homework assignment template repository:
 * copy files from the ``course_materials/release/assignment1`` directory
 * create any extra files as listed in ``config.yml``
 * git add and git commit the local files
-* (optionally, if using ``--github`` flag) create a new repository on GitHub with the name ``assignment1-template`` and push the contents of the local repo to GitHub
 
-**Command line options**
+ If you want to push the `assignment1` template repo to GitHub, in addition to the
+ steps outlined above, run::
+
+  abc-new-template assignment1 --github
+
+If you have already created the template directory, you will need to use the
+``--mode merge`` or ``--mode delete`` options to ensure the existing template is
+either 1) deleted if you want to start over OR 2) merged or updated to reflect
+changes to files. The command to merge would look like::
+
+    abc-new-template assignment1 --mode merge --github
+
+Command Line Options
+~~~~~~~~~~~~~~~~~~~~~~
 
 Run ``abc-new-template -h`` to see the options. The output is reproduced below::
 
@@ -105,18 +117,20 @@ Run ``abc-new-template -h`` to see the options. The output is reproduced below::
 
 .. _abc-update-template:
 
-Updating an existing template repository
+Updating an Existing Template Repository
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To update an existing template repository (for example, if you change assignment files and want to push new versions to GitHub), use the ``abc-update-template`` scripts. Assuming that ``template_dir/assignment1-template`` exists:
+To update an existing template repository (for example, if you change assignment
+files and want to push new versions to GitHub), use the ``abc-update-template``
+scripts. Assuming that ``template_dir/assignment1-template`` exists::
 
-```abc-update-template assignment1``
+    abc-update-template assignment1
 
 will:
 
 * copy any files in ``course_materials/release/assignment1`` to ``template_dir/assignment1-template`` (overwriting any existing files with the same name; use the ``-delete`` mode if you want to erase the existing template before starting)
-* git add and git commit the changes
-* push the changes to GitHub
+* ``git add`` and ``git commit`` the changes
+* ``git push`` the changes to GitHub
 
 **Command line arguments**
 
@@ -143,7 +157,7 @@ is reproduced here::
                             merge).
 
 
-Configuration settings
+Configuration Settings
 ======================
 
 Creating an assignment uses these settings from ``config.yml``:
