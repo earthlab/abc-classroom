@@ -40,7 +40,7 @@ For the purposes of ``abc-classroom``, this directory is referred to as ``course
 
 Then, add the assignment to the nbgrader database using::
 
-    ``nbgrade assignment add assignment-name-here``
+    nbgrader assignment add assignment-name-here
 
 This step adds the assignment to the nbgrader database. This may be an optional
 step. TODO -- more testing is needed.
@@ -56,7 +56,11 @@ releasing it to students be careful. Once an assignment is "graded" nbgrader
 will not allow you to release it again. Thus a work around is to delete the
 assignment from the database using::
 
-    nbgrader db assignment remove assignment-name-here
+    nbgrader db assignment remove assignment-name-here --force
+
+IMPORTANT: Danger zone - you are removing an assignment using --force that may
+have grades in your ``nbgrader`` database. Proceed with caution if you have already
+graded this assignment!
 
 TODO: BELOW CAN BE A NOTE
 
