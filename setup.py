@@ -47,7 +47,7 @@ setup(
     ],
     include_package_data=True,
     package_data={
-        DISTNAME: [
+        "abcclassroom": [
             "example-data/readme.md",
             "example-data/sample_roster.csv",
             "example-data/config.yml",
