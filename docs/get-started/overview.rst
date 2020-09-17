@@ -21,8 +21,8 @@ for GitHub classroom).
 * create an assignment on GitHub Classroom and link the template repository to the GitHub Classroom assignment
 * give students the assignment link
 * students accept assignment, complete work, and submit by pushing to their github repo
-* :doc:`clone student repos and copy submitted files </clone>` into course materials directory
-* :doc:`copy feedback reports from course materials to student repos </manage-assignments/feedback>` and push back to students
+* :doc:`clone student repos and copy submitted files </collect-grade-assignments/clone>` into course materials directory
+* :doc:`copy feedback reports from course materials to student repos </collect-grade-assignments/feedback>` and push back to students
 
 abc-classroom scripts
 =====================
