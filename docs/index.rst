@@ -19,10 +19,8 @@ and autograding Jupyter notebooks.
    Get Started <get-started/index>
    manage-assignments/index
    Collect & Grade Assignments <collect-grade-assignments/index>
-   contributing
-   code-of-conduct
+   contributing/index
    change-log
-   previous-functionality
    api
 
 Indices and tables
