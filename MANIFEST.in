@@ -1,3 +1,3 @@
-recursive-include abcclassroom *.yml *.csv *.md
+graft abcclassroom/example-files
 include README.md
 include LICENSE.rst
