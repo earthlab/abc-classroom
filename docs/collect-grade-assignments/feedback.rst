@@ -1,22 +1,30 @@
 .. _abc-feedback:
 
-Pushing feedback reports back to students
------------------------------------------
+Push Feedback Reports Back to GitHub Classroom Student Repos
+-------------------------------------------------------------
 
-The the final step in the **abc-classroom** workflow is pushing any feedback
+The the final step in the **abc-classroom** workflow is pushing feedback
 from the instructor to the students through their GitHub repositories for the
 assignment. Running::
 
-  $ abc-feedback assignment-name
+    abc-feedback assignment-name
 
-iterates through students in the
-roster and copies any files from ``course_materials/feedback/student/assignment``
-into the respository at ``cloned_dir/assignment-student``.
+1. iterates through students in the roster
+2. copies files from ``course_materials/feedback/student/assignment-name`` directory into student's cloned repository located here: ``cloned_dir/assignment-student`` directory.
 
-If you want to also push the feedback reports to the student repository on GitHub (using ``git push``) use the ``--github`` option (see below). By default,
-``abc-feedback`` only copies the files locally.
+If you want to also push the feedback reports to the student repository on
+GitHub (using ``git push``) use the ``--github`` option (see below).::
 
-Command-line arguments
+    abc-feedback assignment-name --githhub
+
+Note that when you use the ``--github`` flag, the files are added to the repo as a
+direct comment (not a pull request). So you will want to tell the students to
+check their repo after pushing out the feedback files.
+
+By default ``abc-feedback`` only copies the files to each cloned student repo
+in your local directory.
+
+Command-line Arguments
 ======================
 
 Run ``abc-feedback -h`` to see details of command line parameters::
