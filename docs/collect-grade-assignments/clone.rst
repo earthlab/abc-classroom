@@ -61,7 +61,8 @@ Setup SSH to Ensure abc-clone Runs Properly
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 There are three steps to setup ssh on your computer. You can follow the GitHub
-documentation carefully to set this up.
+documentation carefully to set this up. ``abc-clone`` will fail if this
+authentication is not setup!
 
 * Step one: Check to see if you already have an ssh key installed on your computer locally https://docs.github.com/en/enterprise/2.14/user/articles/checking-for-existing-ssh-keys
 * Step two: Generate a new key - https://docs.github.com/en/enterprise/2.14/user/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent

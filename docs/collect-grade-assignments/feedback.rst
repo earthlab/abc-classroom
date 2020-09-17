@@ -1,7 +1,7 @@
 .. _abc-feedback:
 
-Push Feedback Reports Back to GitHub Classroom Student Repos
--------------------------------------------------------------
+Push Feedback to GitHub Student Repos
+--------------------------------------
 
 The the final step in the **abc-classroom** workflow is pushing feedback
 from the instructor to the students through their GitHub repositories for the
