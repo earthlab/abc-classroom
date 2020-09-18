@@ -32,6 +32,12 @@ listed in the roster.
    ``roster: path-to-roster-here/roster.csv``
 
 
+.. note::
+  It can be helpful to ask students to add their first and last names to their
+  GitHub profile given sometimes the usernames do not clearly link to their
+  LMS profile names.
+
+
 Optional: Link GitHub Classroom to Your Learning Management System
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -48,7 +54,7 @@ your student's names with their GitHub usernames.
 
 
 Optional: Add Roster to Nbgrader
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you are using nbgrader, you may also want to upload the roster to the nbgrader
 database. You can add a .csv file to nbgrader using::
@@ -65,3 +71,6 @@ field for this to work. As suchh you may want to
 
 Once you have made this changes, ``nbgrader`` will be able to associated each
 ``github`` username with a first and last name. This may make grading easier.
+
+You can download the roster from GitHub Classroom directly.
+

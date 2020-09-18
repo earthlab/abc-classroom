@@ -6,16 +6,25 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_, and this project adheres to
 `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+
 [Unreleased]
 ------------
 
-[0.1.0]
+[0.1.5]
+------------
+-  Update manifest to bundle ``example-data`` directory (@lwasser, #272)
+-  This patch also includes an extensive reorganization of the documentation.
+   There is no GitHub issue associated with this effort. (@lwasser)
+
+[0.1.4]
 --------
 
 -  Copy / create extra files from an ``extra_files`` directory rather than having
    them specified in config (@kcranston, #195)
 -  Changed markdown documents to ``.rst`` to remove ``m2r`` as a dependency
    (@nkorinek, #210)
+-  NOTE - there was a package bundling issue in 0.1.0-0.1.3 that was resolved in
+   this release
 
 [0.0.15]
 --------
