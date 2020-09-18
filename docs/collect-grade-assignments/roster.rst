@@ -15,9 +15,9 @@ may want to wait until all students have accepted the first assignment to
 create your roster. This will ensure that all of the students in your class are
 listed in the roster.
 2. Once you think all of your students have accepted the first assignment, go
-   to the classroom interface and click on the ``download roster`` button.
-   This will return a list of students with their names as they have entered them
-   in GitHub and their github usernames. The format will look like::
+to the classroom interface and click on the ``download roster`` button.
+This will return a list of students with their names as they have entered them
+in GitHub and their github usernames. The format will look like::
 
    identifier github_username github_id name
 
@@ -73,4 +73,3 @@ Once you have made this changes, ``nbgrader`` will be able to associated each
 ``github`` username with a first and last name. This may make grading easier.
 
 You can download the roster from GitHub Classroom directly.
-
