@@ -5,6 +5,8 @@
 
 ![PyPI](https://img.shields.io/pypi/v/abc-classroom.svg?color=purple&style=plastic)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/abc-classroom.svg?color=purple&label=pypi%20downloads&style=plastic)
+![Conda](https://img.shields.io/conda/v/conda-forge/abc-classroom.svg?color=purple&style=plastic)
+![Conda](https://img.shields.io/conda/dn/conda-forge/abc-classroom.svg?color=purple&label=conda-forge%20downloads&style=plastic)
 [![codecov](https://codecov.io/gh/earthlab/abc-classroom/branch/master/graph/badge.svg)](https://codecov.io/gh/earthlab/abc-classroom)
 
 [![Documentation Status](https://readthedocs.org/projects/abc-classroom/badge/?version=latest)](https://abc-classroom.readthedocs.io/en/latest/?badge=latest)
