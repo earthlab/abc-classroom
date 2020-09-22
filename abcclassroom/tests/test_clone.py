@@ -1,15 +1,14 @@
 # Tests for clone script
 
 import pytest
-import os
 from pathlib import Path
 
 import abcclassroom.clone as abcclone
-import abcclassroom.github as github
 
+# TODO - this should be a fixture
 test_data = {
     "assignment": "assignment1",
-    "students": ["bert"],
+    "students": ["bert", "alana"],
     "files": ["nb1.ipynb", "nb2.ipynb", "junk.csv"],
 }
 
@@ -27,8 +26,8 @@ def test_files(default_config, tmp_path):
     files = test_data["files"]
     for s in students:
         repo_name = "{}-{}".format(assignment, s)
-        assignment_path = Path(tmp_path, clone_dir, repo_name)
-        assignment_path.mkdir(parents=True)
+        assignment_path = Path(tmp_path, clone_dir, assignment, repo_name)
+        assignment_path.mkdir(parents=True, exist_ok=True)
         for f in files:
             Path(assignment_path, f).touch()
 
@@ -58,5 +57,5 @@ def test_copy_assignment_files(default_config, test_files):
             Path(
                 materials_dir, "submitted", s, assignment, "junk.csv"
             ).exists()
-            == False
+            is False
         )
