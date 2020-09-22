@@ -14,7 +14,11 @@ from . import github
 
 def copy_feedback(args):
     """
-    Copies feedback reports to local student repositories, commits the changes, and (optionally) pushes to github. Assumes files are in the directory course_materials/feedback/student/assignment. Copies all files in the source directory.
+    Copies feedback reports to local student repositories, commits the changes,
+    and (optionally) pushes to github.
+    Assumes feedback files are in the directory
+    course_materials/feedback/student/assignment following a typical
+    nbgrader structure. Copies all files in the source directory.
     """
     assignment = args.assignment
     do_github = args.github
@@ -26,7 +30,6 @@ def copy_feedback(args):
     roster_filename = cf.get_config_option(config, "roster", True)
     course_dir = cf.get_config_option(config, "course_directory", True)
     clone_dir = cf.get_config_option(config, "clone_dir", True)
-    organization = cf.get_config_option(config, "organization", True)
     materials_dir = cf.get_config_option(config, "course_materials", True)
 
     try:
@@ -39,12 +42,12 @@ def copy_feedback(args):
                     "*"
                 )
                 repo = "{}-{}".format(assignment, student)
-                destination_dir = Path(clone_dir, repo)
+                # The repos now live in clone_dir/assignment-name/repo
+                destination_dir = Path(clone_dir, assignment, repo)
                 if not destination_dir.is_dir():
                     print(
-                        "Local student repository {} does not exist; skipping student".format(
-                            destination_dir
-                        )
+                        "Local student repository {} does not exist; skipping "
+                        "student".format(destination_dir)
                     )
                     continue
                 for f in source_files:
