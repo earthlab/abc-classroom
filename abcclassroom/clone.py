@@ -22,13 +22,10 @@ def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
     ----------
     organization : string
         Organization where your GitHub classroom lives.
-
     repo : string
         Name of the student's GitHub repo.
-
     clone_dir : string
         Name of the clone directory.
-
     skip_existing : boolean
         True if you wish to skip copying files to existing repos.
     """
