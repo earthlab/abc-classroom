@@ -166,12 +166,25 @@ def create_template_dir(config, assignment, mode="fail"):
 def copy_assignment_files(config, template_repo, assignment):
     """Copy all of the files from the course_materials/release directory for the
     assignment into the template repo directory.
+
+    Parameters
+    ----------
+    config: ordered dictionary
+        Config file returned by ``get_config()`` that contains paths to the
+        course directory, github organization and other custom options
+    template_repo: path ??s
+        path to the template repository where the assignment files will be
+        copied (is it relative or actual full)???
+    assignment: string
+        name of the assignment being copied
+
     """
 
     course_dir = cf.get_config_option(config, "course_directory", True)
     materials_dir = cf.get_config_option(config, "course_materials", True)
     parent_path = utils.get_abspath(materials_dir, course_dir)
     release_dir = Path(parent_path, "release", assignment)
+
     if not release_dir.is_dir():
         print(
             "release directory {} does not exist; exiting\n".format(
@@ -188,13 +201,21 @@ def copy_assignment_files(config, template_repo, assignment):
             template_repo.relative_to(course_dir)
         )
     )
-    for file in all_files:
+    # Get a list of files to ignore - maybe our default config has some
+    # could have some defaults - then remove all files that we want to ignore
+    files_to_ignore = cf.get_config_option(config, "files_to_ignore", True)
+    files_to_move = set(all_files).difference(files_to_ignore)
+
+    for file in files_to_move:
         fpath = Path(release_dir, file)
         print(" {}".format(fpath.relative_to(course_dir)))
         # overwrites if fpath exists in template_repo
+        # TODO: Note that as written here, moving directories will fail so
+        # we may want to revisit this
         shutil.copy(fpath, template_repo)
         nfiles += 1
-    print("Copied {} files".format(nfiles))
+    print("Copied {} files to your assignment directory!".format(nfiles))
+    print("The files copied include: {}".format(files_to_move))
 
 
 def create_extra_files(config, template_repo, assignment):
