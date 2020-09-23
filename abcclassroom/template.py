@@ -214,6 +214,7 @@ def copy_assignment_files(config, template_repo, assignment):
         # we may want to revisit this
         shutil.copy(fpath, template_repo)
         nfiles += 1
+
     print("Copied {} files to your assignment directory!".format(nfiles))
     print("The files copied include: {}".format(files_to_move))
 
