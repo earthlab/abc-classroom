@@ -22,7 +22,12 @@ def new_update_template(args):
 
     Creates an assignment entry in the config file if one does not already
     exist.
+
+    Parameters
+    ----------
+    args : command line arguments
     """
+
     print("Loading configuration from config.yml")
     config = cf.get_config()
 
@@ -61,6 +66,23 @@ def new_update_template(args):
 def create_or_update_remote(
     template_repo_path, organization, repo_name, token
 ):
+    """
+    Push template repo to github creating a new repository or update the
+    repo's contents
+
+    Parameters
+    ----------
+    template_repo_path : string
+        The path to the template repo on your local computer.
+    organization : string
+        The name of the organization where your GitHub Classroom lives.
+    repo_name : string
+        The name of the template repository to create on GitHub
+    token : github token
+        Used to authenticate with GitHub via the API. Created by running
+        ``abc-init``
+
+    """
     remote_exists = github.remote_repo_exists(organization, repo_name, token)
     if not remote_exists:
         print("Creating remote repo {}".format(repo_name))
