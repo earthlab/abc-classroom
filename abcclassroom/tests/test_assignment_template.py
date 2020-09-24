@@ -11,9 +11,7 @@ import abcclassroom.config as cf
 
 @pytest.fixture
 def config_file(default_config, tmp_path):
-    """
-    Writes the config to a file in tmp_path
-    """
+    """Writes the config to a file in tmp_path"""
     cf.write_config(default_config, tmp_path)
 
 
