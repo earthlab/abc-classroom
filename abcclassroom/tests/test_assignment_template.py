@@ -91,9 +91,9 @@ def test_move_git_dir(default_config, tmp_path):
     assert Path(template_path, ".git").exists()
 
 
-# Tests for copy_assignment_files method
+# Tests for copy_assignment_files
 def test_copy_assignment_files(default_config, tmp_path):
-    """ "Test that files are moved to the template repo directory and that
+    """Test that files are moved to the template repo directory and that
     ignored files are NOT moved.
     """
     default_config["course_directory"] = tmp_path
@@ -123,6 +123,32 @@ def test_copy_assignment_files(default_config, tmp_path):
             assert afile not in os.listdir(template_repo)
 
 
+def test_copy_assignment_dirs(default_config, tmp_path, capfd):
+    """Test that when there is a directory in the extra_files dir, things
+     still copy as expected.
+    """
+    default_config["course_directory"] = tmp_path
+    assignment = "assignment1"
+    # first, set up the test course materials directory
+    # and create some temporary files
+    cmpath = Path(
+        tmp_path, default_config["course_materials"], "release", assignment
+    )
+    cmpath.mkdir(parents=True)
+    cmpath.joinpath("dummy-dir").mkdir()
+
+    # Manually create the dir to just test the copy function
+    template_path = Path(
+        tmp_path, default_config["template_dir"], assignment + "-template"
+    )
+    template_path.mkdir(parents=True)
+    abctemplate.copy_assignment_files(
+        default_config, template_path, assignment
+    )
+    out, err = capfd.readouterr()
+    print(out)
+    assert "Oops - looks like" in out
+
 
 def test_copy_assignment_files_fails_nodir(default_config, tmp_path):
     """Test that fails if course_materials dir does not exist"""
@@ -135,7 +161,7 @@ def test_copy_assignment_files_fails_nodir(default_config, tmp_path):
         )
 
 
-# Test for create_extra_files method
+# Test for create_extra_files
 def test_create_extra_files(default_config, tmp_path):
     default_config["course_directory"] = tmp_path
     assignment = "assignment1"

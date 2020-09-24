@@ -230,12 +230,19 @@ def copy_assignment_files(config, template_repo, assignment):
 
     for file in files_to_move:
         fpath = Path(release_dir, file)
-        print(" {}".format(fpath.relative_to(course_dir)))
-        # overwrites if fpath exists in template_repo
-        # TODO: Note that as written here, moving directories will fail so
-        # we may want to revisit this
-        shutil.copy(fpath, template_repo)
-        nfiles += 1
+        if fpath.is_dir():
+            # TODO: Note that as written here, moving directories will fail so
+            print(
+                "Oops - looks like {} is a directory. Currently I can't "
+                "move that for you. Contact the abc-classroom maintainers"
+                "if this is a feature that you'd "
+                "like".format(fpath.relative_to(course_dir))
+            )
+        else:
+            print(" {}".format(fpath.relative_to(course_dir)))
+            # Overwrites if fpath exists in template_repo
+            shutil.copy(fpath, template_repo)
+            nfiles += 1
 
     print("Copied {} files to your assignment directory!".format(nfiles))
     print("The files copied include: {}".format(files_to_move))
