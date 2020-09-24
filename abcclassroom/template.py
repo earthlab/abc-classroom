@@ -242,7 +242,18 @@ def copy_assignment_files(config, template_repo, assignment):
 
 
 def create_extra_files(config, template_repo, assignment):
-    """Copy any extra files that exist the extra_files directory """
+    """Copy any extra files that exist the extra_files directory
+
+    Parameters
+    ----------
+    config : Path
+        Path to the config.yml file??
+    template_repo : Path object ?
+        Path to the template repo that you wish to copy files over to. ??
+    assignment : string
+        Name of the assignment that you want to copy files over for.
+
+    """
     course_dir = cf.get_config_option(config, "course_directory", True)
     extra_path = Path(course_dir, "extra_files")
     if extra_path.is_dir():

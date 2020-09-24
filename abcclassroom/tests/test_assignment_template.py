@@ -93,7 +93,7 @@ def test_move_git_dir(default_config, tmp_path):
 
 # Tests for copy_assignment_files method
 def test_copy_assignment_files(default_config, tmp_path):
-    """"Test that files are moved to the template repo directory and that
+    """ "Test that files are moved to the template repo directory and that
     ignored files are NOT moved.
     """
     default_config["course_directory"] = tmp_path
