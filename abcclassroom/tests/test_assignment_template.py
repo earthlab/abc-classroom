@@ -93,12 +93,12 @@ def test_move_git_dir(default_config, tmp_path):
 
 # Tests for copy_assignment_files method
 def test_copy_assignment_files(default_config, tmp_path):
-    """"test that contents are the same for target and source directory
+    """"Test that files are moved to the template repo directory and that
+    ignored files are NOT moved.
     """
     default_config["course_directory"] = tmp_path
     assignment = "assignment1"
-    files_to_ignore = [".DS_Store", ".ipynb_checkpoints"]
-    default_config["files_to_ignore"] = files_to_ignore
+    files_to_ignore = default_config["files_to_ignore"]
     # first, set up the test course materials directory
     # and create some temporary files
     cmpath = Path(
@@ -126,7 +126,7 @@ def test_copy_assignment_files(default_config, tmp_path):
 
 
 def test_copy_assignment_files_fails_nodir(default_config, tmp_path):
-    # test that fails if course_materials dir does not exist
+    """Test that fails if course_materials dir does not exist"""
     default_config["course_directory"] = tmp_path
     assignment = "assignment1"
     template_repo = abctemplate.create_template_dir(default_config, assignment)
