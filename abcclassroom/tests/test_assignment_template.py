@@ -123,7 +123,7 @@ def test_copy_assignment_files(default_config, tmp_path):
 
 def test_copy_assignment_dirs(default_config, tmp_path, capfd):
     """Test that when there is a directory in the extra_files dir, things
-     still copy as expected.
+    still copy as expected.
     """
     default_config["course_directory"] = tmp_path
     assignment = "assignment1"

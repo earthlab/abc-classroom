@@ -9,6 +9,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 
 [Unreleased]
 ------------
+-  Add files_to_ignore to skip moving certain files (@lwasser, #172, #278)
 
 [0.1.5]
 ------------

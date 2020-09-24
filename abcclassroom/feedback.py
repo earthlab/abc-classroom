@@ -14,7 +14,18 @@ from . import github
 
 def copy_feedback(args):
     """
-    Copies feedback reports to local student repositories, commits the changes, and (optionally) pushes to github. Assumes files are in the directory course_materials/feedback/student/assignment. Copies all files in the source directory.
+    Copies feedback reports to local student repositories, commits the changes,
+    and (optionally) pushes to github. Assumes files are in the directory
+    course_materials/feedback/student/assignment. Copies all files in the
+    source directory.
+
+    Parameters
+    ----------
+
+    args: string
+        Command line argument for the copy_feedback function. Options include:
+        assignment: Assignment name
+        github: a flag to push to GitHub vs only commit the change
     """
     assignment = args.assignment
     do_github = args.github
@@ -22,11 +33,10 @@ def copy_feedback(args):
     print("Loading configuration from config.yml")
     config = cf.get_config()
 
-    # get various paths from config
+    # Get various paths from config
     roster_filename = cf.get_config_option(config, "roster", True)
     course_dir = cf.get_config_option(config, "course_directory", True)
     clone_dir = cf.get_config_option(config, "clone_dir", True)
-    organization = cf.get_config_option(config, "organization", True)
     materials_dir = cf.get_config_option(config, "course_materials", True)
 
     try:
@@ -42,12 +52,23 @@ def copy_feedback(args):
                 destination_dir = Path(clone_dir, repo)
                 if not destination_dir.is_dir():
                     print(
-                        "Local student repository {} does not exist; skipping student".format(
-                            destination_dir
-                        )
+                        "Local student repository {} does not exist; "
+                        "skipping student".format(destination_dir)
                     )
                     continue
-                for f in source_files:
+                # TODO: Turn this into a helper function lines 53 - 71 here
+                # Don't copy any system related files -- not this is exactly
+                # the same code used in the template.py copy files function.
+                # this could become a helper that just moves files. I think
+                # we'd call it a few times so it's worth doing... and when /
+                # if we add support to move directories we could just add it
+                # in one place.
+                files_to_ignore = cf.get_config_option(
+                    config, "files_to_ignore", True
+                )
+                files_to_move = set(source_files).difference(files_to_ignore)
+
+                for f in files_to_move:
                     print(
                         "Copying {} to {}".format(
                             f.relative_to(course_dir), destination_dir
