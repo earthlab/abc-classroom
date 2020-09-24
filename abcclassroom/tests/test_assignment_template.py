@@ -93,10 +93,12 @@ def test_move_git_dir(default_config, tmp_path):
 
 # Tests for copy_assignment_files method
 def test_copy_assignment_files(default_config, tmp_path):
-    # test that contents are the same for target and source directory
+    """"test that contents are the same for target and source directory
+    """
     default_config["course_directory"] = tmp_path
     assignment = "assignment1"
-
+    files_to_ignore = [".DS_Store", ".ipynb_checkpoints"]
+    default_config["files_to_ignore"] = files_to_ignore
     # first, set up the test course materials directory
     # and create some temporary files
     cmpath = Path(
@@ -105,11 +107,21 @@ def test_copy_assignment_files(default_config, tmp_path):
     cmpath.mkdir(parents=True)
     cmpath.joinpath("file1.txt").touch()
     cmpath.joinpath("file2.txt").touch()
+    cmpath.joinpath(".DS_Store").touch()
 
     template_repo = abctemplate.create_template_dir(default_config, assignment)
     abctemplate.copy_assignment_files(
         default_config, template_repo, assignment
     )
+    # Test that both text files have been moved to the template dir but that
+    # the system .DS_Store is not there
+    for afile in os.listdir(cmpath):
+        if afile not in files_to_ignore:
+            assert afile in os.listdir(template_repo)
+        else:
+            print(afile)
+            assert afile not in os.listdir(template_repo)
+
     assert os.listdir(cmpath).sort() == os.listdir(template_repo).sort()
 
 

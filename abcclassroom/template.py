@@ -172,9 +172,9 @@ def copy_assignment_files(config, template_repo, assignment):
     config: ordered dictionary
         Config file returned by ``get_config()`` that contains paths to the
         course directory, github organization and other custom options
-    template_repo: path ??s
-        path to the template repository where the assignment files will be
-        copied (is it relative or actual full)???
+    template_repo: os path object
+        Absolute path to the template repository where the assignment files
+        will be copied
     assignment: string
         name of the assignment being copied
 
