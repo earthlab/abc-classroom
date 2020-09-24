@@ -9,26 +9,20 @@ import csv
 import shutil
 
 from . import config as cf
+
+# This is problematic as github is a module but it's also an argument name
 from . import github
 
 
-def copy_feedback(args):
-    """
-    Copies feedback reports to local student repositories, commits the changes,
+# i renamed the argument here to be push_github but this is'nt tested yet
+# as it was before github was an argument AND a module name which was
+# problematic
+def copy_feedback_files(assignment, do_github=False):
+    """Copies feedback reports to local student repositories, commits the
+    changes,
     and (optionally) pushes to github. Assumes files are in the directory
     course_materials/feedback/student/assignment. Copies all files in the
-    source directory.
-
-    Parameters
-    ----------
-
-    args: string
-        Command line argument for the copy_feedback function. Options include:
-        assignment: Assignment name
-        github: a flag to push to GitHub vs only commit the change
-    """
-    assignment = args.assignment
-    do_github = args.github
+    source directory."""
 
     print("Loading configuration from config.yml")
     config = cf.get_config()
@@ -56,7 +50,7 @@ def copy_feedback(args):
                         "skipping student".format(destination_dir)
                     )
                     continue
-                # TODO: Turn this into a helper function lines 53 - 71 here
+                # TODO: Turn this into a helper function lines 46 - 64 here
                 # Don't copy any system related files -- not this is exactly
                 # the same code used in the template.py copy files function.
                 # this could become a helper that just moves files. I think
@@ -85,3 +79,24 @@ def copy_feedback(args):
     except FileNotFoundError as err:
         print("Missing file or directory:")
         print(" ", err)
+
+
+def copy_feedback(args):
+    """
+    Copies feedback reports to local student repositories, commits the changes,
+    and (optionally) pushes to github. Assumes files are in the directory
+    course_materials/feedback/student/assignment. Copies all files in the
+    source directory. This is the command line implementation.
+
+    Parameters
+    ----------
+
+    args: string
+        Command line argument for the copy_feedback function. Options include:
+        assignment: Assignment name
+        github: a flag to push to GitHub vs only commit the change
+    """
+    assignment = args.assignment
+    do_github = args.github
+
+    copy_feedback_files(assignment, do_github)
