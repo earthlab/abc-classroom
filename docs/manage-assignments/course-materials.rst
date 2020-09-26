@@ -49,12 +49,47 @@ dir (this _must_ be called `release`)::
 Put the files that you want to distribute to students in the `release` directory before :doc:`creating a new template repository <new_assignment>`.
 
 Add Files To Every Assignment Repository
-======================================================
+==========================================
 
-There are probably some files that you want added to each assignment repository.
-By default, these include a readme for the repository and a `.gitignore`. These
-files exist in `extra_files` directory. Whatever you place in here gets
-copied to each new assignment repo.
+There are probably some files that you want to add to each assignment
+repository. Any files that you wish to add to every new template repo can be
+added to the ``extra_files`` directory which is created when you run
+``abc-quickstart`` to set things up. By default, abc-quickstart will generate
+an extra_files directory containing:
+
+1. a generic ``README.md`` file for the repository and
+2. a ``.gitignore`` file.
+
+You can add any additional files that want in each repo to this directory.
+File that you may want could include things like:
+
+1. a customized .gitignore file
+2. logos and graphics that you want to display on every student assignment
+3. custom modules needed to complete assignments for the course
+
+Any files in the extra_files directory will be addeded by defaul to each
+template repository.
+
+Ignore Some Files
+~~~~~~~~~~~~~~~~~~
+In many cases there may be system and tool based files that you do not wish to
+move. if that is the case, you can populate the ``files_to_ignore`` section
+of your ``config.yml`` file with anything that you want to skip.
+
+. code-block:: yaml
+    # Add any system files that you wish to ignore when copying files to your
+    # template here
+    files_to_ignore:
+    - .DS_Store
+    - .ipynb_checkpoints
+
+
+.. note::
+    Currently abc-classroom does not support moving entire directories over to
+    new template repos. We will consider adding that functionality in the
+    future if it is of community interest AND/OR are open to community PR's to
+    add that functionality.
+
 
 Update config.yml
 ===================

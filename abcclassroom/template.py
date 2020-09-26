@@ -22,7 +22,12 @@ def new_update_template(args):
 
     Creates an assignment entry in the config file if one does not already
     exist.
+
+    Parameters
+    ----------
+    args : command line arguments
     """
+
     print("Loading configuration from config.yml")
     config = cf.get_config()
 
@@ -61,6 +66,23 @@ def new_update_template(args):
 def create_or_update_remote(
     template_repo_path, organization, repo_name, token
 ):
+    """
+    Push template repo to github creating a new repository or update the
+    repo's contents
+
+    Parameters
+    ----------
+    template_repo_path : string
+        The path to the template repo on your local computer.
+    organization : string
+        The name of the organization where your GitHub Classroom lives.
+    repo_name : string
+        The name of the template repository to create on GitHub
+    token : github token
+        Used to authenticate with GitHub via the API. Created by running
+        ``abc-init``
+
+    """
     remote_exists = github.remote_repo_exists(organization, repo_name, token)
     if not remote_exists:
         print("Creating remote repo {}".format(repo_name))
@@ -166,12 +188,25 @@ def create_template_dir(config, assignment, mode="fail"):
 def copy_assignment_files(config, template_repo, assignment):
     """Copy all of the files from the course_materials/release directory for the
     assignment into the template repo directory.
+
+    Parameters
+    ----------
+    config: ordered dictionary
+        Config file returned by ``get_config()`` that contains paths to the
+        course directory, github organization and other custom options
+    template_repo: os path object
+        Absolute path to the template repository where the assignment files
+        will be copied
+    assignment: string
+        name of the assignment being copied
+
     """
 
     course_dir = cf.get_config_option(config, "course_directory", True)
     materials_dir = cf.get_config_option(config, "course_materials", True)
     parent_path = utils.get_abspath(materials_dir, course_dir)
     release_dir = Path(parent_path, "release", assignment)
+
     if not release_dir.is_dir():
         print(
             "release directory {} does not exist; exiting\n".format(
@@ -188,17 +223,46 @@ def copy_assignment_files(config, template_repo, assignment):
             template_repo.relative_to(course_dir)
         )
     )
-    for file in all_files:
+    # TODO this could also use the copy files helper - thinking to put it in
+    # the utils module
+    # Get a list of files to ignore - maybe our default config has some
+    # could have some defaults - then remove all files that we want to ignore
+    files_to_ignore = cf.get_config_option(config, "files_to_ignore", True)
+    files_to_move = set(all_files).difference(files_to_ignore)
+
+    for file in files_to_move:
         fpath = Path(release_dir, file)
-        print(" {}".format(fpath.relative_to(course_dir)))
-        # overwrites if fpath exists in template_repo
-        shutil.copy(fpath, template_repo)
-        nfiles += 1
-    print("Copied {} files".format(nfiles))
+        if fpath.is_dir():
+            # TODO: Note that as written here, moving directories will fail so
+            print(
+                "Oops - looks like {} is a directory. Currently I can't "
+                "move that for you. Contact the abc-classroom maintainers"
+                "if this is a feature that you'd "
+                "like".format(fpath.relative_to(course_dir))
+            )
+        else:
+            print(" {}".format(fpath.relative_to(course_dir)))
+            # Overwrites if fpath exists in template_repo
+            shutil.copy(fpath, template_repo)
+            nfiles += 1
+
+    print("Copied {} files to your assignment directory!".format(nfiles))
+    print("The files copied include: {}".format(files_to_move))
 
 
 def create_extra_files(config, template_repo, assignment):
-    """Copy any extra files that exist the extra_files directory """
+    """Copy any extra files that exist the extra_files directory
+
+    Parameters
+    ----------
+    config : Path
+        Path to the config.yml file??
+    template_repo : Path object ?
+        Path to the template repo that you wish to copy files over to. ??
+    assignment : string
+        Name of the assignment that you want to copy files over for.
+
+    """
     course_dir = cf.get_config_option(config, "course_directory", True)
     extra_path = Path(course_dir, "extra_files")
     if extra_path.is_dir():
