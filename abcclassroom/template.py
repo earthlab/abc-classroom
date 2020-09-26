@@ -223,6 +223,8 @@ def copy_assignment_files(config, template_repo, assignment):
             template_repo.relative_to(course_dir)
         )
     )
+    # TODO this could also use the copy files helper - thinking to put it in
+    # the utils module
     # Get a list of files to ignore - maybe our default config has some
     # could have some defaults - then remove all files that we want to ignore
     files_to_ignore = cf.get_config_option(config, "files_to_ignore", True)

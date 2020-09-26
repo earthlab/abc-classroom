@@ -81,6 +81,7 @@ def copy_feedback_files(assignment_name, push_to_github=False):
                         )
                     )
                     shutil.copy(f, destination_dir)
+
                 github.commit_all_changes(
                     destination_dir,
                     msg="Adding feedback for assignment {}".format(

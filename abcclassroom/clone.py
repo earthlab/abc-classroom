@@ -50,7 +50,7 @@ def clone_student_repos(args):
     notebook files into the 'course_materials/submitted' directory, based on
     course_materials set in config.yml."""
 
-    assignment = args.assignment
+    assignment_name = args.assignment
     skip_existing = args.skip_existing
 
     print("Loading configuration from config.yml")
@@ -68,23 +68,23 @@ def clone_student_repos(args):
         )
     try:
         # Create the assignment subdirectory path and ensure it exists
-        Path(course_dir, clone_dir, assignment).mkdir(exist_ok=True)
+        Path(course_dir, clone_dir, assignment_name).mkdir(exist_ok=True)
         missing = []
         with open(roster_filename, newline="") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 student = row["github_username"]
                 # expected columns: identifier,github_username,github_id,name
-                repo = "{}-{}".format(assignment, student)
+                repo = "{}-{}".format(assignment_name, student)
                 try:
                     clone_or_update_repo(
                         organization,
                         repo,
-                        Path(clone_dir, assignment),
+                        Path(clone_dir, assignment_name),
                         skip_existing,
                     )
                     if materials_dir is not None:
-                        copy_assignment_files(config, student, assignment)
+                        copy_assignment_files(config, student, assignment_name)
                 except RuntimeError:
                     missing.append(repo)
         if len(missing) == 0:
@@ -99,20 +99,30 @@ def clone_student_repos(args):
         print(err)
 
 
-def copy_assignment_files(config, student, assignment):
+def copy_assignment_files(config, student, assignment_name):
     """Copies all notebook files from clone_dir to course_materials/submitted.
-    Will overwrite any existing files with the same name."""
+    Will overwrite any existing files with the same name.
+
+    Parameters
+    -----------
+    config: dict
+        config file returned as a dictionary from get_config()
+    student:
+    assignment_name: string
+        Name of the assignment for which files are being copied
+
+    """
     course_dir = cf.get_config_option(config, "course_directory", True)
     materials_dir = cf.get_config_option(config, "course_materials", False)
     clone_dir = cf.get_config_option(config, "clone_dir", True)
-    repo = "{}-{}".format(assignment, student)
+    repo = "{}-{}".format(assignment_name, student)
 
     # Copy files from the cloned_dirs/assignment name directory
     # TODO - right now this ONLY copies notebooks but we may want to copy
     # other file types like .py files as well.
-    files = Path(course_dir, clone_dir, assignment, repo).glob("*.ipynb")
+    files = Path(course_dir, clone_dir, assignment_name, repo).glob("*.ipynb")
     destination = Path(
-        course_dir, materials_dir, "submitted", student, assignment
+        course_dir, materials_dir, "submitted", student, assignment_name
     )
     destination.mkdir(parents=True, exist_ok=True)
     print(
@@ -120,6 +130,13 @@ def copy_assignment_files(config, student, assignment):
             Path(clone_dir, repo), destination
         )
     )
+    # We are copying files here source: clone dir -> nbgrader submitted
+    # TODO: use the copy files helper - in this case it's only copying .ipynb
+    # files
+    # but i could see someone wanting to copy other types of files such as .py
+    # So it may make sense to implement a copy files helper here as well even
+    # tho it's adding a bit of additional steps - it's still a very small
+    # operation
     for f in files:
         print("copying {} to {}".format(f, destination))
         copy(f, destination)
