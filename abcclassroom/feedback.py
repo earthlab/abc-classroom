@@ -14,10 +14,12 @@ from . import github
 
 def copy_feedback(args):
     """
-    Copies feedback reports to local student repositories, commits the changes,
-    and (optionally) pushes to github.
+    Copies feedback reports to local student repositories and commits the
+    changes. If the --github flag is used, it also will push the changes to
+    GitHub.
+
     Assumes feedback files are in the directory
-    course_materials/feedback/student/assignment following a typical
+    course_materials/feedback/student/assignment-name following a typical
     nbgrader structure. Copies all files in the source directory.
     """
     assignment_name = args.assignment

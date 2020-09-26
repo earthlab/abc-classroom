@@ -9,6 +9,9 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 
 [Unreleased]
 ------------
+- Clone dir copies assignments into an assignment-name dir rather than cloned
+  dir root (@lwasser, #276)
+- Fix manifest file to bundle example-data not example-files dir (@lwasser, #272 take two)
 
 [0.1.5]
 ------------
