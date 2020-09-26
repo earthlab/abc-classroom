@@ -14,9 +14,15 @@ from . import github
 
 def copy_feedback(args):
     """
-    Copies feedback reports to local student repositories, commits the changes, and (optionally) pushes to github. Assumes files are in the directory course_materials/feedback/student/assignment. Copies all files in the source directory.
+    Copies feedback reports to local student repositories and commits the
+    changes. If the --github flag is used, it also will push the changes to
+    GitHub.
+
+    Assumes feedback files are in the directory
+    course_materials/feedback/student/assignment-name following a typical
+    nbgrader structure. Copies all files in the source directory.
     """
-    assignment = args.assignment
+    assignment_name = args.assignment
     do_github = args.github
 
     print("Loading configuration from config.yml")
@@ -26,7 +32,6 @@ def copy_feedback(args):
     roster_filename = cf.get_config_option(config, "roster", True)
     course_dir = cf.get_config_option(config, "course_directory", True)
     clone_dir = cf.get_config_option(config, "clone_dir", True)
-    organization = cf.get_config_option(config, "organization", True)
     materials_dir = cf.get_config_option(config, "course_materials", True)
 
     try:
@@ -35,16 +40,16 @@ def copy_feedback(args):
             reader = csv.DictReader(csvfile)
             for row in reader:
                 student = row["github_username"]
-                source_files = Path(feedback_dir, student, assignment).glob(
-                    "*"
-                )
-                repo = "{}-{}".format(assignment, student)
-                destination_dir = Path(clone_dir, repo)
+                source_files = Path(
+                    feedback_dir, student, assignment_name
+                ).glob("*")
+                repo_name = "{}-{}".format(assignment_name, student)
+                # The repos now live in clone_dir/assignment-name/repo-name
+                destination_dir = Path(clone_dir, assignment_name, repo_name)
                 if not destination_dir.is_dir():
                     print(
-                        "Local student repository {} does not exist; skipping student".format(
-                            destination_dir
-                        )
+                        "Local student repository {} does not exist; skipping "
+                        "student".format(destination_dir)
                     )
                     continue
                 for f in source_files:
@@ -56,7 +61,9 @@ def copy_feedback(args):
                     shutil.copy(f, destination_dir)
                 github.commit_all_changes(
                     destination_dir,
-                    msg="Adding feedback for assignment {}".format(assignment),
+                    msg="Adding feedback for assignment {}".format(
+                        assignment_name
+                    ),
                 )
                 if do_github:
                     github.push_to_github(destination_dir)

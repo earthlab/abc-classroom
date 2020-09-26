@@ -1,3 +1,3 @@
-graft abcclassroom/example-files
+graft abcclassroom/example-data
 include README.md
 include LICENSE.rst
