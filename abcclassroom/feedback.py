@@ -53,12 +53,13 @@ def copy_feedback_files(assignment_name, push_to_github=False):
                 source_files = Path(
                     feedback_dir, student, assignment_name
                 ).glob("*")
-                repo = "{}-{}".format(assignment_name, student)
-                destination_dir = Path(clone_dir, repo)
+                repo_name = "{}-{}".format(assignment_name, student)
+                # The repos now live in clone_dir/assignment-name/repo-name
+                destination_dir = Path(clone_dir, assignment_name, repo_name)
                 if not destination_dir.is_dir():
                     print(
-                        "Local student repository {} does not exist; "
-                        "skipping student".format(destination_dir)
+                        "Local student repository {} does not exist; skipping "
+                        "student".format(destination_dir)
                     )
                     continue
                 # TODO: Turn this into a helper function lines 46 - 64 here
@@ -82,8 +83,9 @@ def copy_feedback_files(assignment_name, push_to_github=False):
                     shutil.copy(f, destination_dir)
                 github.commit_all_changes(
                     destination_dir,
-                    msg="Adding feedback for assignment "
-                    "{}".format(assignment_name),
+                    msg="Adding feedback for assignment {}".format(
+                        assignment_name
+                    ),
                 )
                 if push_to_github:
                     github.push_to_github(destination_dir)

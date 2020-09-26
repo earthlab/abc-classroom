@@ -17,6 +17,17 @@ def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
     Tries to clone the single repository 'repo' from the organization. If the
     local repository already exists, pulls instead of cloning (unless the
     skip flag is set, in which case it does nothing).
+
+    Parameters
+    ----------
+    organization : string
+        Organization where your GitHub classroom lives.
+    repo : string
+        Name of the student's GitHub repo.
+    clone_dir : string
+        Name of the clone directory.
+    skip_existing : boolean
+        True if you wish to skip copying files to existing repos.
     """
     destination_dir = Path(clone_dir, repo)
     if destination_dir.is_dir():
@@ -56,7 +67,8 @@ def clone_student_repos(args):
             "repositories but will not copy any assignment files."
         )
     try:
-        Path(course_dir, clone_dir).mkdir(exist_ok=True)
+        # Create the assignment subdirectory path and ensure it exists
+        Path(course_dir, clone_dir, assignment).mkdir(exist_ok=True)
         missing = []
         with open(roster_filename, newline="") as csvfile:
             reader = csv.DictReader(csvfile)
@@ -66,7 +78,10 @@ def clone_student_repos(args):
                 repo = "{}-{}".format(assignment, student)
                 try:
                     clone_or_update_repo(
-                        organization, repo, clone_dir, skip_existing
+                        organization,
+                        repo,
+                        Path(clone_dir, assignment),
+                        skip_existing,
                     )
                     if materials_dir is not None:
                         copy_assignment_files(config, student, assignment)
@@ -80,7 +95,7 @@ def clone_student_repos(args):
                 print(" {}".format(r))
 
     except FileNotFoundError as err:
-        print("Cannot find roster file".format(roster_filename))
+        print("Cannot find roster file: {}".format(roster_filename))
         print(err)
 
 
@@ -91,7 +106,11 @@ def copy_assignment_files(config, student, assignment):
     materials_dir = cf.get_config_option(config, "course_materials", False)
     clone_dir = cf.get_config_option(config, "clone_dir", True)
     repo = "{}-{}".format(assignment, student)
-    files = Path(course_dir, clone_dir, repo).glob("*.ipynb")
+
+    # Copy files from the cloned_dirs/assignment name directory
+    # TODO - right now this ONLY copies notebooks but we may want to copy
+    # other file types like .py files as well.
+    files = Path(course_dir, clone_dir, assignment, repo).glob("*.ipynb")
     destination = Path(
         course_dir, materials_dir, "submitted", student, assignment
     )
