@@ -9,25 +9,36 @@ import csv
 import shutil
 
 from . import config as cf
-
-# This is problematic as github is a module but it's also an argument name
 from . import github
 
 
-# i renamed the argument here to be push_github but this is'nt tested yet
-# as it was before github was an argument AND a module name which was
-# problematic
-def copy_feedback_files(assignment, do_github=False):
+def copy_feedback_files(assignment_name, push_to_github=False):
     """Copies feedback reports to local student repositories, commits the
     changes,
     and (optionally) pushes to github. Assumes files are in the directory
     course_materials/feedback/student/assignment. Copies all files in the
-    source directory."""
+    source directory.
+
+    Parameters
+    -----------
+    assignment_name: string
+        Name of the assignment for which feedback is being processed.
+    push_to_github: boolean (default = False)
+        ``True`` if you want to automagically push feedback to GitHub after
+        committing changes
+
+    Returns
+    -------
+        Moves feedback html files from the student feedback directory to the
+        cloned_repos directory. Will commit to git and if ``push_to_github``
+        is ``True``, it will also run ``git push``.
+    """
 
     print("Loading configuration from config.yml")
     config = cf.get_config()
 
     # Get various paths from config
+    # I think we do this a bunch so is it worth a helper for it?
     roster_filename = cf.get_config_option(config, "roster", True)
     course_dir = cf.get_config_option(config, "course_directory", True)
     clone_dir = cf.get_config_option(config, "clone_dir", True)
@@ -39,10 +50,10 @@ def copy_feedback_files(assignment, do_github=False):
             reader = csv.DictReader(csvfile)
             for row in reader:
                 student = row["github_username"]
-                source_files = Path(feedback_dir, student, assignment).glob(
-                    "*"
-                )
-                repo = "{}-{}".format(assignment, student)
+                source_files = Path(
+                    feedback_dir, student, assignment_name
+                ).glob("*")
+                repo = "{}-{}".format(assignment_name, student)
                 destination_dir = Path(clone_dir, repo)
                 if not destination_dir.is_dir():
                     print(
@@ -71,9 +82,10 @@ def copy_feedback_files(assignment, do_github=False):
                     shutil.copy(f, destination_dir)
                 github.commit_all_changes(
                     destination_dir,
-                    msg="Adding feedback for assignment {}".format(assignment),
+                    msg="Adding feedback for assignment "
+                    "{}".format(assignment_name),
                 )
-                if do_github:
+                if push_to_github:
                     github.push_to_github(destination_dir)
 
     except FileNotFoundError as err:
@@ -90,13 +102,18 @@ def copy_feedback(args):
 
     Parameters
     ----------
-
     args: string
         Command line argument for the copy_feedback function. Options include:
         assignment: Assignment name
         github: a flag to push to GitHub vs only commit the change
-    """
-    assignment = args.assignment
-    do_github = args.github
 
-    copy_feedback_files(assignment, do_github)
+    Returns
+    -------
+        Moves feedback html files from the student feedback directory to the
+        cloned_repos directory. Will commit to git and if ``push_to_github``
+        is ``True``, it will also run ``git push``.
+    """
+    assignment_name = args.assignment
+    push_to_github = args.github
+
+    copy_feedback_files(assignment_name, push_to_github)
