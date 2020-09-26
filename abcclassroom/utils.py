@@ -15,6 +15,56 @@ from shutil import copystat, copy2
 
 from IPython import get_ipython
 
+# from . import config as cf
+
+# TODO: this will require grabbing paths to files or creating paths in this
+# function so it will require a bit more thought.
+
+#
+# def move_files(all_files, src_dir, dest_dir):
+#     """Moves files from one location to another.
+#
+#     Ignores files specified
+#     in the ``files_to_ignore`` in the configpath. Currently does not support
+#     moving directories but oculd in the future.
+#
+#     Parameters
+#     ----------
+#     all_files: list
+#         list of file and directory names to move
+#     src_dir: path
+#         Path to the src directory of files to move
+#     dest_dir: path
+#         Path to the destination directory of files to move
+#
+#     """
+#     # TODO this could also use the copy files helper - thinking to put it in
+#     # the utils module
+#     # Get a list of files to ignore - maybe our default config has some
+#     # could have some defaults - then remove all files that we want to ignore
+#     config = cf.get_config()
+#     files_to_ignore = cf.get_config_option(config, "files_to_ignore", True)
+#     files_to_move = set(all_files).difference(files_to_ignore)
+#
+#     for file in files_to_move:
+#         fpath = Path(release_dir, file)
+#         if fpath.is_dir():
+#             # TODO: Note that as written here, moving directories will fail
+#             print(
+#                 "Oops - looks like {} is a directory. Currently I can't "
+#                 "move that for you. Contact the abc-classroom maintainers"
+#                 "if this is a feature that you'd "
+#                 "like".format(fpath.relative_to(course_dir))
+#             )
+#         else:
+#             print(" {}".format(fpath.relative_to(course_dir)))
+#             # Overwrites if fpath exists in template_repo
+#             shutil.copy(fpath, template_repo)
+#             nfiles += 1
+#
+#     print("Copied {} files to your assignment directory!".format(nfiles))
+#     print("The files copied include: {}".format(files_to_move))
+
 
 class Error(OSError):
     pass
