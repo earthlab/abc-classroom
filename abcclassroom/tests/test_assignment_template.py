@@ -11,9 +11,7 @@ import abcclassroom.config as cf
 
 @pytest.fixture
 def config_file(default_config, tmp_path):
-    """
-    Writes the config to a file in tmp_path
-    """
+    """Writes the config to a file in tmp_path"""
     cf.write_config(default_config, tmp_path)
 
 
@@ -91,12 +89,14 @@ def test_move_git_dir(default_config, tmp_path):
     assert Path(template_path, ".git").exists()
 
 
-# Tests for copy_assignment_files method
+# Tests for copy_assignment_files
 def test_copy_assignment_files(default_config, tmp_path):
-    # test that contents are the same for target and source directory
+    """Test that files are moved to the template repo directory and that
+    ignored files are NOT moved.
+    """
     default_config["course_directory"] = tmp_path
     assignment = "assignment1"
-
+    files_to_ignore = default_config["files_to_ignore"]
     # first, set up the test course materials directory
     # and create some temporary files
     cmpath = Path(
@@ -105,16 +105,51 @@ def test_copy_assignment_files(default_config, tmp_path):
     cmpath.mkdir(parents=True)
     cmpath.joinpath("file1.txt").touch()
     cmpath.joinpath("file2.txt").touch()
+    cmpath.joinpath(".DS_Store").touch()
 
     template_repo = abctemplate.create_template_dir(default_config, assignment)
     abctemplate.copy_assignment_files(
         default_config, template_repo, assignment
     )
-    assert os.listdir(cmpath).sort() == os.listdir(template_repo).sort()
+    # Test that both text files have been moved to the template dir but that
+    # the system .DS_Store is not there
+    for afile in os.listdir(cmpath):
+        if afile not in files_to_ignore:
+            assert afile in os.listdir(template_repo)
+        else:
+            print(afile)
+            assert afile not in os.listdir(template_repo)
+
+
+def test_copy_assignment_dirs(default_config, tmp_path, capfd):
+    """Test that when there is a directory in the extra_files dir, things
+    still copy as expected.
+    """
+    default_config["course_directory"] = tmp_path
+    assignment = "assignment1"
+    # first, set up the test course materials directory
+    # and create some temporary files
+    cmpath = Path(
+        tmp_path, default_config["course_materials"], "release", assignment
+    )
+    cmpath.mkdir(parents=True)
+    cmpath.joinpath("dummy-dir").mkdir()
+
+    # Manually create the dir to just test the copy function
+    template_path = Path(
+        tmp_path, default_config["template_dir"], assignment + "-template"
+    )
+    template_path.mkdir(parents=True)
+    abctemplate.copy_assignment_files(
+        default_config, template_path, assignment
+    )
+    out, err = capfd.readouterr()
+    print(out)
+    assert "Oops - looks like" in out
 
 
 def test_copy_assignment_files_fails_nodir(default_config, tmp_path):
-    # test that fails if course_materials dir does not exist
+    """Test that fails if course_materials dir does not exist"""
     default_config["course_directory"] = tmp_path
     assignment = "assignment1"
     template_repo = abctemplate.create_template_dir(default_config, assignment)
@@ -124,7 +159,7 @@ def test_copy_assignment_files_fails_nodir(default_config, tmp_path):
         )
 
 
-# Test for create_extra_files method
+# Test for create_extra_files
 def test_create_extra_files(default_config, tmp_path):
     default_config["course_directory"] = tmp_path
     assignment = "assignment1"

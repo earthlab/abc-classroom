@@ -29,3 +29,11 @@ clone_dir: cloned_repos
 # course_dir unless you enter an absolute path (i.e. starting with '/' on
 # Linux or OS X or with 'C:' on Windows).
 template_dir: assignment_repos
+
+# A list of files that you do not want to be copied from your assignment
+# release directory to the github template repo. These may be system files
+# Checkpoints or other files that are created by various tools and operating
+# system functions. Add as many as you wish to the list below!
+files_to_ignore:
+- .DS_Store
+- .ipynb_checkpoints

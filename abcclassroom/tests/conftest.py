@@ -14,5 +14,6 @@ def default_config():
         "template_dir": "test_template",
         "course_materials": "nbgrader",
         "clone_dir": "cloned-repos",
+        "files_to_ignore": [".DS_Store", ".ipynb_checkpoints"],
     }
     return config
