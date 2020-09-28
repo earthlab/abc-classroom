@@ -16,6 +16,7 @@ Submodules
    abcclassroom.config
    abcclassroom.distribute
    abcclassroom.feedback
+   abcclassroom.feedback_report
    abcclassroom.github
    abcclassroom.notebook
    abcclassroom.ok
