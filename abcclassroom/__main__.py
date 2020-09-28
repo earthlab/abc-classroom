@@ -11,6 +11,25 @@ from . import feedback as fdback
 from . import config as cf
 from .quickstart import create_dir_struct
 from .clone import clone_student_repos
+from .feedback_report import generate_student_feedback
+
+# Is using an underscore for a CLI argument better than a dash?
+
+
+def generate_feedback():
+    """
+    Creates a cleaned version of the autograded notebook with hidden tests
+    removed. Then turns that notebook into an HTML file for each student in
+    the roster.
+    """
+    parser = argparse.ArgumentParser(description=feedback.__doc__)
+    parser.add_argument(
+        "assignment",
+        help="""Name of assignment. Must match name in course_materials
+        autograded directory""",
+    )
+    args = parser.parse_args()
+    generate_student_feedback(args)
 
 
 def quickstart():

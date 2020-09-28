@@ -43,7 +43,7 @@ def remove_notebook_test_cells(nb):
 # Saves the cleaned notebook to some place and moves the html to another place
 
 
-def creat_clean_report(assignment_name):
+def create_clean_report(assignment_name):
     """This function will take a notebook from a dir structure as follows:
     dir/student-name/assignment-name/file-names.ipynb It will then open the
     file,
@@ -72,13 +72,16 @@ def creat_clean_report(assignment_name):
             for row in reader:
                 student = row["github_username"]
 
-                # Create path to autograded directory
+                # Create path to autograded directory & get all notebooks
                 path_to_notebooks = Path(
                     autograded_dir, student, assignment_name
                 )
                 graded_notebooks = path_to_notebooks.glob("*.ipynb")
-                print(path_to_notebooks)
+                print(graded_notebooks)
                 # Iterate through each source file notebook
+                # TODO: right now this just fails quietly if the assignment
+                # directory doesn't exist. We should test to ensure i t
+                # exists and then do everything below.
                 for anotebook in graded_notebooks:
                     print("Cleaning answers from:", anotebook)
                     # Open & clean the notebook
@@ -132,3 +135,18 @@ def creat_clean_report(assignment_name):
     except FileNotFoundError as err:
         print("Oops  - something went wrong - not sure what  tho just yet:")
         print(" ", err)
+
+
+def generate_student_feedback(args):
+    """Takes an assignment name as an input and returns 1. the already
+    graded notebook with hidden ess removed. and 2. a graded html file in the
+    student feedback directory.
+
+    Parameters
+    ----------
+    args: Assignment name argument provided by the command line call.
+    """
+
+    assignment_name = args.assignment
+
+    create_clean_report(assignment_name)
