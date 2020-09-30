@@ -31,21 +31,23 @@ def scrub_feedback(html_path):
     html-file: A cleaned html file without the hidden tests.
         The original file will be overwritten.
     """
-    with codecs.open(file, 'r') as html_file:
+    with codecs.open(html_path, "r") as html_file:
         orig_html_feedback = html_file.read()
 
     # Hide hidden tests
     html_clean = re.sub(
         r'<span class="c1">### BEGIN HIDDEN TESTS<\/span>[\w\W]*?'
         r'<span class="c1">### END HIDDEN TESTS<\/span>',
-        '',
-        orig_html_feedback)
+        "",
+        orig_html_feedback,
+    )
     # Just in case we use just one pound sign
     html_clean = re.sub(
         r'<span class="c1"># BEGIN HIDDEN TESTS<\/span>[\w\W]*?'
         r'<span class="c1"># END HIDDEN TESTS<\/span>',
-        '',
-        html_clean)
+        "",
+        html_clean,
+    )
 
     # Not sure we will need this
     # Hide the traceback (which includes parts of the hidden tests)
@@ -56,16 +58,7 @@ def scrub_feedback(html_path):
     #     r'\1\2',
     #     orig_html_feedback)
 
-    # Write the file - do I need a return?
-    with open("new-graded-file.html", "w") as cleaned_html:
+    # Write the file - currently this overwrites the existing html output
+    # We could consider a different approach
+    with open(html_path, "w") as cleaned_html:
         cleaned_html.write(html_clean)
-
-
-def clean_feedback_html():
-    # Go through each html file in the feedback dir and run scrub_feedback
-
-
-def clean_feedback(args):
-    """if we need a cli - this might be better as a option for abc-feedback"""
-    assignment_name = args.assignment
-    clean_feedback_html(assignment_name)
