@@ -118,13 +118,15 @@ def copy_feedback(args):
 
     Parameters
     ----------
-    args: string
+    args : string
         Command line argument for the copy_feedback function. Options include:
         assignment: Assignment name
-        github: a flag to push to GitHub vs only commit the change
-        scrub: boolean
-            if true (exists), remove hidden tests from the html output
-            before moving it to the student directory
+    github : boolean (default = False)
+        If true, or --github used, push to GitHub. Otherwise only commit
+        the change
+    scrub : boolean (default = False)
+        If true (exists), remove hidden tests from the html output
+        before moving it to the student directory
 
     Returns
     -------
