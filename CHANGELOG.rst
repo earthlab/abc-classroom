@@ -9,6 +9,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 
 [Unreleased]
 ------------
+- Update the default config to use ``classroom_roster.csv`` which is the default GH classroom filename (@lwasser, #297)
 - Setup windows testing using github actions (@lwasser, #300)
 - Add ``scrub`` argument to abc-feedback to clean hidden tests from html (@lwasser, #290, #238)
 
