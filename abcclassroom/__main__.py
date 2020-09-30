@@ -140,6 +140,11 @@ def feedback():
         help="""Also pushes files to student repositories on GitHub
         (default = False; only copies files to local repos)""",
     )
+    parser.add_argument(
+        "--scrub",
+        action="store_true",
+        help="""Cleans out hidden tests from notebooks when used.""",
+    )
     args = parser.parse_args()
     fdback.copy_feedback(args)
 
