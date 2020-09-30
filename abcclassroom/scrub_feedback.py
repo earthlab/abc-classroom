@@ -28,7 +28,7 @@ def scrub_feedback(html_path):
 
     Returns
     -------
-    html-file: A cleaned html file without the hidden tests.
+    html-file : A cleaned html file without the hidden tests.
         The original file will be overwritten.
     """
     with codecs.open(html_path, "r") as html_file:
