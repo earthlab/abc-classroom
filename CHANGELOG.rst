@@ -10,6 +10,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 [Unreleased]
 ------------
 - Setup windows testing using github actions (@lwasser, #300)
+- Add ``scrub`` argument to abc-feedback to clean hidden tests from html (@lwasser, #290, #238)
 
 [0.1.6]
 ------------
