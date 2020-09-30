@@ -1,16 +1,16 @@
 
 # The GitHub organization to host your GitHub classroom
 # Create a new organization on GitHub and change this to the name you gave it
-organization: earth-analytics-edu
+organization: your-organization-name
 
 # Absolute path to the course directory. If you ran abc-quickstart, this was
 # set up for you
-course_directory: /Users/karen/awesome-course
+course_directory: /Users/your-user-name/awesome-course
 
 # Path to the course roster (list of students downloaded from
 # github classroom). If the roster is in the course_directory, simply enter
 # the filename (otherwise, enter the path relative to the course_directory).
-roster: roster.csv
+roster: classroom_roster.csv
 
 # Path to the directory that holds your course materials. If you are using
 # nbgrader, this is the top-level nbgrader directory. Path assumed to be
