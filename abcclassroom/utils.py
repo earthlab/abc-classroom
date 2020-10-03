@@ -25,12 +25,12 @@ from IPython import get_ipython
 #     """Moves files from one location to another.
 #
 #     Ignores files specified
-#     in the ``files_to_ignore`` in the configpath. Currently does not support
-#     moving directories but oculd in the future.
+#     in the ``files_to_ignore`` in the config. Currently does not support
+#     moving directories but could in the future.
 #
 #     Parameters
 #     ----------
-#     all_files: list
+#     all_files: list or glob generator object?
 #         list of file and directory names to move
 #     src_dir: path
 #         Path to the src directory of files to move

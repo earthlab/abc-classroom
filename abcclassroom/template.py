@@ -7,15 +7,17 @@ import os
 import sys
 import shutil
 from pathlib import Path
+import ntpath
 
 from . import config as cf
-from . import github
+from . import github as gh
 from . import utils
 
 
 def new_update_template(args):
     """
-    Creates or updates an assignment template repository. Implementation of
+    Command line function that creates or updates an assignment template
+    repository. Implementation of
     both the new_template and update_template console scripts (which perform
     the same basic functions but with different command line arguments and
     defaults).
@@ -27,33 +29,82 @@ def new_update_template(args):
     ----------
     args : command line arguments
     """
+    create_template(
+        mode=args.mode,
+        push_to_github=args.github,
+        custom_message=args.custom_message,
+        assignment_name=args.assignment,
+    )
+
+
+def create_template(mode, push_to_github, custom_message, assignment_name):
+    """
+    Classroom package function that creates or updates an assignment template
+    repository. Implementation of
+    both the new_template and update_template console scripts (which perform
+    the same basic functions but with different command line arguments and
+    defaults).
+
+    Creates an assignment entry in the config file if one does not already
+    exist.
+
+    Parameters
+    ----------
+    push_to_github : boolean
+        True if you want to push to GH
+    mode : merge, fail
+    custom message : boolean (default = False)
+        True if you want to push to github.
+    assignment_name : string
+        name of the assignment
+    """
 
     print("Loading configuration from config.yml")
     config = cf.get_config()
 
-    # create the local directory; copy extra files first, because we use the
-    # .gitignore to filter the assignment files in copy_assignment_files
-    assignment = args.assignment
-    template_repo_path = create_template_dir(config, assignment, args.mode)
-    copy_assignment_files(config, template_repo_path, assignment)
-    create_extra_files(config, template_repo_path, assignment)
+    course_dir = cf.get_config_option(config, "course_directory", True)
+    materials_dir = cf.get_config_option(config, "course_materials", True)
+    # I think this should be moved above where it created the directory
+    parent_path = utils.get_abspath(materials_dir, course_dir)
+    release_dir = Path(parent_path, "release", assignment_name)
 
-    # create the local git repository and commit changes
-    github.init_and_commit(template_repo_path, args.custom_message)
+    # First check to see if there is an assignment with that name in the
+    # release directory, if not, fail gracefully
+    try:
+        release_dir.resolve(strict=True)
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            "Oops, it looks like the assignment - {} - doesn't yet"
+            " exist in the location that I expected it: {}. Did "
+            "you spell the assignment name correctly and is there a "
+            "directory at this path: "
+            "?".format(assignment_name, release_dir)
+        )
 
-    # create / append assignment entry in config
+    # If the assignment exists, then create dirs and copy stuff
+    template_repo_path = create_template_dir(config, assignment_name, mode)
+    # This is copying DS_Store still
+    copy_assignment_files(config, template_repo_path, release_dir)
+    # This is still copying DS_Store -- let's revisit
+    copy_extra_files(config, template_repo_path, assignment_name)
+
+    # Create the local git repository and commit changes
+    gh.init_and_commit(template_repo_path, custom_message)
+
+    # Create / append assignment entry in config - this should only happen if
+    # the assignment above exists...
     print("Updating assignment list in config")
     course_dir = cf.get_config_option(config, "course_directory", True)
     cf.set_config_option(
         config,
         "assignments",
-        assignment,
+        assignment_name,
         append_value=True,
         configpath=course_dir,
     )
 
-    # optional github steps
-    if args.github:
+    # Optional - push files to GitHub
+    if push_to_github:
         organization = cf.get_config_option(config, "organization", True)
         repo_name = os.path.basename(template_repo_path)
         token = cf.get_github_auth()["token"]
@@ -83,22 +134,22 @@ def create_or_update_remote(
         ``abc-init``
 
     """
-    remote_exists = github.remote_repo_exists(organization, repo_name, token)
+    remote_exists = gh.remote_repo_exists(organization, repo_name, token)
     if not remote_exists:
         print("Creating remote repo {}".format(repo_name))
         # create the remote repo on github and push the local repo
         # (will print error and return if repo already exists)
-        github.create_repo(organization, repo_name, token)
+        gh.create_repo(organization, repo_name, token)
 
     try:
-        github.add_remote(template_repo_path, organization, repo_name, token)
+        gh.add_remote(template_repo_path, organization, repo_name, token)
     except RuntimeError:
         print("Remote already added to local repository")
         pass
 
     print("Pushing any changes to remote repository on GitHub")
     try:
-        github.push_to_github(template_repo_path, "master")
+        gh.push_to_github(template_repo_path, "master")
     except RuntimeError as e:
         print(
             """Push to github failed. This is usually because there are
@@ -185,7 +236,7 @@ def create_template_dir(config, assignment, mode="fail"):
     return template_path
 
 
-def copy_assignment_files(config, template_repo, assignment):
+def copy_assignment_files(config, template_repo_path, release_dir):
     """Copy all of the files from the course_materials/release directory for the
     assignment into the template repo directory.
 
@@ -197,30 +248,33 @@ def copy_assignment_files(config, template_repo, assignment):
     template_repo: os path object
         Absolute path to the template repository where the assignment files
         will be copied
-    assignment: string
+    release_dir: Path object.... EDIT ME
         name of the assignment being copied
 
     """
 
     course_dir = cf.get_config_option(config, "course_directory", True)
-    materials_dir = cf.get_config_option(config, "course_materials", True)
-    parent_path = utils.get_abspath(materials_dir, course_dir)
-    release_dir = Path(parent_path, "release", assignment)
+    # materials_dir = cf.get_config_option(config, "course_materials", True)
 
-    if not release_dir.is_dir():
-        print(
-            "release directory {} does not exist; exiting\n".format(
-                release_dir
-            )
-        )
-        sys.exit(1)
+    # Turn this into a try / except? - or did i capture this test above?
+    # TODO - test this because i think i implemented this as a try/ except
+    #  above so we are good to remove it here.
+    # if not release_dir.is_dir():
+    #     print(
+    #         "release directory {} does not exist; exiting\n".format(
+    #             release_dir
+    #         )
+    #     )
+    #     # TODO - talk to karen about sys.exit vs catching this because
+    #     # in Python sys.exit() locks up the console
+    #     sys.exit(1)
 
     nfiles = 0
     all_files = os.listdir(release_dir)
 
     print(
         "Copying assignment files to {}: ".format(
-            template_repo.relative_to(course_dir)
+            template_repo_path.relative_to(course_dir)
         )
     )
     # TODO this could also use the copy files helper - thinking to put it in
@@ -230,27 +284,32 @@ def copy_assignment_files(config, template_repo, assignment):
     files_to_ignore = cf.get_config_option(config, "files_to_ignore", True)
     files_to_move = set(all_files).difference(files_to_ignore)
 
-    for file in files_to_move:
-        fpath = Path(release_dir, file)
+    for afile in files_to_move:
+        fpath = Path(release_dir, afile)
+        print(fpath)
         if fpath.is_dir():
             # TODO: Note that as written here, moving directories will fail so
             print(
                 "Oops - looks like {} is a directory. Currently I can't "
                 "move that for you. Contact the abc-classroom maintainers"
                 "if this is a feature that you'd "
-                "like".format(fpath.relative_to(course_dir))
+                "like".format(afile.relative_to(course_dir))
             )
         else:
             print(" {}".format(fpath.relative_to(course_dir)))
             # Overwrites if fpath exists in template_repo
-            shutil.copy(fpath, template_repo)
+            shutil.copy(fpath, template_repo_path)
             nfiles += 1
 
-    print("Copied {} files to your assignment directory!".format(nfiles))
+    print(
+        "Copied {} files to your template assignment git repo: {}!".format(
+            nfiles, template_repo_path
+        )
+    )
     print("The files copied include: {}".format(files_to_move))
 
 
-def create_extra_files(config, template_repo, assignment):
+def copy_extra_files(config, template_repo, assignment):
     """Copy any extra files that exist the extra_files directory
 
     Parameters
@@ -265,11 +324,17 @@ def create_extra_files(config, template_repo, assignment):
     """
     course_dir = cf.get_config_option(config, "course_directory", True)
     extra_path = Path(course_dir, "extra_files")
+
+    # TODO - implement helper for this part
+    files_to_ignore = cf.get_config_option(config, "files_to_ignore", True)
+
     if extra_path.is_dir():
         print("Copying extra files: ")
         for f in extra_path.iterdir():
-            print(" {}".format(f.relative_to(course_dir)))
-            shutil.copy(f, template_repo)
+            if not ntpath.basename(f) in files_to_ignore:
+                # Move file to new location
+                print(" {}".format(f.relative_to(course_dir)))
+                shutil.copy(f, template_repo)
 
         # modify the readme with the assignment name
         readme_path = Path(template_repo, "README.md")
