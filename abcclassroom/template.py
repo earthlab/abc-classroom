@@ -4,7 +4,6 @@ abc-classroom.template
 
 """
 import os
-import sys
 import shutil
 from pathlib import Path
 import ntpath
@@ -144,10 +143,10 @@ def create_or_update_remote(
     try:
         gh.add_remote(template_repo_path, organization, repo_name, token)
     except RuntimeError:
-        print("Remote already added to local repository")
+        print("Remote already added to local repository.")
         pass
 
-    print("Pushing any changes to remote repository on GitHub")
+    print("Pushing any changes to remote repository on GitHub.")
     try:
         gh.push_to_github(template_repo_path, "master")
     except RuntimeError as e:
@@ -192,14 +191,12 @@ def create_template_dir(config, assignment, mode="fail"):
         )
     else:
         if mode == "fail":
-            print(
-                """Directory {} already exists for this course; re-run with
-                '--mode merge' or '--mode delete', or delete / move directory
-                before re-running""".format(
-                    template_path.relative_to(course_dir)
-                )
+            raise Exception(
+                "Directory {} already exists for this course; "
+                "re-run with --mode merge' or '--mode delete', "
+                "or delete / move directory before re-running"
+                ". ".format(template_path.relative_to(course_dir))
             )
-            sys.exit(1)
         elif mode == "merge":
             print(
                 """Directory {} already exists for this course; will keep
@@ -236,7 +233,7 @@ def create_template_dir(config, assignment, mode="fail"):
     return template_path
 
 
-def copy_assignment_files(config, template_repo_path, release_dir):
+def copy_assignment_files(config, template_path, release_dir):
     """Copy all of the files from the course_materials/release directory for the
     assignment into the template repo directory.
 
@@ -245,11 +242,11 @@ def copy_assignment_files(config, template_repo_path, release_dir):
     config: ordered dictionary
         Config file returned by ``get_config()`` that contains paths to the
         course directory, github organization and other custom options
-    template_repo: os path object
+    template_path: Pathlib Path object
         Absolute path to the template repository where the assignment files
         will be copied
-    release_dir: Path object.... EDIT ME
-        name of the assignment being copied
+    release_dir: Path object
+        Path to the released assignment directory
 
     """
 
@@ -270,11 +267,11 @@ def copy_assignment_files(config, template_repo_path, release_dir):
     #     sys.exit(1)
 
     nfiles = 0
-    all_files = os.listdir(release_dir)
+    all_files = release_dir.glob("*")
 
     print(
         "Copying assignment files to {}: ".format(
-            template_repo_path.relative_to(course_dir)
+            template_path.relative_to(course_dir)
         )
     )
     # TODO this could also use the copy files helper - thinking to put it in
@@ -282,12 +279,10 @@ def copy_assignment_files(config, template_repo_path, release_dir):
     # Get a list of files to ignore - maybe our default config has some
     # could have some defaults - then remove all files that we want to ignore
     files_to_ignore = cf.get_config_option(config, "files_to_ignore", True)
-    files_to_move = set(all_files).difference(files_to_ignore)
-
-    for afile in files_to_move:
-        fpath = Path(release_dir, afile)
-        print(fpath)
-        if fpath.is_dir():
+    files_moved = []
+    for afile in all_files:
+        afile = Path(afile)
+        if afile.is_dir():
             # TODO: Note that as written here, moving directories will fail so
             print(
                 "Oops - looks like {} is a directory. Currently I can't "
@@ -296,17 +291,22 @@ def copy_assignment_files(config, template_repo_path, release_dir):
                 "like".format(afile.relative_to(course_dir))
             )
         else:
-            print(" {}".format(fpath.relative_to(course_dir)))
-            # Overwrites if fpath exists in template_repo
-            shutil.copy(fpath, template_repo_path)
-            nfiles += 1
+            if not ntpath.basename(afile) in files_to_ignore:
+                # TODO Removed "relative_to" as This is causing issues between
+                #  str  and path
+                #  objects --- revisit
+                print("Moving: {}".format(afile))
+                # Overwrites if afile exists in template_repo
+                shutil.copy(afile, template_path)
+                files_moved.append(afile)
+                nfiles += 1
 
     print(
         "Copied {} files to your template assignment git repo: {}!".format(
-            nfiles, template_repo_path
+            nfiles, template_path
         )
     )
-    print("The files copied include: {}".format(files_to_move))
+    print("The files copied include: {}".format(files_moved))
 
 
 def copy_extra_files(config, template_repo, assignment):
