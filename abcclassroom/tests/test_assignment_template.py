@@ -85,11 +85,9 @@ def test_create_template_dir_fail_when_exists(default_config, tmp_path):
     default_config["course_directory"] = tmp_path
     assignment_name = "test_assignment"
     abctemplate.create_template_dir(default_config, assignment_name)
-    expected_path = str(
-        Path(default_config["template_dir"], assignment_name + "-template")
-    )
+
     # If run again, it should fail given the dir already exists
-    with pytest.raises(Exception, match=("Directory " + expected_path)):
+    with pytest.raises(Exception, match=("Oops! The directory specified")):
         abctemplate.create_template_dir(default_config, assignment_name)
 
 

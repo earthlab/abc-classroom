@@ -192,18 +192,17 @@ def create_template_dir(config, assignment, mode="fail"):
     else:
         if mode == "fail":
             raise Exception(
-                "Directory {} already exists for this course; "
+                "Oops! The directory specified: {} already exists "
+                "for this course; "
                 "re-run with --mode merge' or '--mode delete', "
                 "or delete / move directory before re-running"
                 ". ".format(template_path.relative_to(course_dir))
             )
         elif mode == "merge":
             print(
-                """Directory {} already exists for this course; will keep
-                directory but overwrite existing files with same
-                names""".format(
-                    template_path.relative_to(course_dir)
-                )
+                "Oops! The directory specified: {} already exists for this"
+                " course; will keep directory but overwrite existing files "
+                "with same names".format(template_path.relative_to(course_dir))
             )
         else:
             # mode == delete
