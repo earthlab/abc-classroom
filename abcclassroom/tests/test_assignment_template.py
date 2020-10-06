@@ -39,7 +39,7 @@ def sample_course_structure(tmp_path):
 @pytest.fixture
 def course_structure_assignment(sample_course_structure, tmp_path):
     """Creates an assignment within the default course structure directory
-    with several files including system files that we want to ignore. """
+    with several files including system files that we want to ignore."""
     course_name, a_config = sample_course_structure
     assignment_name = "demo_assignment1"
     release_path = Path(
