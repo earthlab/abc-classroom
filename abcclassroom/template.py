@@ -82,7 +82,6 @@ def create_template(mode, push_to_github, custom_message, assignment_name):
 
     # If the assignment exists, then create dirs and copy stuff
     template_repo_path = create_template_dir(config, assignment_name, mode)
-    # This is copying DS_Store still
     copy_assignment_files(config, template_repo_path, release_dir)
     # This is still copying DS_Store -- let's revisit
     copy_extra_files(config, template_repo_path, assignment_name)
