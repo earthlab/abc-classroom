@@ -1,4 +1,4 @@
-codecov==2.1.9
+codecov==2.1.10
 bumpversion==0.6.0
 pre-commit==2.7.1
 pytest==6.1.1
