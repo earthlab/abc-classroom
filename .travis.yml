@@ -29,4 +29,4 @@ deploy:
   on:
     tags: true
     repo: earthlab/abc-classroom
-    python: 3.6
+    python: 3.7
