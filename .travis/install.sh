@@ -11,12 +11,13 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
   conda config --set always_yes yes --set show_channel_urls true --set changeps1 no
   conda update -q conda
   conda config --add channels conda-forge
-  conda info -a
   conda init bash
-  conda env create -f environment.yml
+  # Force python 3.8
+  conda create -n abc-dev python=3.8 github3.py
   conda activate abc-dev
   python setup.py install
   pip install -r dev-requirements.txt
+  conda info -a
 
 else
   sudo apt-add-repository ppa:ubuntugis/ubuntugis-unstable --yes
