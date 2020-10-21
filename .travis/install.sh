@@ -13,7 +13,8 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
   conda config --add channels conda-forge
   conda info -a
   conda init bash
-  conda env create -f environment.yml
+  # Force python 3.8
+  conda env create -f environment_osx.yml
   conda activate abc-dev
   python setup.py install
   conda info -a
