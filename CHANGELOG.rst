@@ -6,8 +6,12 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_, and this project adheres to
 `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+[unreleased]
+------------
+- Fix CI to force mac to build on python 3.8 and fix linux matrix / tox versions (@lwasser, #303)
 
-[Unreleased]
+
+[0.1.7]
 ------------
 - Update the default config to use ``classroom_roster.csv`` which is the default GH classroom filename (@lwasser, #297)
 - Setup windows testing using github actions (@lwasser, #300)
