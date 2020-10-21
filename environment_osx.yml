@@ -1,8 +1,0 @@
-name: abc-dev
-channels:
-  - conda-forge
-dependencies:
-  - python=3.8
-  # Github API
-  - github3.py
-
