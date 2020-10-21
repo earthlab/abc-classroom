@@ -15,8 +15,10 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
   conda init bash
   conda env create -f environment.yml
   conda activate abc-dev
-  pip install -e .
+  python setup.py install
+  conda info -a
   pip install -r dev-requirements.txt
+  conda info -a
 
 else
   sudo apt-add-repository ppa:ubuntugis/ubuntugis-unstable --yes
