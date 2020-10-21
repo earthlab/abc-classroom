@@ -9,7 +9,7 @@ import abcclassroom.clone as abcclone
 test_data = {
     "assignment": "assignment1",
     "students": ["bert", "alana"],
-    "files": ["nb1.ipynb", "nb2.ipynb", "junk.csv"],
+    "files": ["nb1.ipynb", "nb2.ipynb", "script.py", "junk.csv"],
 }
 
 
@@ -50,9 +50,12 @@ def test_copy_assignment_files(default_config, test_files):
     for s in students:
         abcclone.copy_assignment_files(default_config, s, assignment)
 
-        assert Path(
-            materials_dir, "submitted", s, assignment, "nb1.ipynb"
-        ).exists()
+        good_files = ["nb1.ipynb", "nb2.ipynb", "script.py"]
+
+        for file in good_files:
+            assert Path(
+                materials_dir, "submitted", s, assignment, file
+            ).exists()
         assert (
             Path(
                 materials_dir, "submitted", s, assignment, "junk.csv"
