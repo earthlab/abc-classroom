@@ -15,7 +15,7 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
   conda init bash
   conda env create -f environment.yml
   conda activate abc-dev
-  python setup.py install
+  pip install -e .
   pip install -r dev-requirements.txt
 
 else
