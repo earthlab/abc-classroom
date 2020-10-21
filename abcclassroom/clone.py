@@ -9,7 +9,7 @@ from pathlib import Path
 from shutil import copy
 
 from . import config as cf
-from . import github
+from . import github as gh
 
 
 def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
@@ -39,19 +39,46 @@ def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
                 )
             )
             return
-        github.pull_from_github(destination_dir)
+        gh.pull_from_github(destination_dir)
     else:
-        github.clone_repo(organization, repo, clone_dir)
+        gh.clone_repo(organization, repo, clone_dir)
 
 
 def clone_student_repos(args):
-    """Iterates through the student roster, clones each repo for this
-    assignment into the directory specified in the config, and then copies the
-    notebook files into the 'course_materials/submitted' directory, based on
-    course_materials set in config.yml."""
+    """This is the CLI implementation of clone repos
+
+    Parameters
+    ----------
+    args : string argument inputs
+        Arguments include the assignment name (string) and skip existing (
+        boolean?)
+
+    """
 
     assignment_name = args.assignment
     skip_existing = args.skip_existing
+
+    clone_repos(assignment_name, skip_existing)
+
+
+def clone_repos(assignment_name, skip_existing):
+    """Iterates through the student roster, clones each repo for this
+    assignment into the directory specified in the config, and then copies the
+    notebook files into the 'course_materials/submitted' directory, based on
+    course_materials set in config.yml."
+
+    Parameters
+    ----------
+    assignment_name : string
+        The name of the assignment to clone repos for
+    skip_existing : boolean
+        Not sure what this does yet!
+
+    Returns
+    --------
+    This returns the cloned student repos and also moves each notebook file
+    into the nbgrader "submitted" directory.
+    """
 
     print("Loading configuration from config.yml")
     config = cf.get_config()
@@ -63,18 +90,24 @@ def clone_student_repos(args):
 
     if materials_dir is None:
         print(
-            "No course_materials directory set in config.yml. Will clone "
-            "repositories but will not copy any assignment files."
+            "Oops! I couldn't find a course_materials directory location "
+            "in your config.yml file. I will just clone all of the student"
+            "repositories. I can't copy any assignment files to a "
+            "course_materials directory."
         )
+    # This is a really large try block and makes it hard to figure out where
+    # things fail. perhaps break out into a few sub try / excepts?
     try:
         # Create the assignment subdirectory path and ensure it exists
         Path(course_dir, clone_dir, assignment_name).mkdir(exist_ok=True)
         missing = []
+        # If it can't find the roster file you'll get a FileNotFoundError
+        # Also what happens if the roster is not in the correct format??
         with open(roster_filename, newline="") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 student = row["github_username"]
-                # expected columns: identifier,github_username,github_id,name
+                # Expected columns: identifier,github_username,github_id,name
                 repo = "{}-{}".format(assignment_name, student)
                 try:
                     clone_or_update_repo(

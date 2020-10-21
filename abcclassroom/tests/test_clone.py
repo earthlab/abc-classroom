@@ -32,6 +32,12 @@ def test_files(default_config, tmp_path):
             Path(assignment_path, f).touch()
 
 
+# TODO: Test that the correct message is returned when no course_materials dir
+# exists in the config
+
+# TODO: Test what happens when the roster doesn'exist
+
+
 # test_clone_no_local_repo(default_config, tmp_path, monkeypatch):
 # need to mock up github api object for this
 
