@@ -87,6 +87,7 @@ def clone_repos(assignment_name, skip_existing):
     clone_dir = cf.get_config_option(config, "clone_dir", True)
     organization = cf.get_config_option(config, "organization", True)
     materials_dir = cf.get_config_option(config, "course_materials", False)
+    print(config)
 
     if materials_dir is None:
         print(
@@ -128,7 +129,9 @@ def clone_repos(assignment_name, skip_existing):
                 print(" {}".format(r))
 
     except FileNotFoundError as err:
-        print("Cannot find roster file: {}".format(roster_filename))
+        raise FileNotFoundError(
+            "Cannot find roster file: {}".format(roster_filename)
+        )
         print(err)
 
 
