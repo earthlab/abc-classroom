@@ -65,7 +65,7 @@ def clone_repos(assignment_name, skip_existing):
     """Iterates through the student roster, clones each repo for this
     assignment into the directory specified in the config, and then copies the
     notebook files into the 'course_materials/submitted' directory, based on
-    course_materials set in config.yml."
+    course_materials set in config.yml.
 
     Parameters
     ----------
