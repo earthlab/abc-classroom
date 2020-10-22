@@ -7,8 +7,6 @@ abc-classroom.clone
 import csv
 from pathlib import Path
 
-from os.path import isdir, join
-
 from . import config as cf
 from . import github
 from . import utils
@@ -129,7 +127,7 @@ def include_patterns(patterns):
         ignore = set(
             name
             for name in names
-            if name not in keep and not isdir(join(path, name))
+            if name not in keep and not Path(path, name).is_dir()
         )
         return ignore
 
