@@ -6,10 +6,12 @@ abc-classroom.clone
 
 import csv
 from pathlib import Path
-from shutil import copy
+
+from os.path import isdir, join
 
 from . import config as cf
 from . import github
+from . import utils
 
 
 def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
@@ -99,7 +101,44 @@ def clone_student_repos(args):
         print(err)
 
 
-def copy_assignment_files(config, student, assignment_name):
+def include_patterns(patterns):
+    """Factory function that can be used with copytree() ignore parameter.
+
+    Arguments define a sequence of glob-style patterns
+    that are used to specify what files to NOT ignore.
+    Creates and returns a function that determines this for each directory
+    in the file hierarchy rooted at the source directory when used with
+    shutil.copytree().
+
+    Parameters
+    -----------
+    patterns: list
+        List of strings file extensions to be copied. Should be a string of
+        what it's expected the file name will end in.
+    """
+
+    # We might want to move this to utils, as it is a helper for copytree
+
+    def _ignore_patterns(path, names):
+        keep = set(
+            name
+            for pattern in patterns
+            for name in names
+            if name.endswith(pattern)
+        )
+        ignore = set(
+            name
+            for name in names
+            if name not in keep and not isdir(join(path, name))
+        )
+        return ignore
+
+    return _ignore_patterns
+
+
+def copy_assignment_files(
+    config, student, assignment_name, copy_file_types=[".py", ".ipynb"]
+):
     """Copies all notebook files from clone_dir to course_materials/submitted.
     Will overwrite any existing files with the same name.
 
@@ -107,9 +146,13 @@ def copy_assignment_files(config, student, assignment_name):
     -----------
     config: dict
         config file returned as a dictionary from get_config()
-    student:
+    student: string
+        Name of the student who's files are being copied
     assignment_name: string
         Name of the assignment for which files are being copied
+    copy_file_types: list
+        List of strings file extensions to be copied. Should be a string of
+        what it's expected the file name will end in.
 
     """
     course_dir = cf.get_config_option(config, "course_directory", True)
@@ -118,25 +161,15 @@ def copy_assignment_files(config, student, assignment_name):
     repo = "{}-{}".format(assignment_name, student)
 
     # Copy files from the cloned_dirs/assignment name directory
-    # TODO - right now this ONLY copies notebooks but we may want to copy
-    # other file types like .py files as well.
-    files = Path(course_dir, clone_dir, assignment_name, repo).glob("*.ipynb")
+
+    source_dir = Path(course_dir, clone_dir, assignment_name, repo)
     destination = Path(
         course_dir, materials_dir, "submitted", student, assignment_name
     )
     destination.mkdir(parents=True, exist_ok=True)
-    print(
-        "Copying files from {} to {}".format(
-            Path(clone_dir, repo), destination
-        )
+    print("Copying files from {} to {}".format(Path(source_dir), destination))
+
+    # Using the copytree function from util to make copying easier
+    utils.copytree(
+        source_dir, destination, ignore=include_patterns(copy_file_types)
     )
-    # We are copying files here source: clone dir -> nbgrader submitted
-    # TODO: use the copy files helper - in this case it's only copying .ipynb
-    # files
-    # but i could see someone wanting to copy other types of files such as .py
-    # So it may make sense to implement a copy files helper here as well even
-    # tho it's adding a bit of additional steps - it's still a very small
-    # operation
-    for f in files:
-        print("copying {} to {}".format(f, destination))
-        copy(f, destination)
