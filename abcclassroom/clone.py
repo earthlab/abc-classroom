@@ -95,15 +95,13 @@ def clone_repos(assignment_name, skip_existing):
             "repositories. I can't copy any assignment files to a "
             "course_materials directory."
         )
-    # This is a really large try block and makes it hard to figure out where
-    # things fail. perhaps break out into a few sub try / excepts?
+
     try:
         # Create the assignment subdirectory path and ensure it exists
         Path(course_dir, clone_dir, assignment_name).mkdir(exist_ok=True)
         missing_repos = []
         missing_student_gh = []
-        # If it can't find the roster file you'll get a FileNotFoundError
-        # Also what happens if the roster is not in the correct format??
+
         with open(roster_filename, newline="") as csvfile:
             reader = csv.DictReader(csvfile)
             try:
@@ -139,6 +137,9 @@ def clone_repos(assignment_name, skip_existing):
         if len(missing_repos) == 0 and len(missing_student_gh) == 0:
             print("Great! All repos were successfully cloned!")
         else:
+            # Two potential points of failure 1. github repo doesn't exist or
+            # 2. missing gh username. Here the message is clear about what
+            # is wrong
             if len(missing_repos) > 0:
                 print("Could not clone or update the following repos: ")
                 for r in missing_repos:
