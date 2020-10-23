@@ -87,7 +87,6 @@ def clone_repos(assignment_name, skip_existing):
     clone_dir = cf.get_config_option(config, "clone_dir", True)
     organization = cf.get_config_option(config, "organization", True)
     materials_dir = cf.get_config_option(config, "course_materials", False)
-    print(config)
 
     if materials_dir is None:
         print(
@@ -109,7 +108,6 @@ def clone_repos(assignment_name, skip_existing):
             try:
                 for row in reader:
                     student = row["github_username"]
-                    print(row)
                     # Expected columns: identifier,github_username,
                     # github_id,name
                     repo = "{}-{}".format(assignment_name, student)
