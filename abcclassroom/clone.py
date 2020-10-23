@@ -106,21 +106,32 @@ def clone_repos(assignment_name, skip_existing):
         # Also what happens if the roster is not in the correct format??
         with open(roster_filename, newline="") as csvfile:
             reader = csv.DictReader(csvfile)
-            for row in reader:
-                student = row["github_username"]
-                # Expected columns: identifier,github_username,github_id,name
-                repo = "{}-{}".format(assignment_name, student)
-                try:
-                    clone_or_update_repo(
-                        organization,
-                        repo,
-                        Path(clone_dir, assignment_name),
-                        skip_existing,
-                    )
-                    if materials_dir is not None:
-                        copy_assignment_files(config, student, assignment_name)
-                except RuntimeError:
-                    missing.append(repo)
+            try:
+                for row in reader:
+                    student = row["github_username"]
+                    print(row)
+                    # Expected columns: identifier,github_username,
+                    # github_id,name
+                    repo = "{}-{}".format(assignment_name, student)
+                    try:
+                        clone_or_update_repo(
+                            organization,
+                            repo,
+                            Path(clone_dir, assignment_name),
+                            skip_existing,
+                        )
+                        if materials_dir is not None:
+                            copy_assignment_files(
+                                config, student, assignment_name
+                            )
+                    except RuntimeError:
+                        missing.append(repo)
+            except KeyError as ke:
+                raise KeyError(
+                    "Oops! Please check your roster file to "
+                    "ensure is has the correct "
+                    "headers. {}".format(ke)
+                )
         if len(missing) == 0:
             print("All successful; no missing repos")
         else:

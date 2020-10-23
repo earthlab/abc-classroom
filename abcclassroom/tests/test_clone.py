@@ -1,7 +1,6 @@
 # Tests for clone script
 
 import pytest
-import os
 from pathlib import Path
 
 import abcclassroom.clone as abcclone
@@ -48,23 +47,29 @@ def test_roster_missing(sample_course_structure, tmp_path):
         abcclone.clone_repos(assignment_name, skip_existing=False)
 
 
-# TODO: Test what happens when the roster exists but has the incorrect format
 def test_roster_wrong_format(sample_course_structure, tmp_path):
-    """Test that when the roster is missing things fail gracefully."""
+    """Test that when the roster is missing a correct header fail
+    gracefully."""
 
     course_name, config = sample_course_structure
     assignment_name = "test_assignment"
-    # config = cf.get_config()
+
     path_to_course = Path(config["course_directory"])
     # Mess up the roster file
-    path_to_course.joinpath("classroom_roster.csv").touch()
+    roster_path = path_to_course.joinpath("classroom_roster.csv")
+    roster_path.touch()
+    roster_path.write_text(
+        "identifier,githubb_username,github_id,name \n"
+        "student-id,student-gh-name,student-gh-id,"
+        "student-name"
+    )
 
-    # I'm not sure why this actually runs
-    abcclone.clone_repos(assignment_name, skip_existing=False)
-    print(path_to_course)
-    print(os.listdir(path_to_course))
-    print(config["roster"])
+    # Still returning a keyerror
+    with pytest.raises(KeyError, match="Oops! Please check your roster file"):
+        abcclone.clone_repos(assignment_name, skip_existing=False)
 
+
+# TODO: Test that when the roster is empty it fails gracefully
 
 # test_clone_no_local_repo(default_config, tmp_path, monkeypatch):
 # need to mock up github api object for this
