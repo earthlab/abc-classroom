@@ -37,6 +37,9 @@ def test_files(default_config, tmp_path):
 # TODO: Test that the correct message is returned when no course_materials dir
 # exists in the config
 
+# TODO: Test what happens when a student is listed but not repo for that
+#  student is found (so the gh username is missing or misspelled
+
 
 def test_roster_missing(sample_course_structure, tmp_path):
     """Test that when the roster is missing things fail gracefully."""
@@ -47,7 +50,30 @@ def test_roster_missing(sample_course_structure, tmp_path):
         abcclone.clone_repos(assignment_name, skip_existing=False)
 
 
-def test_roster_wrong_format(sample_course_structure, tmp_path):
+def test_roster_missing_github_name(sample_course_structure, capsys):
+    """Test that when the roster is missing a student gh username."""
+
+    course_name, config = sample_course_structure
+    assignment_name = "test_assignment"
+
+    path_to_course = Path(config["course_directory"])
+    # Mess up the roster file
+    roster_path = path_to_course.joinpath("classroom_roster.csv")
+    roster_path.touch()
+    roster_path.write_text(
+        '"identifier","github_username","github_id","name" \n'
+        '"student-id","","student-gh-id",'
+        '"student-name1" \n "student-id","","",'
+        '"student-name2"'
+    )
+    abcclone.clone_repos(assignment_name, skip_existing=False)
+
+    captured = capsys.readouterr()
+    expected_string = "Oops! The following students are missing github"
+    assert expected_string in captured.out
+
+
+def test_roster_wrong_format(sample_course_structure):
     """Test that when the roster is missing a correct header fail
     gracefully."""
 
@@ -59,12 +85,11 @@ def test_roster_wrong_format(sample_course_structure, tmp_path):
     roster_path = path_to_course.joinpath("classroom_roster.csv")
     roster_path.touch()
     roster_path.write_text(
-        "identifier,githubb_username,github_id,name \n"
-        "student-id,student-gh-name,student-gh-id,"
-        "student-name"
+        '"identifier","githubb_username","github_id","name" \n'
+        '"student-id","student-gh-name","student-gh-id",'
+        '"student-name"'
     )
 
-    # Still returning a keyerror
     with pytest.raises(KeyError, match="Oops! Please check your roster file"):
         abcclone.clone_repos(assignment_name, skip_existing=False)
 

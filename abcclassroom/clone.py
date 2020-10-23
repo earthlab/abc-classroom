@@ -100,7 +100,8 @@ def clone_repos(assignment_name, skip_existing):
     try:
         # Create the assignment subdirectory path and ensure it exists
         Path(course_dir, clone_dir, assignment_name).mkdir(exist_ok=True)
-        missing = []
+        missing_repos = []
+        missing_student_gh = []
         # If it can't find the roster file you'll get a FileNotFoundError
         # Also what happens if the roster is not in the correct format??
         with open(roster_filename, newline="") as csvfile:
@@ -108,34 +109,48 @@ def clone_repos(assignment_name, skip_existing):
             try:
                 for row in reader:
                     student = row["github_username"]
-                    # Expected columns: identifier,github_username,
-                    # github_id,name
-                    repo = "{}-{}".format(assignment_name, student)
-                    try:
-                        clone_or_update_repo(
-                            organization,
-                            repo,
-                            Path(clone_dir, assignment_name),
-                            skip_existing,
-                        )
-                        if materials_dir is not None:
-                            copy_assignment_files(
-                                config, student, assignment_name
+                    print(student)
+                    # If there is no student gh name skip trying to clone
+                    if not student:
+                        missing_student_gh.append(row)
+                    else:
+                        # Expected columns: identifier,github_username,
+                        # github_id,name
+                        repo = "{}-{}".format(assignment_name, student)
+                        try:
+                            clone_or_update_repo(
+                                organization,
+                                repo,
+                                Path(clone_dir, assignment_name),
+                                skip_existing,
                             )
-                    except RuntimeError:
-                        missing.append(repo)
+                            if materials_dir is not None:
+                                copy_assignment_files(
+                                    config, student, assignment_name
+                                )
+                        except RuntimeError:
+                            missing_repos.append(repo)
             except KeyError as ke:
                 raise KeyError(
                     "Oops! Please check your roster file to "
                     "ensure is has the correct "
                     "headers. {}".format(ke)
                 )
-        if len(missing) == 0:
-            print("All successful; no missing repos")
+        if len(missing_repos) == 0 and len(missing_student_gh) == 0:
+            print("Great! All repos were successfully cloned!")
         else:
-            print("Could not clone or update the following repos: ")
-            for r in missing:
-                print(" {}".format(r))
+            if len(missing_repos) > 0:
+                print("Could not clone or update the following repos: ")
+                for r in missing_repos:
+                    print(" {}".format(r))
+            if len(missing_student_gh) > 0:
+                print(
+                    "Oops! The following students are missing github "
+                    "usernames in the roster. Consider updating your "
+                    "roster accordingly:"
+                )
+                for astudent in missing_student_gh:
+                    print(" {}".format(astudent))
 
     except FileNotFoundError as err:
         raise FileNotFoundError(
