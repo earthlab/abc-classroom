@@ -8,6 +8,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 
 [unreleased]
 ------------
+- Move clone into a stand alone package function (@lwasser, #319)
 - Add fixtures to conftest for universal abc setup (@lwasser, #316)
 - Fix CI to force mac to build on python 3.8 and fix linux matrix / tox versions (@lwasser, #303)
 
