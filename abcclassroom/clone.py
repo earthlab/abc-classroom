@@ -6,6 +6,7 @@ abc-classroom.clone
 
 import csv
 from pathlib import Path
+import shutil
 
 from . import config as cf
 from . import github as gh
@@ -159,44 +160,7 @@ def clone_repos(assignment_name, skip_existing):
         print(err)
 
 
-def include_patterns(patterns):
-    """Factory function that can be used with copytree() ignore parameter.
-
-    Arguments define a sequence of glob-style patterns
-    that are used to specify what files to NOT ignore.
-    Creates and returns a function that determines this for each directory
-    in the file hierarchy rooted at the source directory when used with
-    shutil.copytree().
-
-    Parameters
-    -----------
-    patterns: list
-        List of strings file extensions to be copied. Should be a string of
-        what it's expected the file name will end in.
-    """
-
-    # We might want to move this to utils, as it is a helper for copytree
-
-    def _ignore_patterns(path, names):
-        keep = set(
-            name
-            for pattern in patterns
-            for name in names
-            if name.endswith(pattern)
-        )
-        ignore = set(
-            name
-            for name in names
-            if name not in keep and not Path(path, name).is_dir()
-        )
-        return ignore
-
-    return _ignore_patterns
-
-
-def copy_assignment_files(
-    config, student, assignment_name, copy_file_types=[".py", ".ipynb"]
-):
+def copy_assignment_files(config, student, assignment_name):
     """Copies all notebook files from clone_dir to course_materials/submitted.
     Will overwrite any existing files with the same name.
 
@@ -208,14 +172,12 @@ def copy_assignment_files(
         Name of the student who's files are being copied
     assignment_name: string
         Name of the assignment for which files are being copied
-    copy_file_types: list
-        List of strings file extensions to be copied. Should be a string of
-        what it's expected the file name will end in.
 
     """
     course_dir = cf.get_config_option(config, "course_directory", True)
     materials_dir = cf.get_config_option(config, "course_materials", False)
     clone_dir = cf.get_config_option(config, "clone_dir", True)
+    ignore_files = cf.get_config_option(config, "files_to_ignore", False)
     repo = "{}-{}".format(assignment_name, student)
 
     # Copy files from the cloned_dirs/assignment name directory
@@ -228,6 +190,9 @@ def copy_assignment_files(
     print("Copying files from {} to {}".format(Path(source_dir), destination))
 
     # Using the copytree function from util to make copying easier
-    utils.copytree(
-        source_dir, destination, ignore=include_patterns(copy_file_types)
+    shutil.copytree(
+        source_dir,
+        destination,
+        ignore=shutil.ignore_patterns(*ignore_files),
+        dirs_exist_ok=True,
     )
