@@ -43,7 +43,7 @@ def create_dir_struct(course_name="abc_course", force=False, working_dir=None):
     This is the implementation of the abc-quickstart script; it is called
     directly from main.
     """
-    # Making sure the sample configuration file is where it's supposed to be.
+    # Make sure the sample configuration file is where it's supposed to be.
     try:
         config_path = path_to_example("config.yml")
     except FileNotFoundError as err:
@@ -54,7 +54,7 @@ def create_dir_struct(course_name="abc_course", force=False, working_dir=None):
                 err
             )
         )
-    # Assigning the custom folder name if applicable
+    # Assign the custom folder name if applicable
     if " " in course_name:
         raise ValueError(
             """Spaces not allowed in custom course name: {}. Please use
@@ -66,7 +66,7 @@ def create_dir_struct(course_name="abc_course", force=False, working_dir=None):
         working_dir = os.getcwd()
     main_dir = Path(working_dir, course_name)
 
-    # Check if the main_dir doesn't exist already
+    # Check if the main_dir exists
     if main_dir.is_dir():
         if force:
             rmtree(main_dir)
@@ -78,27 +78,43 @@ def create_dir_struct(course_name="abc_course", force=False, working_dir=None):
                 Consider using a different course name, deleting the
                 existing directory, or running quikstart with the -f flag to
                 force overwrite the existing directory.""".format(
-                    course_name
+                    main_dir
                 )
             )
-    # make the main course directory and copy the config file there
+    # Make the main course directory and copy the config file there
     main_dir.mkdir()
     copy(config_path, main_dir)
 
-    # now we can use config functions to read / write config
+    # Use config functions to read / write config
+    # TODO: Can't we just copy the sample config - why are we rewriting it
+    #  here?
     config = cf.get_config(main_dir)
     config["course_directory"] = str(main_dir)
     cf.write_config(config, main_dir)
     clone_dir = cf.get_config_option(config, "clone_dir")
     template_dir = cf.get_config_option(config, "template_dir")
 
-    # make the required subdirectories
+    # Make the required subdirectories
     Path(main_dir, clone_dir).mkdir()
     Path(main_dir, template_dir).mkdir()
 
-    # create the extra_files directory in the main_dir
+    # Create the extra_files directory in the main_dir & copy files
     extra_path = path_to_example("extra_files")
     copytree(extra_path, Path(main_dir, "extra_files"))
+
+    # Copy the sample roster over to the new quickstart dir
+    # TODO make sure the name of this file matches the default config name
+    try:
+        sample_roster = path_to_example("sample_roster.csv")
+        copy(sample_roster, Path(main_dir))
+    except FileNotFoundError as err:
+        print(
+            """Sample config.yml configuration file cannot be located at {},
+        please ensure abc-classroom has been installed
+        correctly""".format(
+                err
+            )
+        )
 
     print(
         """

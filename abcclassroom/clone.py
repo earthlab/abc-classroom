@@ -9,7 +9,7 @@ from pathlib import Path
 from shutil import copy
 
 from . import config as cf
-from . import github
+from . import github as gh
 
 
 def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
@@ -39,19 +39,46 @@ def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
                 )
             )
             return
-        github.pull_from_github(destination_dir)
+        gh.pull_from_github(destination_dir)
     else:
-        github.clone_repo(organization, repo, clone_dir)
+        gh.clone_repo(organization, repo, clone_dir)
 
 
 def clone_student_repos(args):
-    """Iterates through the student roster, clones each repo for this
-    assignment into the directory specified in the config, and then copies the
-    notebook files into the 'course_materials/submitted' directory, based on
-    course_materials set in config.yml."""
+    """This is the CLI implementation of clone repos
+
+    Parameters
+    ----------
+    args : string argument inputs
+        Arguments include the assignment name (string) and skip existing (
+        boolean?)
+
+    """
 
     assignment_name = args.assignment
     skip_existing = args.skip_existing
+
+    clone_repos(assignment_name, skip_existing)
+
+
+def clone_repos(assignment_name, skip_existing):
+    """Iterates through the student roster, clones each repo for this
+    assignment into the directory specified in the config, and then copies the
+    notebook files into the 'course_materials/submitted' directory, based on
+    course_materials set in config.yml.
+
+    Parameters
+    ----------
+    assignment_name : string
+        The name of the assignment to clone repos for
+    skip_existing : boolean
+        Not sure what this does yet!
+
+    Returns
+    --------
+    This returns the cloned student repos and also moves each notebook file
+    into the nbgrader "submitted" directory.
+    """
 
     print("Loading configuration from config.yml")
     config = cf.get_config()
@@ -63,39 +90,73 @@ def clone_student_repos(args):
 
     if materials_dir is None:
         print(
-            "No course_materials directory set in config.yml. Will clone "
-            "repositories but will not copy any assignment files."
+            "Oops! I couldn't find a course_materials directory location "
+            "in your config.yml file. I will just clone all of the student"
+            "repositories. I can't copy any assignment files to a "
+            "course_materials directory."
         )
+
     try:
         # Create the assignment subdirectory path and ensure it exists
         Path(course_dir, clone_dir, assignment_name).mkdir(exist_ok=True)
-        missing = []
+        missing_repos = []
+        missing_student_gh = []
+
         with open(roster_filename, newline="") as csvfile:
             reader = csv.DictReader(csvfile)
-            for row in reader:
-                student = row["github_username"]
-                # expected columns: identifier,github_username,github_id,name
-                repo = "{}-{}".format(assignment_name, student)
-                try:
-                    clone_or_update_repo(
-                        organization,
-                        repo,
-                        Path(clone_dir, assignment_name),
-                        skip_existing,
-                    )
-                    if materials_dir is not None:
-                        copy_assignment_files(config, student, assignment_name)
-                except RuntimeError:
-                    missing.append(repo)
-        if len(missing) == 0:
-            print("All successful; no missing repos")
+            try:
+                for row in reader:
+                    student = row["github_username"]
+                    print(student)
+                    # If there is no student gh name skip trying to clone
+                    if not student:
+                        missing_student_gh.append(row)
+                    else:
+                        # Expected columns: identifier,github_username,
+                        # github_id,name
+                        repo = "{}-{}".format(assignment_name, student)
+                        try:
+                            clone_or_update_repo(
+                                organization,
+                                repo,
+                                Path(clone_dir, assignment_name),
+                                skip_existing,
+                            )
+                            if materials_dir is not None:
+                                copy_assignment_files(
+                                    config, student, assignment_name
+                                )
+                        except RuntimeError:
+                            missing_repos.append(repo)
+            except KeyError as ke:
+                raise KeyError(
+                    "Oops! Please check your roster file to "
+                    "ensure is has the correct "
+                    "headers. {}".format(ke)
+                )
+        if len(missing_repos) == 0 and len(missing_student_gh) == 0:
+            print("Great! All repos were successfully cloned!")
         else:
-            print("Could not clone or update the following repos: ")
-            for r in missing:
-                print(" {}".format(r))
+            # Two potential points of failure 1. github repo doesn't exist or
+            # 2. missing gh username. Here the message is clear about what
+            # is wrong
+            if len(missing_repos) > 0:
+                print("Could not clone or update the following repos: ")
+                for r in missing_repos:
+                    print(" {}".format(r))
+            if len(missing_student_gh) > 0:
+                print(
+                    "Oops! The following students are missing github "
+                    "usernames in the roster. Consider updating your "
+                    "roster accordingly:"
+                )
+                for astudent in missing_student_gh:
+                    print(" {}".format(astudent))
 
     except FileNotFoundError as err:
-        print("Cannot find roster file: {}".format(roster_filename))
+        raise FileNotFoundError(
+            "Cannot find roster file: {}".format(roster_filename)
+        )
         print(err)
 
 
