@@ -286,6 +286,7 @@ def init_and_commit(directory, custom_message=False):
     # note that running git init on an existing repo is safe, so no need
     # to check anything first
     git_init(directory)
+    _master_branch_to_main(directory)
     if repo_changed(directory):
         message = "Initial commit"
         if custom_message:
@@ -296,6 +297,27 @@ def init_and_commit(directory, custom_message=False):
         commit_all_changes(directory, message)
     else:
         print("No changes to local repository.")
+
+
+def _master_branch_to_main(directory):
+    """Change the name of the master branch to main
+
+    Changes the name of the master branch to main for the repo in the
+    given directory. Since we create the repo on github first, which now sets
+    the default branch to 'main', we need the local repo to match
+    in order to be able to push with error later.
+    """
+    print(
+        """Changing name of 'master' branch to 'main'
+        in repo {}""".format(
+            directory
+        )
+    )
+    try:
+        _call_git("branch", "-m", "master", "main", directory=directory)
+    except RuntimeError:
+        # we get here if the master branch has already been renamed
+        pass
 
 
 def push_to_github(directory, branch="master"):
