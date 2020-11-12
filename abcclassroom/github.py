@@ -223,10 +223,8 @@ def create_repo(org, repository, token):
         )
 
 
-def add_remote(directory, organization, remote_repo, token):
-    remote_url = "https://{}@github.com/{}/{}".format(
-        token, organization, remote_repo
-    )
+def add_remote(directory, organization, remote_repo):
+    remote_url = "git@github.com:{}/{}.git".format(organization, remote_repo)
     _call_git("remote", "add", "origin", remote_url, directory=directory)
 
 

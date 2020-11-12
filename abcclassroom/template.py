@@ -91,7 +91,7 @@ def create_or_update_remote(
         github.create_repo(organization, repo_name, token)
 
     try:
-        github.add_remote(template_repo_path, organization, repo_name, token)
+        github.add_remote(template_repo_path, organization, repo_name)
     except RuntimeError:
         print("Remote already added to local repository")
         pass
