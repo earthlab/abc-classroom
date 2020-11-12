@@ -1,14 +1,11 @@
 import argparse
-import sys
 
 from argparse import ArgumentParser
-from getpass import getpass
-
-import github3 as gh3
 
 from . import template
 from . import feedback as fdback
-from . import config as cf
+from . import github
+
 from .quickstart import create_dir_struct
 from .clone import clone_student_repos
 
@@ -38,57 +35,8 @@ def init():
     GitHub authentication yaml file, and if there isn't, create a valid file.
     """
 
-    gh_auth = cf.get_github_auth()
-
-    # check the token we have is still valid by attempting to login with
-    # the token we have if this fails we need a new one
-    if gh_auth.get("token") is not None:
-        try:
-            # We have to use the GitHub API to find out if our login
-            # credentials actually work, this is why we call `me()`
-            gh = gh3.login(token=gh_auth["token"])
-            gh.me()
-            print("GitHub token present and valid.")
-            return
-
-        except gh3.exceptions.AuthenticationFailed:
-            # need to get a new token
-            pass
-
-    print("GitHub token is missing or expired. Populating")
-    user = input("GitHub username: ")
-    password = ""
-
-    while not password:
-        password = getpass("Password for {0}: ".format(user))
-
-    note = "ABC-classroom workflow helper"
-    note_url = "https://github.com/earthlab/abc-classroom"
-    scopes = ["repo", "read:user"]
-
-    def two_factor():
-        code = ""
-        while not code:
-            # The user could accidentally press Enter before being ready,
-            # let's protect them from doing that.
-            code = input("Enter 2FA code: ")
-        return code
-
-    gh = gh3.github.GitHub()
-    gh.login(username=user, password=password, two_factor_callback=two_factor)
-    try:
-        auth = gh.authorize(user, password, scopes, note, note_url)
-
-        cf.set_github_auth({"token": auth.token, "id": auth.id})
-
-    except gh3.exceptions.UnprocessableEntity:
-        print(
-            "Failed to create a access token for you. Please visit "
-            "https://github.com/settings/tokens and delete any access "
-            "token with the name 'ABC-classroom workflow helper' and run "
-            "`abc-init` again."
-        )
-        sys.exit(1)
+    print("Setting up GitHub API access")
+    github.get_access_token()
 
 
 def clone():

@@ -11,9 +11,125 @@ import string
 import subprocess
 import sys
 
+import requests
+
 import github3 as gh3
 
-from .utils import input_editor
+from .utils import input_editor, get_request
+from .config import get_github_auth, set_github_auth
+
+
+def get_access_token():
+    """ Get a GitHub access token for the API
+
+    First tries to read from local token file. If token does not exist,
+    or is not valid, generates a new token using the OAuth Device Flow.
+    https://docs.github.com/en/free-pro-team@latest/developers/apps/
+    identifying-and-authorizing-users-for-github-apps#device-flow
+
+    Returns an access token (string).
+    """
+    # first, we see if we have a saved token
+    auth_info = get_github_auth()
+    if auth_info:
+        try:
+            access_token = auth_info["access_token"]
+            # if so, is it valid?
+            if _test_access_token(access_token):
+                print("Access token is present and valid; nothing to do")
+                return access_token
+        except KeyError:
+            pass
+
+    # otherwise, generate a new token
+    print("Generating new access token")
+    # client id for the abc-classroom-bot GitHub App
+    client_id = "Iv1.8df72ad9560c774c"
+
+    # TODO need to handle cases where the device call fails - wrong client_id,
+    # the user could ^C or the internet could be out, or some other
+    # unanticipated woe)
+    device_code = _get_login_code(client_id)
+    access_token = _poll_for_status(client_id, device_code)
+    return access_token
+
+
+def _test_access_token(token):
+    """Test the validity of an access token.
+
+    Given a github access token, test that it is valid by making an
+    API call to get the authenticated user. Returns True if the call
+    returns a 200 status code, and False otherwise.
+    """
+
+    url = "https://api.github.com/user"
+    (status, body) = get_request(url, token)
+    if status == 200:
+        return True
+    else:
+        return False
+
+
+def _get_login_code(client_id):
+    """Prompts the user to authorize abc-classroom-bot.
+
+    First part of the Device Flow workflow. Asks user to visit a URL and
+    enter the provided code. Waits for user to hit RETURN to continue.
+    Returns the device code.
+    """
+
+    # make the device call
+    header = {"Content-Type": "application/json", "Accept": "application/json"}
+    payload = {"client_id": client_id}
+    link = "https://github.com/login/device/code"
+    r = requests.post(link, headers=header, json=payload)
+
+    # process the response
+    data = r.json()
+    status = r.status_code
+    if status != 200:
+        # print the response if the call failed
+        print(r.json())
+        return None
+
+    device_code = data["device_code"]
+    uri = data["verification_uri"]
+    user_code = data["user_code"]
+
+    # prompt the user to enter the code
+    print(
+        "To authorize this app, go to {} and enter the code {}".format(
+            uri, user_code
+        )
+    )
+    input("\nPress RETURN to continue after inputting the code successfully")
+
+    return device_code
+
+
+def _poll_for_status(client_id, device_code):
+    """ Polls API to see if user entered the device code
+
+    This is the second step of the Device Flow. Returns an access token, and
+    also writes the token to a file in the user's home directory.
+    """
+
+    header = {"Content-Type": "application/json", "Accept": "application/json"}
+    payload = {
+        "client_id": client_id,
+        "device_code": device_code,
+        "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
+    }
+    r = requests.post(
+        "https://github.com/login/oauth/access_token",
+        headers=header,
+        json=payload,
+    )
+
+    data = r.json()
+    access_token = data["access_token"]
+    set_github_auth({"access_token": access_token})
+    return access_token
 
 
 def _call_git(*args, directory=None):
