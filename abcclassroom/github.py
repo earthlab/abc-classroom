@@ -35,8 +35,12 @@ def get_access_token():
         try:
             access_token = auth_info["access_token"]
             # if so, is it valid?
-            if _test_access_token(access_token):
-                print("Access token is present and valid; nothing to do")
+            user = _get_authenticated_user(access_token)
+            if user is not None:
+                print(
+                    "Access token is present and valid; successfully "
+                    "authenticated as user {}".format(user)
+                )
                 return access_token
         except KeyError:
             pass
@@ -51,23 +55,31 @@ def get_access_token():
     # unanticipated woe)
     device_code = _get_login_code(client_id)
     access_token = _poll_for_status(client_id, device_code)
+
+    # test the new access token
+    user = _get_authenticated_user(access_token)
+    if user is not None:
+        print("""Successfully authenticated as user {}""".format(user))
     return access_token
 
 
-def _test_access_token(token):
+def _get_authenticated_user(token):
     """Test the validity of an access token.
 
     Given a github access token, test that it is valid by making an
-    API call to get the authenticated user. Returns True if the call
-    returns a 200 status code, and False otherwise.
+    API call to get the authenticated user.
+
+    Returns the GitHub username of the authenticated user if token valid,
+    otherwise returns None.
     """
 
     url = "https://api.github.com/user"
     (status, body) = get_request(url, token)
-    if status == 200:
-        return True
-    else:
-        return False
+    try:
+        user = body["login"]
+        return user
+    except KeyError:
+        return None
 
 
 def _get_login_code(client_id):
