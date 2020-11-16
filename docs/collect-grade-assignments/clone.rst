@@ -57,17 +57,6 @@ files into the nbgrader ``submitted`` directory using the structure:
 The path to ``course_materials`` is defined in ``config.yml`` file. ``abc-clone``
 will create subdirectories within ``course_materials`` for each student as needed.
 
-Setup SSH to Ensure abc-clone Runs Properly
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-There are three steps to setup ssh on your computer. You can follow the GitHub
-documentation carefully to set this up. ``abc-clone`` will fail if this
-authentication is not setup!
-
-* Step one: Check to see if you already have an ssh key installed on your computer locally https://docs.github.com/en/enterprise/2.14/user/articles/checking-for-existing-ssh-keys
-* Step two: Generate a new key - https://docs.github.com/en/enterprise/2.14/user/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
-* Step three: Add the key to GitHub - https://docs.github.com/en/enterprise/2.14/user/articles/adding-a-new-ssh-key-to-your-github-account
-
 
 Command-line Arguments
 ======================
