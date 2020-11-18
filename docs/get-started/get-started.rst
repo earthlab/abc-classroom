@@ -55,7 +55,7 @@ setup an access token for the GitHub API.
 #. Run ``abc-init`` at the command line. If you don't already have a token,
    **abc-classroom** will prompt you to authenticate through GitHub.
 
-#. Open a web browser, go to https://github.com/device/login, log in to GitHub
+#. Open a web browser, go to https://github.com/login/device/, log in to GitHub
    (if you aren't already) and enter the temporary code provided by
    **abc-classroom**:
 
