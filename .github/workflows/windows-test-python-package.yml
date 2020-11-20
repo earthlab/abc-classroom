@@ -1,7 +1,7 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Windows Run Pytest
+name: Windows Run Pytest & Build Docs
 
 on:
   push:
@@ -13,7 +13,8 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+
+    runs-on: windows-latest
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8]
@@ -32,3 +33,9 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+    - name: Build Docs
+      run: |
+        make -B docs
+    - name: Linting
+      run: |
+        black --check --verbose .
