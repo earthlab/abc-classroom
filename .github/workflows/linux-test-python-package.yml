@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8]
@@ -35,6 +35,3 @@ jobs:
     - name: Build Docs
       run: |
         make docs -B
-    - name: Lint
-      run: |
-        black --check --verbose .
