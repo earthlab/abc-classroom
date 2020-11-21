@@ -48,12 +48,12 @@ def copy_feedback_files(assignment_name, push_to_github=False, scrub=False):
     course_dir = cf.get_config_option(config, "course_directory", True)
     clone_dir = cf.get_config_option(config, "clone_dir", True)
     materials_dir = cf.get_config_option(config, "course_materials", True)
-
-    try:
-        feedback_dir = Path(course_dir, materials_dir, "feedback")
-        with open(roster_filename, newline="") as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
+    feedback_dir = Path(course_dir, materials_dir, "feedback")
+    student_repos = []
+    with open(roster_filename, newline="") as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            try:
                 student = row["github_username"]
                 feedback_path = Path(feedback_dir, student, assignment_name)
                 source_files = list(feedback_path.glob("*.html"))
@@ -66,6 +66,7 @@ def copy_feedback_files(assignment_name, push_to_github=False, scrub=False):
                         "student".format(destination_dir)
                     )
                     continue
+                student_repos.append(destination_dir)
                 # TODO: Turn this into a helper function lines 46 - 64 here
                 # Don't copy any system related files -- not this is exactly
                 # the same code used in the template.py copy files function.
@@ -104,9 +105,21 @@ def copy_feedback_files(assignment_name, push_to_github=False, scrub=False):
                 if push_to_github:
                     github.push_to_github(destination_dir)
 
-    except FileNotFoundError as err:
-        print("Missing file or directory:")
-        print(" ", err)
+            except FileNotFoundError as err:
+                print("Missing file or directory:")
+                print(" ", err)
+
+    # if we didn't find any repos, there is probably something wrong
+    if len(student_repos) == 0:
+        print(
+            """No repositories found in {} for assignment {};
+            exiting""".format(
+                clone_dir, assignment
+            )
+        )
+        sys.exit(1)
+
+    return student_repos
 
 
 def copy_feedback(args):
