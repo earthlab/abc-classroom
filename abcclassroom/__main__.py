@@ -118,8 +118,8 @@ def clone():
     )
     parser.add_argument(
         "--update-submitted",
-        action="store_true",
-        help="""Move files from cloned repo to submitted dir for grading.""",
+        action="store_false",
+        help="""Skip moving files from cloned repo to submitted.""",
     )
     args = parser.parse_args()
 

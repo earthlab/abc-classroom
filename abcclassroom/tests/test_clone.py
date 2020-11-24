@@ -4,7 +4,6 @@ import pytest
 from pathlib import Path
 
 import abcclassroom.clone as abcclone
-import abcclassroom.config as cf
 
 # TODO - this should be a fixture
 test_data = {
@@ -104,6 +103,9 @@ def test_roster_wrong_format(sample_course_structure):
 # need to mock up github api object for this
 #     # when skip_existing is yes (default)
 #     # when skip_existing is no
+# TODO test that when files_to_ignore is not populated it fails gracefully
+
+# TODO test that when giles_to_grade  is not populated it fails gracefully..
 
 
 def test_copy_assignment_files(default_config, test_files):

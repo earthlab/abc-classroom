@@ -57,8 +57,9 @@ def clone_student_repos(args):
 
     assignment_name = args.assignment
     skip_existing = args.skip_existing
+    update_submitted = args.update_submitted
 
-    clone_repos(assignment_name, skip_existing)
+    clone_repos(assignment_name, skip_existing, update_submitted)
 
 
 def clone_repos(assignment_name, skip_existing, update_submitted=True):
@@ -131,6 +132,13 @@ def clone_repos(assignment_name, skip_existing, update_submitted=True):
                                 copy_assignment_files(
                                     config, student, assignment_name
                                 )
+                                print(
+                                    "Copying files to the:",
+                                    materials_dir,
+                                    "dir",
+                                )
+                            else:
+                                print("Not copying files to submitted")
                         except RuntimeError:
                             missing_repos.append(repo)
             except KeyError as ke:
@@ -182,7 +190,6 @@ def copy_assignment_files(config, student, assignment_name):
     course_dir = cf.get_config_option(config, "course_directory", True)
     materials_dir = cf.get_config_option(config, "course_materials", False)
     clone_dir = cf.get_config_option(config, "clone_dir", True)
-    # ignore_files = cf.get_config_option(config, "files_to_ignore", False)
     files_to_grade = cf.get_config_option(config, "files_to_grade", False)
     repo = "{}-{}".format(assignment_name, student)
 
@@ -201,6 +208,9 @@ def copy_assignment_files(config, student, assignment_name):
     for a_file in Path(course_dir, clone_dir, assignment_name, repo).glob(
         r"**/*"
     ):
+        # If files to grade is not populated then just move notebooks
+        if not files_to_grade:
+            files_to_grade = [".ipynb"]
         if a_file.suffix in files_to_grade:
             print("copying {} to {}".format(a_file, destination))
             shutil.copy(a_file, destination)
