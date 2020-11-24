@@ -22,6 +22,7 @@ def default_config():
         "course_materials": "nbgrader",
         "clone_dir": "cloned-repos",
         "files_to_ignore": [".DS_Store", ".ipynb_checkpoints", "junk.csv"],
+        "files_to_grade": [".py", ".ipynb"],
     }
     return config
 

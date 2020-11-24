@@ -116,6 +116,11 @@ def clone():
         help="""Do not attempt to update repositories that have already been
         cloned.""",
     )
+    parser.add_argument(
+        "--update-submitted",
+        action="store_true",
+        help="""Move files from cloned repo to submitted dir for grading.""",
+    )
     args = parser.parse_args()
 
     clone_student_repos(args)

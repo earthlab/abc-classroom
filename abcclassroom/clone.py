@@ -61,7 +61,7 @@ def clone_student_repos(args):
     clone_repos(assignment_name, skip_existing)
 
 
-def clone_repos(assignment_name, skip_existing):
+def clone_repos(assignment_name, skip_existing, update_submitted=True):
     """Iterates through the student roster, clones each repo for this
     assignment into the directory specified in the config, and then copies the
     notebook files into the 'course_materials/submitted' directory, based on
@@ -72,7 +72,12 @@ def clone_repos(assignment_name, skip_existing):
     assignment_name : string
         The name of the assignment to clone repos for
     skip_existing : boolean
-        Not sure what this does yet!
+        Do not update files in repositories that have already been cloned.
+    update_submitted : boolean (default = True)
+        If true, moves assignment files from cloned repo to submitted
+        directory for grading. If false files are not moved to submitted
+        dir. This might be useful if you want to update the student clone
+        but don't want to update the file that was parsed by the autograder
 
     Returns
     --------
@@ -91,9 +96,9 @@ def clone_repos(assignment_name, skip_existing):
     if materials_dir is None:
         print(
             "Oops! I couldn't find a course_materials directory location "
-            "in your config.yml file. I will just clone all of the student"
-            "repositories. I can't copy any assignment files to a "
-            "course_materials directory."
+            "in your config.yml file. I will only clone all of the student"
+            "repositories. I can not copy any assignment files to a "
+            "course_materials directory given it does not exist."
         )
 
     try:
@@ -122,7 +127,7 @@ def clone_repos(assignment_name, skip_existing):
                                 Path(clone_dir, assignment_name),
                                 skip_existing,
                             )
-                            if materials_dir is not None:
+                            if materials_dir is not None and update_submitted:
                                 copy_assignment_files(
                                     config, student, assignment_name
                                 )
@@ -177,22 +182,35 @@ def copy_assignment_files(config, student, assignment_name):
     course_dir = cf.get_config_option(config, "course_directory", True)
     materials_dir = cf.get_config_option(config, "course_materials", False)
     clone_dir = cf.get_config_option(config, "clone_dir", True)
-    ignore_files = cf.get_config_option(config, "files_to_ignore", False)
+    # ignore_files = cf.get_config_option(config, "files_to_ignore", False)
+    files_to_grade = cf.get_config_option(config, "files_to_grade", False)
     repo = "{}-{}".format(assignment_name, student)
 
-    # Copy files from the cloned_dirs/assignment name directory
-
+    # Copy files from the cloned_dirs to submitted directory
     source_dir = Path(course_dir, clone_dir, assignment_name, repo)
     destination = Path(
         course_dir, materials_dir, "submitted", student, assignment_name
     )
+
     destination.mkdir(parents=True, exist_ok=True)
     print("Copying files from {} to {}".format(Path(source_dir), destination))
 
+    # Only move files with extensions needed for grading
+    # NOTE: if there is a notebook or script in a subdirectory shutil does not
+    # handle the subdirectory - it spits the file back into the main dir.
+    for a_file in Path(course_dir, clone_dir, assignment_name, repo).glob(
+        r"**/*"
+    ):
+        if a_file.suffix in files_to_grade:
+            print("copying {} to {}".format(a_file, destination))
+            shutil.copy(a_file, destination)
+
+    # In this case, IF you have a graded html file that will get moved over
     # Using the copytree function from util to make copying easier
-    shutil.copytree(
-        source_dir,
-        destination,
-        ignore=shutil.ignore_patterns(*ignore_files),
-        dirs_exist_ok=True,
-    )
+    # This also moves subdirectories by default
+    # shutil.copytree(
+    #     source_dir,
+    #     destination,
+    #     ignore=shutil.ignore_patterns(*ignore_files),
+    #     dirs_exist_ok=True,
+    # )
