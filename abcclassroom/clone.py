@@ -174,7 +174,7 @@ def copy_assignment_files(config, student, assignment_name):
     config: dict
         config file returned as a dictionary from get_config()
     student: string
-        Name of the student who's files are being copied
+        Name of the student whose files are being copied
     assignment_name: string
         Name of the assignment for which files are being copied
 
