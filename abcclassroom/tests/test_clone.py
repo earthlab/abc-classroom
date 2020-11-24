@@ -4,12 +4,13 @@ import pytest
 from pathlib import Path
 
 import abcclassroom.clone as abcclone
+import abcclassroom.config as cf
 
 # TODO - this should be a fixture
 test_data = {
     "assignment": "assignment1",
     "students": ["bert", "alana"],
-    "files": ["nb1.ipynb", "nb2.ipynb", "junk.csv"],
+    "files": ["nb1.ipynb", "nb2.ipynb", "script.py", "junk.csv"],
 }
 
 # TODO: We might have a version of this fixture in conftest
@@ -114,9 +115,43 @@ def test_copy_assignment_files(default_config, test_files):
     for s in students:
         abcclone.copy_assignment_files(default_config, s, assignment)
 
-        assert Path(
-            materials_dir, "submitted", s, assignment, "nb1.ipynb"
-        ).exists()
+        good_files = ["nb1.ipynb", "nb2.ipynb", "script.py"]
+
+        for file in good_files:
+            assert Path(
+                materials_dir, "submitted", s, assignment, file
+            ).exists()
+        assert (
+            Path(
+                materials_dir, "submitted", s, assignment, "junk.csv"
+            ).exists()
+            is False
+        )
+
+
+def test_copy_assignment_files_optional_files(
+    default_config, test_files, tmp_path
+):
+    materials_dir = Path(
+        default_config["course_directory"], default_config["course_materials"]
+    )
+    assignment = test_data["assignment"]
+    students = test_data["students"]
+    default_config["files_to_ignore"] = [
+        ".DS_Store",
+        ".ipynb_checkpoints",
+        "junk.csv",
+        "*.py",
+    ]
+    for s in students:
+        abcclone.copy_assignment_files(default_config, s, assignment)
+
+        good_files = ["nb1.ipynb", "nb2.ipynb"]
+
+        for file in good_files:
+            assert Path(
+                materials_dir, "submitted", s, assignment, file
+            ).exists()
         assert (
             Path(
                 materials_dir, "submitted", s, assignment, "junk.csv"
