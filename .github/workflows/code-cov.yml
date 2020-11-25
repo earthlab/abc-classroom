@@ -1,4 +1,4 @@
-name: Example workflow for Codecov
+name: Codecov
 on: [push]
 jobs:
   run:
@@ -24,7 +24,6 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
         files: ./coverage1.xml,./coverage2.xml
         directory: ./coverage/reports/
