@@ -57,7 +57,7 @@ files into the nbgrader ``submitted`` directory using the structure:
 The path to ``course_materials`` is defined in ``config.yml`` file. ``abc-clone``
 will create subdirectories within ``course_materials`` for each student as needed.
 
-Cone and Do Not Move to Submitted
+Clone and Do Not Move to Submitted
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Sometimes you need to update student repos however  you may not with to update
 the submitted directory which contains the version oof the assignment that you
