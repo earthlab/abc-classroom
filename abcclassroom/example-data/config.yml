@@ -37,3 +37,9 @@ template_dir: assignment_repos
 files_to_ignore:
 - .DS_Store
 - .ipynb_checkpoints
+
+# These are files that you want to be moved to your submitted dir for grading
+# If you do not have this set the default value it to move only .ipynb files
+files_to_grade:
+- .py
+- .ipynb
