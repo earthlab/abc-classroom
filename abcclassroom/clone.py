@@ -57,12 +57,12 @@ def clone_student_repos(args):
 
     assignment_name = args.assignment
     skip_existing = args.skip_existing
-    update_submitted = args.update_submitted
+    no_submitted = args.no_submitted
 
-    clone_repos(assignment_name, skip_existing, update_submitted)
+    clone_repos(assignment_name, skip_existing, no_submitted)
 
 
-def clone_repos(assignment_name, skip_existing, update_submitted=True):
+def clone_repos(assignment_name, skip_existing, no_submitted=True):
     """Iterates through the student roster, clones each repo for this
     assignment into the directory specified in the config, and then copies the
     notebook files into the 'course_materials/submitted' directory, based on
@@ -74,7 +74,7 @@ def clone_repos(assignment_name, skip_existing, update_submitted=True):
         The name of the assignment to clone repos for
     skip_existing : boolean
         Do not update files in repositories that have already been cloned.
-    update_submitted : boolean (default = True)
+    no_submitted : boolean (default = True)
         If true, moves assignment files from cloned repo to submitted
         directory for grading. If false files are not moved to submitted
         dir. This might be useful if you want to update the student clone
@@ -128,7 +128,7 @@ def clone_repos(assignment_name, skip_existing, update_submitted=True):
                                 Path(clone_dir, assignment_name),
                                 skip_existing,
                             )
-                            if materials_dir is not None and update_submitted:
+                            if materials_dir is not None and no_submitted:
                                 copy_assignment_files(
                                     config, student, assignment_name
                                 )

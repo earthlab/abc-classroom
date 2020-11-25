@@ -117,7 +117,7 @@ def clone():
         cloned.""",
     )
     parser.add_argument(
-        "--update-submitted",
+        "--no-submitted",
         action="store_false",
         help="""Skip moving files from cloned repo to submitted.""",
     )
