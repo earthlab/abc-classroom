@@ -110,64 +110,61 @@ def test_copy_assignment_files(course_with_student_clones):
 
     config, assignment_name, students = course_with_student_clones
 
-    materials_dir = Path(
-        config["course_directory"], config["course_materials"]
-    )
+    grading_dir = Path(config["course_directory"], config["course_materials"])
 
     for s in students:
         abcclone.copy_assignment_files(config, s, assignment_name)
 
         good_files = ["nb1.ipynb", "nb2.ipynb", "script.py"]
-        submitted_path = Path(materials_dir, "submitted", s, assignment_name)
+        submitted_path = Path(grading_dir, "submitted", s, assignment_name)
         for file in good_files:
             assert Path(submitted_path, file).exists()
         assert Path(submitted_path, "junk.csv").exists() is False
 
 
-#
-def test_files_to_grade_empty(course_with_student_clones, tmp_path):
+def test_files_to_grade_empty(course_with_student_clones):
     """Test that when files to grade list is empty, only ipynb files are
-    moved"""
+    moved to the submitted dir."""
 
     config, assignment_name, students = course_with_student_clones
-
-    # materials_dir = Path(
-    #    default_config["course_directory"],default_config["course_materials"]
-    # )
+    submitted_dir = Path(
+        config["course_directory"], config["course_materials"], "submitted"
+    )
 
     # Clear out the files_to_grade  item
     config["files_to_grade"] = []
     for a_student in students:
         abcclone.copy_assignment_files(config, a_student, assignment_name)
+        # Check submitted dir
+        student_submitted = Path(
+            submitted_dir, "submitted", a_student, assignment_name
+        )
+        all_files = student_submitted.glob("*")
+        # Loop through submitted and ensure the extensions are .ipynb only
+        for a_file in all_files:
+            assert a_file.suffix == ".ipynb"
 
 
-# def test_copy_assignment_files_optional_files(
-#     default_config, test_files, tmp_path
-# ):
-#     """Test that files to skip are not moved by copy assignment files"""
-#     materials_dir = Path(
-#         default_config["course_directory"],default_config["course_materials"]
-#     )
-#     assignment = test_data["assignment"]
-#     students = test_data["students"]
-#     default_config["files_to_ignore"] = [
-#         ".DS_Store",
-#         ".ipynb_checkpoints",
-#         "junk.csv",
-#         "*.py",
-#     ]
-#     for s in students:
-#         abcclone.copy_assignment_files(default_config, s, assignment)
-#
-#         good_files = ["nb1.ipynb", "nb2.ipynb"]
-#
-#         for file in good_files:
-#             assert Path(
-#                 materials_dir, "submitted", s, assignment, file
-#             ).exists()
-#         assert (
-#             Path(
-#                 materials_dir, "submitted", s, assignment, "junk.csv"
-#             ).exists()
-#             is False
-#         )
+def test_copy_assignment_files_optional_files(course_with_student_clones):
+    """Test that files to skip are not moved by copy assignment files"""
+
+    config, assignment_name, students = course_with_student_clones
+    grading_dir = Path(config["course_directory"], config["course_materials"])
+
+    # Customize config to ignore other files
+    config["files_to_ignore"] = [
+        ".DS_Store",
+        ".ipynb_checkpoints",
+        "junk.csv",
+        "*.py",
+    ]
+    for a_student in students:
+        abcclone.copy_assignment_files(config, a_student, assignment_name)
+        good_files = ["nb1.ipynb", "nb2.ipynb"]
+        student_submitted = Path(
+            grading_dir, "submitted", a_student, assignment_name
+        )
+        for file in good_files:
+            assert Path(student_submitted, file).exists()
+        # It should not move the csv file in this case
+        assert Path(student_submitted, "junk.csv").exists() is False
