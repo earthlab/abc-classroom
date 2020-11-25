@@ -8,6 +8,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 
 [unreleased]
 ------------
+- Overhaul fixtures, support moving  different type of files & fix codecov ci (@lwasser, #273, #172)
 
 [0.1.8]
 ------------
