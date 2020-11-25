@@ -6,12 +6,6 @@ import pytest
 import abcclassroom.clone as abcclone
 
 
-# TODO: We might have a version of this fixture in conftest
-
-# TODO remove this fixture potentially given  what is in conftest -
-#  course_with_student_clones
-
-
 @pytest.fixture
 def test_files(default_config, tmp_path, test_data):
     """
@@ -101,8 +95,6 @@ def test_roster_wrong_format(sample_course_structure):
 #     # when skip_existing is yes (default)
 #     # when skip_existing is no
 # TODO test that when files_to_ignore is not populated it fails gracefully
-
-# TODO test that when files_to_grade  is not populated it fails gracefully..
 
 
 def test_copy_assignment_files(course_with_student_clones):
