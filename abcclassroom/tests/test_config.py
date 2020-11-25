@@ -1,8 +1,7 @@
 # Tests for config methods
 
 import pytest
-import os
-from ruamel.yaml import YAML
+
 from pathlib import Path
 
 import abcclassroom.config as abcconfig
@@ -43,11 +42,13 @@ def test_get_config_option(default_config):
     # test we're ok when option not required and missing
     assert (
         abcconfig.get_config_option(default_config, "floofykitten", False)
-        == None
+        is None
     )
 
-    # test that fails when required but absent
-    with pytest.raises(SystemExit):
+    # Test that fails when required but absent
+    with pytest.raises(
+        KeyError, match="Oops! I  couldn't find the required option"
+    ):
         abcconfig.get_config_option(default_config, "floofykitten", True)
 
 
