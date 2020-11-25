@@ -10,6 +10,8 @@ import subprocess
 import sys
 import tempfile
 import textwrap
+
+import requests
 from contextlib import contextmanager
 from shutil import copystat, copy2
 
@@ -18,6 +20,25 @@ from IPython import get_ipython
 
 class Error(OSError):
     pass
+
+
+# implements a simple GET request to the GitHub API url provided,
+# optionally using a token in the authentication header
+# returns the status code and response
+def get_request(url, token=None):
+    if token is None:
+        header = {
+            "Content-Type": "application/json",
+            "Accept": "application/vnd.github.v3+json",
+        }
+    else:
+        header = {
+            "Content-Type": "application/json",
+            "Accept": "application/vnd.github.v3+json",
+            "Authorization": "token {}".format(token),
+        }
+    r = requests.get(url, headers=header)
+    return (r.status_code, r.json())
 
 
 # a copy of shutil.copytree() that is ok with the target directory

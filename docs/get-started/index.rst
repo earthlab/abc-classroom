@@ -19,5 +19,5 @@ to understand the **abc-classroom** workflow.
 
    Installation & Github Authentication <get-started>
    create-course
-   ABC-Classroom Workflow <overview>
+   ABC-Classroom Overview <overview>
    configuration
