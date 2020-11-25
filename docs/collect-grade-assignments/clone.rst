@@ -11,7 +11,7 @@ the commits that they've made to date.::
 In order for this command to work properly, you will need to setup a ssh key
 both locally and on GitHub (discussed at the end of this page).
 
-``Abc-clone`` does two things:
+``abc-clone`` does two things:
 
 1. It clones each repository using ``git clone``
 2. It then copies each student's notebook files into ``course_materials/submitted/student/assignment-name``
@@ -19,7 +19,7 @@ both locally and on GitHub (discussed at the end of this page).
 ABC-Clone - How Clone Works
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-abc-clone uses
+``abc-clone`` uses
 1. the ``github_username`` column in the student roster,  and
 2. the assignment name provided as a command line argument,
 3. the GitHub organization set in the config file ``config.yml``.
@@ -56,6 +56,14 @@ files into the nbgrader ``submitted`` directory using the structure:
 
 The path to ``course_materials`` is defined in ``config.yml`` file. ``abc-clone``
 will create subdirectories within ``course_materials`` for each student as needed.
+
+Clone and Do Not Move to Submitted
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sometimes you need to update student repos however  you may not with to update
+the submitted directory which contains the version oof the assignment that you
+graded. In this case, you can run ``abc-clone assignment-name --no-submitted``.
+The ``no-submitted`` flag / parameter will make abc-clone only clone or pull down
+repo updates. It will NOT update your submitted directory.
 
 Setup SSH to Ensure abc-clone Runs Properly
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -76,7 +76,7 @@ def create_dir_struct(course_name="abc_course", force=False, working_dir=None):
                 Ooops! It looks like the directory {} already exists in this
                 directory. You might have already run quickstart here.
                 Consider using a different course name, deleting the
-                existing directory, or running quikstart with the -f flag to
+                existing directory, or running quickstart with the -f flag to
                 force overwrite the existing directory.""".format(
                     main_dir
                 )

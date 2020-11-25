@@ -116,12 +116,11 @@ def get_config_option(config, option, required=True):
         return value
     except KeyError:
         if required:
-            print(
-                "Did not find required option {} in config; exiting".format(
-                    option
-                )
+            raise KeyError(
+                "Oops! I  couldn't find the required option in the "
+                "config file. Check your config file to ensure the the {} "
+                "option is populated".format(option)
             )
-            sys.exit(1)
         else:
             return None
 
