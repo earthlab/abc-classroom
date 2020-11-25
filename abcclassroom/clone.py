@@ -62,7 +62,7 @@ def clone_student_repos(args):
     clone_repos(assignment_name, skip_existing, no_submitted)
 
 
-def clone_repos(assignment_name, skip_existing, no_submitted=True):
+def clone_repos(assignment_name, skip_existing=False, no_submitted=True):
     """Iterates through the student roster, clones each repo for this
     assignment into the directory specified in the config, and then copies the
     notebook files into the 'course_materials/submitted' directory, based on
@@ -72,7 +72,7 @@ def clone_repos(assignment_name, skip_existing, no_submitted=True):
     ----------
     assignment_name : string
         The name of the assignment to clone repos for
-    skip_existing : boolean
+    skip_existing : boolean (default=False)
         Do not update files in repositories that have already been cloned.
     no_submitted : boolean (default = True)
         If true, moves assignment files from cloned repo to submitted
@@ -160,8 +160,9 @@ def clone_repos(assignment_name, skip_existing, no_submitted=True):
             if len(missing_student_gh) > 0:
                 print(
                     "Oops! The following students are missing github "
-                    "usernames in the roster. Consider updating your "
-                    "roster accordingly:"
+                    "usernames in the roster. Consider adding their username "
+                    "to your roster.csv file or removing that entry from the "
+                    "file altogether."
                 )
                 for astudent in missing_student_gh:
                     print(" {}".format(astudent))

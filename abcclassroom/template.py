@@ -36,7 +36,9 @@ def new_update_template(args):
     )
 
 
-def create_template(mode, push_to_github, custom_message, assignment_name):
+def create_template(
+    assignment_name, mode="fail", push_to_github=False, custom_message=False
+):
     """
     Classroom package function that creates or updates an assignment template
     repository. Implementation of
@@ -252,16 +254,14 @@ def copy_assignment_files(config, template_path, release_dir):
     # materials_dir = cf.get_config_option(config, "course_materials", True)
 
     # Turn this into a try / except? - or did i capture this test above?
-    # TODO - test this because i think i implemented this as a try/ except
-    #  above so we are good to remove it here.
+    # TODO - Write a test for this. If it fails gracefully we can remove
+    # this code
     # if not release_dir.is_dir():
     #     print(
     #         "release directory {} does not exist; exiting\n".format(
     #             release_dir
     #         )
     #     )
-    #     # TODO - talk to karen about sys.exit vs catching this because
-    #     # in Python sys.exit() locks up the console
     #     sys.exit(1)
 
     nfiles = 0
