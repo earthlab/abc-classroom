@@ -34,23 +34,26 @@ The ``abc-new-template`` and ``abc-update-template`` scripts allow you to create
 How To Create and Update Template Repositories
 ==============================================
 
-There are two template scripts : ``abc-new-template`` and ``abc-update-template``.
-The 'new' script is for first-time creation of a new assignment template
-repository from a directory of assignment files. The 'update' script allows you
-to quickly update the local and remote repositories after making changes to
-assignment files.
+There are two template scripts or commands that you can use
+
+1. ``abc-new-template``: Use this for creating the initial template repository
+   When used with the optional --github flag, you can push to github after files
+   are updated.
+2. ``abc-update-template``: Quickly update your template repo and push to
+   github. No flag is needed to push to github.
 
 .. note::
-    The 'update' script is simply a convenience function - both
-    scripts call the same code, but with different default command line parameters
-    (i.e. you can replicate the behavior of 'update' by choosing the parameters of
-    'new').
+  ``abc-update-template`` is a convenience function - both
+  scripts call the same code, but with different default parameters
+  (i.e. you can replicate the behavior of 'update' by choosing the
+  parameters of 'new').
 
-Make sure you have updated your ``config.yml`` before running the template scripts. See the Configuration section below for details.
+Make sure you have updated your ``config.yml`` before running the template
+scripts. See the Configuration section below for details.
 
 .. _abc-new-template:
 
-Creating a New Template repository
+Create a New Template Repository
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To create a GitHub Classroom homework assignment template repository:
@@ -63,14 +66,14 @@ To create a GitHub Classroom homework assignment template repository:
 
 ``abc-new-template`` will then perform the following steps:
 
-* get the name of the `template_dir` directory from the config file
+* get the name of the ``template_dir`` directory from the config file
 * create a local directory in ``template_dir`` called ``assignment1-template`` and initialize as a git repository
 * copy files from the ``course_materials/release/assignment1`` directory
-* create any extra files as listed in ``config.yml``
-* git add and git commit the local files
+* create any extra files in the directory specified in your ``config.yml`` file.
+* ``git add`` and ``git commit`` the local files
 
- If you want to push the `assignment1` template repo to GitHub, in addition to the
- steps outlined above, run::
+ If you want to push the ``assignment1`` template repo to GitHub, in addition
+ to the steps outlined above, run::
 
   abc-new-template assignment1 --github
 
@@ -80,6 +83,29 @@ either 1) deleted if you want to start over OR 2) merged or updated to reflect
 changes to files. The command to merge would look like::
 
     abc-new-template assignment1 --mode merge --github
+
+Text Editors and Git Commit Messages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The default commit message used when you run
+``abc-new-template <assignment-name>`` is **initial commit**. A text editor
+will not open in this case.
+
+When you run ``abc-update-template`` the text editor that is specified in your
+system configuration settings will open up. If you do not have a text editor
+specified, VIM will open as a default.
+
+If you wish to use nano instead you can run the following in your terminal::
+
+  export EDITOR=nano
+
+.. note::
+  Right now if you try to use an editor like atom that launches outside of the
+  terminal, abc-classroom will currently fail and return a message saying
+  _empty commit message_ . This may be fixed in the future but for now we
+  suggest that you use a terminal based editor for your default when using
+  abc-classroom.
+
+
 
 Command Line Options
 ~~~~~~~~~~~~~~~~~~~~~~
