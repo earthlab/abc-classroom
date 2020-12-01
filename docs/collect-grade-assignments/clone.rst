@@ -76,6 +76,22 @@ authentication is not setup!
 * Step two: Generate a new key - https://docs.github.com/en/enterprise/2.14/user/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 * Step three: Add the key to GitHub - https://docs.github.com/en/enterprise/2.14/user/articles/adding-a-new-ssh-key-to-your-github-account
 
+SSH Key Permissions (Important for JupyterHub Use)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``abc-clone`` will quietly fail returning a generic message like this
+when SSH is not setup correctly.
+
+```Could not clone ...```
+
+If you have setup SSH and clone is still not working, you may need to set the
+permissions on the ``.rsa`` file that you created using ``chmod`` in your
+terminal. This key is most often
+stored in your home directory in the ``.ssh`` subdirectory.
+
+```chmod 400 /home/<username>/.ssh/id_rsa```
+
+
 
 Command-line Arguments
 ======================
