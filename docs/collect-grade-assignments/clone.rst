@@ -91,7 +91,10 @@ stored in your home directory in the ``.ssh`` subdirectory.
 
 ```chmod 400 /home/<username>/.ssh/id_rsa```
 
+NOTE: We have found that the permissions for this file periodically reset.
+We are tracking a fix for this here in this issue:
 
+https://github.com/earthlab/abc-classroom/issues/315
 
 Command-line Arguments
 ======================
