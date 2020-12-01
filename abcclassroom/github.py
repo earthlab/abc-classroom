@@ -328,7 +328,7 @@ def _master_branch_to_main(directory):
         pass
 
 
-def push_to_github(directory, branch="master"):
+def push_to_github(directory, branch="main"):
     """Push `branch` back to GitHub"""
     try:
         _call_git(

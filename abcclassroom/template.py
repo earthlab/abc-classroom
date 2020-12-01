@@ -149,7 +149,7 @@ def create_or_update_remote(
 
     print("Pushing any changes to remote repository on GitHub.")
     try:
-        gh.push_to_github(template_repo_path, "master")
+        gh.push_to_github(template_repo_path, "main")
     except RuntimeError as e:
         print(
             """Push to github failed. This is usually because there are
