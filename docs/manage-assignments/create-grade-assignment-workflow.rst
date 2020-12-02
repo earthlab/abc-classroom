@@ -97,12 +97,12 @@ Once you have released the assignment ou can share it with the students using
 GitHub Classroom
 
 
-TODO: add workflow here about the github classroom piece
+TODO: add workflow here about the GitHub  classroom piece
 
 
 ****
 
-3. next collect the assignments from github classroom
+3. next collect the assignments from GitHub  classroom
 
 TODO: link here to that page
 
