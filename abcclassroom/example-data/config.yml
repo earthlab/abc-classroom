@@ -28,7 +28,7 @@ clone_dir: cloned_repos
 # the parent directories should be a git repo. Assumed to be relative to
 # course_dir unless you enter an absolute path (i.e. starting with '/' on
 # Linux or OS X or with 'C:' on Windows).
-template_dir: assignment_repos
+template_dir: template_repos
 
 # A list of files that you do not want to be copied from your assignment
 # release directory to the github template repo. These may be system files
