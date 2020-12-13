@@ -1,7 +1,7 @@
 codecov==2.1.10
 bumpversion==0.6.0
 pre-commit==2.9.2
-pytest==6.1.2
+pytest==6.2.0
 pytest-vcr==1.0.2
 pytest-cov==2.10.1
 tox==3.20.1
