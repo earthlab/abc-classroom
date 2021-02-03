@@ -1,7 +1,6 @@
 """
 abc-classroom.github
 ====================
-
 """
 
 import os
@@ -10,10 +9,137 @@ import random
 import string
 import subprocess
 import sys
+import requests
 
 import github3 as gh3
 
-from .utils import input_editor
+from .utils import input_editor, get_request
+from .config import get_github_auth, set_github_auth
+
+
+def get_access_token():
+    """Get a GitHub access token for the API
+
+    First tries to read from local token file. If token does not exist,
+    or is not valid, generates a new token using the OAuth Device Flow.
+    https://docs.github.com/en/free-pro-team@latest/developers/apps/
+    identifying-and-authorizing-users-for-github-apps#device-flow
+
+    Returns an access token (string).
+    """
+    # first, we see if we have a saved token
+    auth_info = get_github_auth()
+    if auth_info:
+        try:
+            access_token = auth_info["access_token"]
+            # if so, is it valid?
+            user = _get_authenticated_user(access_token)
+            if user is not None:
+                print(
+                    "Access token is present and valid; successfully "
+                    "authenticated as user {}".format(user)
+                )
+                return access_token
+        except KeyError:
+            pass
+
+    # otherwise, generate a new token
+    print("Generating new access token")
+    # client id for the abc-classroom-bot GitHub App
+    client_id = "Iv1.8df72ad9560c774c"
+
+    # TODO need to handle cases where the device call fails - wrong client_id,
+    # the user could ^C or the internet could be out, or some other
+    # unanticipated woe)
+    device_code = _get_login_code(client_id)
+    access_token = _poll_for_status(client_id, device_code)
+
+    # test the new access token
+    user = _get_authenticated_user(access_token)
+    if user is not None:
+        print("""Successfully authenticated as user {}""".format(user))
+    return access_token
+
+
+def _get_authenticated_user(token):
+    """Test the validity of an access token.
+
+    Given a github access token, test that it is valid by making an
+    API call to get the authenticated user.
+
+    Returns the GitHub username of the authenticated user if token valid,
+    otherwise returns None.
+    """
+
+    url = "https://api.github.com/user"
+    (status, body) = get_request(url, token)
+    try:
+        user = body["login"]
+        return user
+    except KeyError:
+        return None
+
+
+def _get_login_code(client_id):
+    """Prompts the user to authorize abc-classroom-bot.
+
+    First part of the Device Flow workflow. Asks user to visit a URL and
+    enter the provided code. Waits for user to hit RETURN to continue.
+    Returns the device code.
+    """
+
+    # make the device call
+    header = {"Content-Type": "application/json", "Accept": "application/json"}
+    payload = {"client_id": client_id}
+    link = "https://github.com/login/device/code"
+    r = requests.post(link, headers=header, json=payload)
+
+    # process the response
+    data = r.json()
+    status = r.status_code
+    if status != 200:
+        # print the response if the call failed
+        print(r.json())
+        return None
+
+    device_code = data["device_code"]
+    uri = data["verification_uri"]
+    user_code = data["user_code"]
+
+    # prompt the user to enter the code
+    print(
+        "To authorize this app, go to {} and enter the code {}".format(
+            uri, user_code
+        )
+    )
+    input("\nPress RETURN to continue after inputting the code successfully")
+
+    return device_code
+
+
+def _poll_for_status(client_id, device_code):
+    """Polls API to see if user entered the device code
+
+    This is the second step of the Device Flow. Returns an access token, and
+    also writes the token to a file in the user's home directory.
+    """
+
+    header = {"Content-Type": "application/json", "Accept": "application/json"}
+    payload = {
+        "client_id": client_id,
+        "device_code": device_code,
+        "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
+    }
+    r = requests.post(
+        "https://github.com/login/oauth/access_token",
+        headers=header,
+        json=payload,
+    )
+
+    data = r.json()
+    access_token = data["access_token"]
+    set_github_auth({"access_token": access_token})
+    return access_token
 
 
 def _call_git(*args, directory=None):
@@ -107,10 +233,8 @@ def create_repo(org, repository, token):
         )
 
 
-def add_remote(directory, organization, remote_repo, token):
-    remote_url = "https://{}@github.com/{}/{}".format(
-        token, organization, remote_repo
-    )
+def add_remote(directory, organization, remote_repo):
+    remote_url = "git@github.com:{}/{}.git".format(organization, remote_repo)
     _call_git("remote", "add", "origin", remote_url, directory=directory)
 
 
@@ -170,6 +294,7 @@ def init_and_commit(directory, custom_message=False):
     # note that running git init on an existing repo is safe, so no need
     # to check anything first
     git_init(directory)
+    _master_branch_to_main(directory)
     if repo_changed(directory):
         message = "Initial commit"
         if custom_message:
@@ -182,7 +307,28 @@ def init_and_commit(directory, custom_message=False):
         print("No changes to local repository.")
 
 
-def push_to_github(directory, branch="master"):
+def _master_branch_to_main(directory):
+    """Change the name of the master branch to main
+
+    Changes the name of the master branch to main for the repo in the
+    given directory. Since we create the repo on github first, which now sets
+    the default branch to 'main', we need the local repo to match
+    in order to be able to push with error later.
+    """
+    print(
+        """Changing name of 'master' branch to 'main'
+        in repo {}""".format(
+            directory
+        )
+    )
+    try:
+        _call_git("branch", "-m", "master", "main", directory=directory)
+    except RuntimeError:
+        # we get here if the master branch has already been renamed
+        pass
+
+
+def push_to_github(directory, branch="main"):
     """Push `branch` back to GitHub"""
     try:
         _call_git(
