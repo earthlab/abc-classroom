@@ -10,6 +10,8 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 ------------
 - Default template_repos dir rather than assignment_repos (@lwasser, #327)
 - Overhaul fixtures, support moving  different type of files & fix codecov ci (@lwasser, #273, #172)
+- Modify how we generate an access token for GitHub API access due to upcoming deprecation of username + password authentication (@kcranston, #328)
+- Make new repositories use 'main' instead of 'master' as the default branch (@kcranston, #326)
 
 [0.1.8]
 ------------
@@ -17,7 +19,6 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 - Move clone into a stand alone package function (@lwasser, #319)
 - Add fixtures to conftest for universal abc setup (@lwasser, #316)
 - Fix CI to force mac to build on python 3.8 and fix linux matrix / tox versions (@lwasser, #303)
-
 
 [0.1.7]
 ------------

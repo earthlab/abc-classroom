@@ -10,8 +10,9 @@ import subprocess
 import sys
 import tempfile
 import textwrap
+
+import requests
 from contextlib import contextmanager
-from shutil import copystat, copy2
 
 from IPython import get_ipython
 
@@ -68,6 +69,25 @@ from IPython import get_ipython
 
 class Error(OSError):
     pass
+
+
+# implements a simple GET request to the GitHub API url provided,
+# optionally using a token in the authentication header
+# returns the status code and response
+def get_request(url, token=None):
+    if token is None:
+        header = {
+            "Content-Type": "application/json",
+            "Accept": "application/vnd.github.v3+json",
+        }
+    else:
+        header = {
+            "Content-Type": "application/json",
+            "Accept": "application/vnd.github.v3+json",
+            "Authorization": "token {}".format(token),
+        }
+    r = requests.get(url, headers=header)
+    return (r.status_code, r.json())
 
 
 # Draft for a function to include only certain patterns instead of ignoring
@@ -161,16 +181,16 @@ class Error(OSError):
 #             if os.path.islink(srcname):
 #                 linkto = os.readlink(srcname)
 #                 if symlinks:
-#                     # We can't just leave it to `copy_function` because legacy
+#                     # We can't just leave it to `copy_function` because old
 #                     # code with a custom `copy_function` may rely on copytree
 #                     # doing the right thing.
 #                     os.symlink(linkto, dstname)
 #                     copystat(srcname, dstname, follow_symlinks=not symlinks)
 #                 else:
 #                     # ignore dangling symlink if the flag is on
-#                     if not os.path.exists(linkto) and ignore_dangling_symlinks:
+#                   if not os.path.exists(linkto) and ignore_dangling_symlinks:
 #                         continue
-#                     # otherwise let the copy occurs. copy2 will raise an error
+#                   # otherwise let the copy occurs. copy2 will raise an error
 #                     if os.path.isdir(srcname):
 #                         copytree(
 #                             srcname, dstname, symlinks, ignore, copy_function
