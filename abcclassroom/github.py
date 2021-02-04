@@ -150,13 +150,14 @@ def _call_git(*args, directory=None):
             cmd,
             cwd=directory,
             check=True,
+            text=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
     except subprocess.CalledProcessError as e:
-        err = e.stderr.decode("utf-8")
+        err = e.stderr
         if not err:
-            err = e.stdout.decode("utf-8")
+            err = e.stdout
         raise RuntimeError(err) from e
 
     return ret
