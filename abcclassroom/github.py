@@ -283,25 +283,43 @@ def init_and_commit(directory, custom_message=False):
         print("No changes to local repository.")
 
 
-def _master_branch_to_main(directory):
+def _master_branch_to_main(dir):
     """Change the name of the master branch to main
 
     Changes the name of the master branch to main for the repo in the
     given directory. Since we create the repo on github first, which now sets
     the default branch to 'main', we need the local repo to match
-    in order to be able to push with error later.
+    in order to be able to push without error later.
     """
-    print(
-        """Changing name of 'master' branch to 'main'
-        in repo {}""".format(
-            directory
-        )
-    )
+
     try:
-        _call_git("branch", "-m", "master", "main", directory=directory)
+        # first, verify if the  master branch exists (this is only true
+        # if there are commits on the master branch)
+        _call_git(
+            "show-ref",
+            "--quiet",
+            "--verify",
+            "refs/heads/master",
+            directory=dir,
+        )
     except RuntimeError:
-        # we get here if the master branch has already been renamed
-        pass
+        # master branch verification fails, so we check for main and create
+        # it if it does not exist
+        try:
+            _call_git(
+                "show-ref",
+                "--quiet",
+                "--verify",
+                "refs/heads/main",
+                directory=dir,
+            )
+        except RuntimeError:
+            # no main branch, create one
+            _call_git("checkout", "-b", "main", directory=dir)
+    else:
+        # rename branch
+        print("master exists, renaming")
+        _call_git("branch", "-m", "master", "main", directory=dir)
 
 
 def push_to_github(directory, branch="main"):
@@ -322,7 +340,7 @@ def pull_from_github(directory, branch="master"):
         raise e
 
 
-def git_init(directory):
+def git_init(directory, defaultbranch="main"):
     """Initialize git repository"""
     _call_git("init", directory=directory)
 
