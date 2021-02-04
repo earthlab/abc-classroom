@@ -26,14 +26,24 @@ def test_master_branch_to_main_repeatedly(tmp_path):
     """
     repo_dir = Path(tmp_path, "change-master")
     repo_dir.mkdir()
-    # we need to make some files and commit in order to rename the branch
-    a_file = Path(repo_dir, "testfile.txt")
-    a_file.write_text("Some text")
-    abcgit.init_and_commit(repo_dir)
+    abcgit.git_init(repo_dir)
 
     # change the default branch name
     abcgit._master_branch_to_main(repo_dir)
-    abcgit._call_git("show-ref", "--quiet", "--verify", "refs/heads/main")
+    # in order to test that main exists, we need to add some commits
+    a_file = Path(repo_dir, "testfile.txt")
+    a_file.write_text("Some text")
+    commit_msg = "commit some things"
+    abcgit.commit_all_changes(repo_dir, msg=commit_msg)
+
+    # now test the existance of main
+    abcgit._call_git(
+        "show-ref",
+        "--quiet",
+        "--verify",
+        "refs/heads/main",
+        directory=repo_dir,
+    )
 
     # trying again should also work without error
     abcgit._master_branch_to_main(repo_dir)
