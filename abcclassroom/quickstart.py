@@ -121,7 +121,7 @@ def create_dir_struct(course_name="abc_course", force=False, working_dir=None):
         Created new abc-classroom directory structure at:
         '{}',
         including a configuration file, directories for template repos
-        and cloned repos.template and clone directories and a directory
+        and cloned repositories, and a directory
         for extra files needed for all assignments.
 
         To proceed, please create / move your course roster and course
