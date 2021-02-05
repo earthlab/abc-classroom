@@ -14,7 +14,7 @@
 
 # Why ABC Classroom
 
-Many of us teaching data science are using GitHub Classroom as a way to teach students
+Many educators teaching data science are using GitHub Classroom as a way to teach students
 both git and GitHub skills and also potentially collaboration skills that align
 with open source software development best practices. However there are many steps
 associated with using GitHub classroom to manage a class.
