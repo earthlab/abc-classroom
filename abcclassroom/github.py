@@ -150,7 +150,7 @@ def _call_git(*args, directory=None):
             cmd,
             cwd=directory,
             check=True,
-            text=True,
+            universal_newlines=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
