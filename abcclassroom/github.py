@@ -289,7 +289,7 @@ def _master_branch_to_main(dir):
     Changes the name of the master branch to main for the repo in the
     given directory. Since we create the repo on github first, which now sets
     the default branch to 'main', we need the local repo to match
-    in order to be able to push without error later.
+    in order to be able to push without errors later.
     """
 
     try:
