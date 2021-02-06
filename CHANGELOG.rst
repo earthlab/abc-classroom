@@ -12,6 +12,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 - Overhaul fixtures, support moving  different type of files & fix codecov ci (@lwasser, #273, #172)
 - Modify how we generate an access token for GitHub API access due to upcoming deprecation of username + password authentication (@kcranston, #328)
 - Make new repositories use 'main' instead of 'master' as the default branch (@kcranston, #326)
+- Fix manged abc-quickstart success message (@kcranston, #367)
 
 [0.1.8]
 ------------
