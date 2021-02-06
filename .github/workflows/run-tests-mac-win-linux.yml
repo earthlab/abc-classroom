@@ -35,8 +35,8 @@ jobs:
       run: |
       # setup the git username and email, needed to run tests in test_github
       # only local git actions, so have no impact beyong tests. Email blank.
-      git config user.name "GitHub Actions Bot"
-      git config user.email "<>"
+        git config --global user.name "GitHub Actions Bot"
+        git config --global user.email "<>"
 
     - name: Test with pytest
       run: |
