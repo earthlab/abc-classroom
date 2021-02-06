@@ -34,7 +34,7 @@ jobs:
     - name: setup git config
       run: |
         # Setup the git username and email, needed to run tests in test_github
-        # only local git actions, so have no impact beyong tests. Email blank.
+        # only local git actions, so have no impact beyong tests.
         git config --global user.name "GitHub Actions Bot"
         git config --global user.email "abc.actions.bot@dummy.org"
 
