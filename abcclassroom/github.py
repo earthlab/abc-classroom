@@ -150,13 +150,14 @@ def _call_git(*args, directory=None):
             cmd,
             cwd=directory,
             check=True,
+            universal_newlines=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
     except subprocess.CalledProcessError as e:
-        err = e.stderr.decode("utf-8")
+        err = e.stderr
         if not err:
-            err = e.stdout.decode("utf-8")
+            err = e.stdout
         raise RuntimeError(err) from e
 
     return ret
@@ -173,31 +174,6 @@ def remote_repo_exists(org, repository, token=None):
         return False
 
     return True
-
-
-def check_student_repo_exists(org, course, student, token=None):
-    """Check if the student has a repository for the course.
-
-    It happens that students delete their repository or do not accept the
-    invitation to the course. In either case they will not have a repository
-    yet.
-    """
-    # temporarily change log level of github3.py as it prints weird messages
-    # XXX could be done more nicely with a context manager maybe
-    gh3_log = logging.getLogger("github3")
-    old_level = gh3_log.level
-    gh3_log.setLevel("ERROR")
-
-    try:
-        g = gh3.login(token=token)
-        repository = "{}-{}".format(course, student)
-        g.repository(org, repository)
-
-    except Exception as e:
-        raise e
-
-    finally:
-        gh3_log.setLevel(old_level)
 
 
 def clone_repo(organization, repo, dest_dir):
@@ -307,25 +283,43 @@ def init_and_commit(directory, custom_message=False):
         print("No changes to local repository.")
 
 
-def _master_branch_to_main(directory):
+def _master_branch_to_main(dir):
     """Change the name of the master branch to main
 
     Changes the name of the master branch to main for the repo in the
     given directory. Since we create the repo on github first, which now sets
     the default branch to 'main', we need the local repo to match
-    in order to be able to push with error later.
+    in order to be able to push without errors later.
     """
-    print(
-        """Changing name of 'master' branch to 'main'
-        in repo {}""".format(
-            directory
-        )
-    )
+
     try:
-        _call_git("branch", "-m", "master", "main", directory=directory)
+        # first, verify if the  master branch exists (this is only true
+        # if there are commits on the master branch)
+        _call_git(
+            "show-ref",
+            "--quiet",
+            "--verify",
+            "refs/heads/master",
+            directory=dir,
+        )
     except RuntimeError:
-        # we get here if the master branch has already been renamed
-        pass
+        # master branch verification fails, so we check for main and create
+        # it if it does not exist
+        try:
+            _call_git(
+                "show-ref",
+                "--quiet",
+                "--verify",
+                "refs/heads/main",
+                directory=dir,
+            )
+        except RuntimeError:
+            # no main branch, create one
+            _call_git("checkout", "-b", "main", directory=dir)
+    else:
+        # rename branch
+        print("master exists, renaming")
+        _call_git("branch", "-m", "master", "main", directory=dir)
 
 
 def push_to_github(directory, branch="main"):
@@ -346,7 +340,7 @@ def pull_from_github(directory, branch="master"):
         raise e
 
 
-def git_init(directory):
+def git_init(directory, defaultbranch="main"):
     """Initialize git repository"""
     _call_git("init", directory=directory)
 
@@ -355,6 +349,31 @@ def git_init(directory):
 # Methods below are from before the re-factoring.
 # Retaining for reference, but with no guarantee
 # about correct function.
+
+
+def check_student_repo_exists(org, course, student, token=None):
+    """Check if the student has a repository for the course.
+
+    It happens that students delete their repository or do not accept the
+    invitation to the course. In either case they will not have a repository
+    yet.
+    """
+    # temporarily change log level of github3.py as it prints weird messages
+    # XXX could be done more nicely with a context manager maybe
+    gh3_log = logging.getLogger("github3")
+    old_level = gh3_log.level
+    gh3_log.setLevel("ERROR")
+
+    try:
+        g = gh3.login(token=token)
+        repository = "{}-{}".format(course, student)
+        g.repository(org, repository)
+
+    except Exception as e:
+        raise e
+
+    finally:
+        gh3_log.setLevel(old_level)
 
 
 def close_existing_pullrequests(
