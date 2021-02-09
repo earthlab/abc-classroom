@@ -65,8 +65,6 @@ def check_git_ssh():
     """Tests that ssh access to GitHub is set up correctly on the users
     computer.
 
-    Returns the github username.
-
     Throws a RuntimeError if setup is not working.
     """
     cmd = ["ssh", "-T", "git@github.com"]
@@ -88,9 +86,7 @@ def check_git_ssh():
         if err.startswith("Hi"):
             # if everything set up correctly, the ssh test returns output
             # starting with 'Hi username!'
-            message = err.split()
-            username = message[1].replace("!", "")
-            return username
+            pass
         elif err.startswith("Permission"):
             # if no key, or permissions on key incorrect, the output
             # starts with 'Permission denied'
@@ -102,6 +98,13 @@ def check_git_ssh():
                 )
             )
             raise RuntimeError(err)
+        elif err.startswith("Warning: Permanently"):
+            # if the user has set up ssh keys, but hasn't logged in yet,
+            # they will need to verify the RSA fingerprint
+            # If they do so, the message is 'Warning: Permanently
+            # added 'github.com' (RSA) to the list of known hosts.'
+            print(err)
+            pass
         else:
             # just in case there are other message in edge cases
             print("Unknown error checking ssh access to git")
