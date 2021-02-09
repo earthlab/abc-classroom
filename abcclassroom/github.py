@@ -103,8 +103,8 @@ def check_git_ssh():
             print(err)
             docURL = "https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh"  # noqa
             print(
-                """Your ssh access to github is not set up correctly;
-            see {}.""".format(
+                """Your ssh access to github is not set up correctly; see
+            {}.""".format(
                     docURL
                 )
             )
