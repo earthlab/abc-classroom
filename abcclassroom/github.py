@@ -61,6 +61,53 @@ def get_access_token():
     return access_token
 
 
+def check_git_ssh():
+    """Tests that ssh access to GitHub is set up correctly on the users
+    computer.
+
+    Returns the github username.
+
+    Throws a RuntimeError if setup is not working.
+    """
+    cmd = ["ssh", "-T", "git@github.com"]
+    try:
+        subprocess.run(
+            cmd,
+            check=True,
+            universal_newlines=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+    except subprocess.CalledProcessError as e:
+        # We ALWAYS will get here, because that subprocess call returns
+        # a non-zero exit code whether ssh access is set up correctly or
+        # not. Must check output.
+        err = e.stderr
+        if not err:
+            err = e.stdout
+        if err.startswith("Hi"):
+            # if everything set up correctly, the ssh test returns output
+            # starting with 'Hi username!'
+            message = err.split()
+            username = message[1].replace("!", "")
+            return username
+        elif err.startswith("Permission"):
+            # if no key, or permissions on key incorrect, the output
+            # starts with 'Permission denied'
+            docURL = "https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh"  # noqa
+            print(
+                """Your ssh access to github is not set up correctly;
+            see {}.""".format(
+                    docURL
+                )
+            )
+            raise RuntimeError(err)
+        else:
+            # just in case there are other message in edge cases
+            print("Unknown error checking ssh access to git")
+            raise RuntimeError(err)
+
+
 def _get_authenticated_user(token):
     """Test the validity of an access token.
 
