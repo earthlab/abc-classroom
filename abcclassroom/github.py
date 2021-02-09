@@ -87,17 +87,6 @@ def check_git_ssh():
             # if everything set up correctly, the ssh test returns output
             # starting with 'Hi username!'
             pass
-        elif err.startswith("Permission"):
-            # if no key, or permissions on key incorrect, the output
-            # starts with 'Permission denied'
-            docURL = "https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh"  # noqa
-            print(
-                """Your ssh access to github is not set up correctly;
-            see {}.""".format(
-                    docURL
-                )
-            )
-            raise RuntimeError(err)
         elif err.startswith("Warning: Permanently"):
             # if the user has set up ssh keys, but hasn't logged in yet,
             # they will need to verify the RSA fingerprint
@@ -106,8 +95,19 @@ def check_git_ssh():
             print(err)
             pass
         else:
-            # just in case there are other message in edge cases
-            print("Unknown error checking ssh access to git")
+            # possible reasons to get here include 1. no ssh key set up;
+            # 2. ssh key has incorrect permissions; 3. remote host
+            # identification changed. We print the error message for
+            # the user and point them to github documentation for help.
+            print("Encountered this error checking ssh access to git:")
+            print(err)
+            docURL = "https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh"  # noqa
+            print(
+                """Your ssh access to github is not set up correctly;
+            see {}.""".format(
+                    docURL
+                )
+            )
             raise RuntimeError(err)
 
 
