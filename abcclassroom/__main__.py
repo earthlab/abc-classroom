@@ -48,7 +48,7 @@ def init():
         github.check_git_ssh()
         print("Access to GitHub via SSH seems to be configured correctly")
     except RuntimeError:
-        raise
+        pass
 
 
 def clone():
