@@ -49,8 +49,8 @@ def clone():
     defined in config.yml and that the roster file exists.
 
     By default, if a local directory with the name of the repo already exists,
-    pulls from github to update. Use the --skip-existing flag if you don't want
-    to update existing repos.
+    abc-clone does not update the local repository. If you want to pull new
+    changes for existing local repositories, use the --update-existing flag.
     """
     parser = argparse.ArgumentParser(description=clone.__doc__)
     parser.add_argument(
@@ -59,9 +59,9 @@ def clone():
         course_materials directories""",
     )
     parser.add_argument(
-        "--skip-existing",
+        "--update-existing",
         action="store_true",
-        help="""Do not attempt to update repositories that have already been
+        help="""Attempt to update repositories that have already been
         cloned.""",
     )
     parser.add_argument(
