@@ -387,6 +387,8 @@ def push_to_github(directory, branch="main"):
 def pull_from_github(directory, branch="master"):
     """Pull `branch` of local repo in `directory` from GitHub"""
     try:
+        # first, check that local git set up with ssh keys for github
+        check_git_ssh()
         _call_git("pull", "origin", branch, directory=directory)
     except RuntimeError as e:
         raise e
