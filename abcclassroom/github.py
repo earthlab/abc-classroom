@@ -228,16 +228,19 @@ def remote_repo_exists(org, repository, token=None):
 
 def clone_repo(organization, repo, dest_dir):
     """Clone `repository` from `org` into a sub-directory in `directory`.
-    Assumes you have ssh keys setup for github (rather than using GitHub API
-    token)."""
-    # If ssh  it not setup correctly -  or however we want to authenticate,
-    # we need a
-    # friendly message about that
-    # We should add some message about what is being cloned here - the  url
-    # works
-    url = "git@github.com:{}/{}.git".format(organization, repo)
-    print("cloning:", url)
-    _call_git("-C", dest_dir, "clone", url)
+
+    Raises RuntimeError if ssh keys not set up correctly, or if git clone
+    fails for other reasons.
+    """
+
+    try:
+        # first, check that local git set up with ssh keys for github
+        check_git_ssh()
+        url = "git@github.com:{}/{}.git".format(organization, repo)
+        print("cloning:", url)
+        _call_git("-C", dest_dir, "clone", url)
+    except RuntimeError as e:
+        raise e
 
 
 def create_repo(org, repository, token):
