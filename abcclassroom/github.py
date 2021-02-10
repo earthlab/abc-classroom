@@ -80,19 +80,19 @@ def check_git_ssh():
         # We ALWAYS will get here, because that subprocess call returns
         # a non-zero exit code whether ssh access is set up correctly or
         # not. Must check output.
-        err = e.stderr
-        if not err:
-            err = e.stdout
-        if err.startswith("Hi"):
+        subprocess_out = e.stderr
+        if not subprocess_out:
+            subprocess_out = e.stdout
+        if subprocess_out.startswith("Hi"):
             # if everything set up correctly, the ssh test returns output
             # starting with 'Hi username!'
             pass
-        elif err.startswith("Warning: Permanently"):
+        elif subprocess_out.startswith("Warning: Permanently"):
             # if the user has set up ssh keys, but hasn't logged in yet,
             # they will need to verify the RSA fingerprint
             # If they do so, the message is 'Warning: Permanently
             # added 'github.com' (RSA) to the list of known hosts.'
-            print(err)
+            print(subprocess_out)
             pass
         else:
             # possible reasons to get here include 1. no ssh key set up;
@@ -100,7 +100,7 @@ def check_git_ssh():
             # identification changed. We print the error message for
             # the user and point them to github documentation for help.
             print("Encountered this error checking ssh access to git:")
-            print(err)
+            print(subprocess_out)
             docURL = "https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh"  # noqa
             print(
                 """Your ssh access to github is not set up correctly; see
@@ -108,7 +108,7 @@ def check_git_ssh():
                     docURL
                 )
             )
-            raise RuntimeError(err)
+            raise RuntimeError(subprocess_out)
 
 
 def _get_authenticated_user(token):
