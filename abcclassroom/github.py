@@ -373,8 +373,10 @@ def _master_branch_to_main(dir):
 
 
 def push_to_github(directory, branch="main"):
-    """Push `branch` back to GitHub"""
+    """Push `branch` of the repository in `directory` back to GitHub"""
     try:
+        # first, check that local git set up with ssh keys for github
+        check_git_ssh()
         _call_git(
             "push", "--set-upstream", "origin", branch, directory=directory
         )
