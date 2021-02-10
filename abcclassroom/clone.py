@@ -12,11 +12,11 @@ from . import config as cf
 from . import github as gh
 
 
-def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
+def clone_or_update_repo(organization, repo, clone_dir, update_existing):
     """
     Tries to clone the single repository 'repo' from the organization. If the
-    local repository already exists, pulls instead of cloning (unless the
-    skip flag is set, in which case it does nothing).
+    local repository already exists, does nothing (unless the
+    update flag is set, in which case it pulls new changes from GitHub).
 
     Parameters
     ----------
@@ -26,20 +26,17 @@ def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
         Name of the student's GitHub repo.
     clone_dir : string
         Name of the clone directory.
-    skip_existing : boolean
-        True if you wish to skip copying files to existing repos.
+    update_existing : boolean
+        True if you wish to update existing repos.
     """
     destination_dir = Path(clone_dir, repo)
     if destination_dir.is_dir():
-        # if path exists, pull instead of clone (unless skip_existing)
-        if skip_existing:
-            print(
-                "Local repo {} already exists; skipping".format(
-                    destination_dir
-                )
-            )
-            return
-        gh.pull_from_github(destination_dir)
+        # if path exists, skip (unless update_existing)
+        if update_existing:
+            print("Pulling changes for local repo {}".format(destination_dir))
+            gh.pull_from_github(destination_dir)
+        else:
+            print("Skipping existing local repo {}".format(destination_dir))
     else:
         gh.clone_repo(organization, repo, clone_dir)
 
@@ -50,19 +47,19 @@ def clone_student_repos(args):
     Parameters
     ----------
     args : string argument inputs
-        Arguments include the assignment name (string) and skip existing (
-        boolean?)
+        Arguments include the assignment name (string) and whether to
+        update existing assignments (boolean)
 
     """
 
     assignment_name = args.assignment
-    skip_existing = args.skip_existing
+    update_existing = args.update_existing
     no_submitted = args.no_submitted
 
-    clone_repos(assignment_name, skip_existing, no_submitted)
+    clone_repos(assignment_name, update_existing, no_submitted)
 
 
-def clone_repos(assignment_name, skip_existing=False, no_submitted=True):
+def clone_repos(assignment_name, update_existing=False, no_submitted=True):
     """Iterates through the student roster, clones each repo for this
     assignment into the directory specified in the config, and then copies the
     notebook files into the 'course_materials/submitted' directory, based on
@@ -72,8 +69,8 @@ def clone_repos(assignment_name, skip_existing=False, no_submitted=True):
     ----------
     assignment_name : string
         The name of the assignment to clone repos for
-    skip_existing : boolean (default=False)
-        Do not update files in repositories that have already been cloned.
+    update_existing : boolean (default=False)
+        Update files in repositories that have already been cloned.
     no_submitted : boolean (default = True)
         If true, moves assignment files from cloned repo to submitted
         directory for grading. If false files are not moved to submitted
@@ -126,7 +123,7 @@ def clone_repos(assignment_name, skip_existing=False, no_submitted=True):
                                 organization,
                                 repo,
                                 Path(clone_dir, assignment_name),
-                                skip_existing,
+                                update_existing,
                             )
                             if materials_dir is not None and no_submitted:
                                 copy_assignment_files(

@@ -38,7 +38,7 @@ def test_roster_missing(sample_course_structure, tmp_path):
     assignment_name = "test_assignment"
 
     with pytest.raises(FileNotFoundError, match="Cannot find roster file"):
-        abcclone.clone_repos(assignment_name, skip_existing=False)
+        abcclone.clone_repos(assignment_name, update_existing=False)
 
 
 def test_roster_missing_github_name(sample_course_structure, capsys):
@@ -57,7 +57,7 @@ def test_roster_missing_github_name(sample_course_structure, capsys):
         '"student-name1" \n "student-id","","",'
         '"student-name2"'
     )
-    abcclone.clone_repos(assignment_name, skip_existing=False)
+    abcclone.clone_repos(assignment_name, update_existing=False)
 
     captured = capsys.readouterr()
     expected_string = "Oops! The following students are missing github"
@@ -82,7 +82,7 @@ def test_roster_wrong_format(sample_course_structure):
     )
 
     with pytest.raises(KeyError, match="Oops! Please check your roster file"):
-        abcclone.clone_repos(assignment_name, skip_existing=False)
+        abcclone.clone_repos(assignment_name, update_existing=False)
 
 
 # TODO: Test that when the roster is empty it fails gracefully
@@ -92,8 +92,8 @@ def test_roster_wrong_format(sample_course_structure):
 
 # test_clone_local_repo_exists(default_config, tmp_path):
 # need to mock up github api object for this
-#     # when skip_existing is yes (default)
-#     # when skip_existing is no
+#     # when update_existing is no (default)
+#     # when update_existing is yes
 # TODO test that when files_to_ignore is not populated it fails gracefully
 
 
