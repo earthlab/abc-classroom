@@ -102,7 +102,15 @@ def copy_feedback_files(assignment_name, push_to_github=False, scrub=False):
                     ),
                 )
                 if push_to_github:
-                    github.push_to_github(destination_dir)
+                    try:
+                        github.push_to_github(destination_dir)
+                    except RuntimeError as e:
+                        print(e)
+                        print(
+                            "Push to GitHub failed for repo {}".format(
+                                destination_dir
+                            )
+                        )
 
     except FileNotFoundError as err:
         print("Missing file or directory:")
