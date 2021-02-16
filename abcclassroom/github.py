@@ -332,7 +332,7 @@ def push_to_github(directory, branch="main"):
         raise e
 
 
-def pull_from_github(directory, branch="master"):
+def pull_from_github(directory, branch="main"):
     """Pull `branch` of local repo in `directory` from GitHub"""
     try:
         _call_git("pull", "origin", branch, directory=directory)
