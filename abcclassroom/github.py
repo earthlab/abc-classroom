@@ -109,6 +109,15 @@ def check_git_ssh():
                 )
             )
             raise RuntimeError(subprocess_out)
+    except FileNotFoundError as e:
+        # we get here if ssh is not installed. The error message is
+        # [Errno 2] No such file or directory: 'ssh'
+        print(e)
+        if "No such file or directory: 'ssh'" in str(e):
+            print(
+                """Did not find `ssh` command. Make sure that open-ssh
+                is installed on your operating system."""
+            )
 
 
 def _get_authenticated_user(token):
