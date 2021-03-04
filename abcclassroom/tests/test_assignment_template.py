@@ -9,97 +9,111 @@ import abcclassroom.template as abctemplate
 import abcclassroom.github as github
 import abcclassroom.config as cf
 
+# Tests here use the course setup fixtures in conftest.py
+
 # Is there something wrong with running abc-quickstart and got all dirs
 # and the config file are then setup That was as the quickstart is changed
 # the tests will all be dependent upon it
 
 
-@pytest.fixture
-def config_file(default_config, tmp_path):
-    """Writes the config to a file in tmp_path"""
-    cf.write_config(default_config, tmp_path)
+# @pytest.fixture
+# def config_file(default_config, tmp_path):
+#     """Writes the config to a file in tmp_path"""
+#     cf.write_config(default_config, tmp_path)
 
 
-def test_create_template_dir(default_config, tmp_path):
+def test_create_template_dir(course_structure_assignment):
     """
     Tests that create_template_dir with default mode "fail" creates a
     directory with the expected name.
     """
-    # If we did the above, then we could remove a lot of this here
-    default_config["course_directory"] = tmp_path
-    templates_dir = default_config["template_dir"]
-    assignment_name = "test_assignment"
-    template_path = abctemplate.create_template_dir(
-        default_config, assignment_name
-    )
-    assert os.path.isdir(template_path)
+    config, assignment_name, release_path = course_structure_assignment
 
+    # # If we did the above, then we could remove a lot of this here
+    # default_config["course_directory"] = tmp_path
+    # templates_dir = default_config["template_dir"]
+    # assignment_name = "test_assignment"
+    template_path = abctemplate.create_template_dir(config, assignment_name)
+    assert Path(template_path).is_dir()
+
+    course_dir = cf.get_config_option(config, "course_directory", True)
+    templates_dir = cf.get_config_option(config, "template_dir", True)
     assert template_path == Path(
-        tmp_path, templates_dir, "{}-template".format(assignment_name)
+        course_dir, templates_dir, "{}-template".format(assignment_name)
     )
 
 
-def test_create_template_dir_fail_when_exists(default_config, tmp_path):
+def test_create_template_dir_fail_when_exists(course_structure_assignment):
     """
     Tests that create_template_dir with default mode "fail" does indeed
-    fail with sys.exit when the directory already exists.
+    throw FileExistsError when the directory already exists.
     """
-    default_config["course_directory"] = tmp_path
-    assignment_name = "test_assignment"
-    abctemplate.create_template_dir(default_config, assignment_name)
+    config, assignment_name, release_path = course_structure_assignment
+    abctemplate.create_template_dir(config, assignment_name)
 
     # If run again, it should fail given the dir already exists
-    with pytest.raises(Exception, match=("Oops! The directory specified")):
-        abctemplate.create_template_dir(default_config, assignment_name)
+    with pytest.raises(
+        FileExistsError, match=("Oops! The directory specified")
+    ):
+        abctemplate.create_template_dir(config, assignment_name)
 
 
-def test_create_template_dir_merge_when_exists(default_config, tmp_path):
+def test_create_template_dir_merge_when_exists(course_structure_assignment):
     """
     Tests that create_template_dir with mode "merge" does not fail when
     directory already exists.
     """
-    default_config["course_directory"] = tmp_path
-    abctemplate.create_template_dir(default_config, "test_assignment")
+    config, assignment_name, release_path = course_structure_assignment
+    abctemplate.create_template_dir(config, assignment_name)
+
     # The test here is that there is no failure? or is there something we
-    # can explicetly test here?
-    abctemplate.create_template_dir(default_config, "test_assignment", "merge")
+    # can explicetly test here? - the method simply returns and does nothing
+    # in this case, so I am not sure what else to test
+    abctemplate.create_template_dir(config, assignment_name, "merge")
 
 
-def test_create_template_dir_delete_when_exists(default_config, tmp_path):
+def test_create_template_dir_delete_when_exists(course_structure_assignment):
     """
-    Tests that create_template_dir with mode "delete" re-creates the
-    directory with the same contents.
+    Tests that create_template_dir with mode "delete" re-creates a
+    directory with the same name without keeping contents.
     """
-    # This is not currently testing anything as there are no files to return
-    # in the glob function. refactor - maybe create a  fixture that creates
-    # a template dir with a file in it and a readme?
-    default_config["course_directory"] = tmp_path
-    template_path = abctemplate.create_template_dir(
-        default_config, "test_assignment"
-    )
+
+    config, assignment_name, release_path = course_structure_assignment
+    template_path = abctemplate.create_template_dir(config, assignment_name)
+    # create a file in the template dir
+    testfile = Path(template_path, "file1.txt")
+    testfile.touch()
+
     # Run in delete mode
-    contents_before = list(Path(template_path).glob("*"))
+    contents_before = list(Path(template_path).rglob("*"))
+    assert len(contents_before) > 0
+    assert testfile.exists()
     template_path = abctemplate.create_template_dir(
-        default_config, "test_assignment", "delete"
+        config, assignment_name, "delete"
     )
-    contents_after = list(Path(template_path).glob("*"))
-    assert contents_before == contents_after
+    contents_after = list(Path(template_path).rglob("*"))
+    assert testfile.exists() is False
+    assert len(contents_after) == 0
 
 
-def test_move_git_dir(default_config, tmp_path):
+def test_create_template_dir_move_git_dir(course_structure_assignment):
     """
-    Tests that we correctly move (and move back) a .git directory in the
-    template repo when running in delete mode.
+    Tests that if have already created a local git repo in a template
+    dir, we correctly move (and move back) when running in delete mode.
     """
-    default_config["course_directory"] = tmp_path
-    template_path = abctemplate.create_template_dir(
-        default_config, "test_assignment"
-    )
+    config, assignment_name, release_path = course_structure_assignment
+    template_path = abctemplate.create_template_dir(config, assignment_name)
+
+    # create a file in the template dir, init a git repo and commit
+    testfile = Path(template_path, "file1.txt")
+    testfile.touch()
     github.init_and_commit(template_path, False)
     assert Path(template_path, ".git").exists()
+
     template_path = abctemplate.create_template_dir(
-        default_config, "test_assignment", "delete"
+        config, assignment_name, "delete"
     )
+
     assert Path(template_path, ".git").exists()
 
 
@@ -113,14 +127,14 @@ def test_copy_assignment_files(course_structure_assignment):
     template_path = abctemplate.create_template_dir(
         sample_config, assignment_name
     )
-    # I think i can remove the stuff below now...
-    release_path = Path(
-        sample_config["course_directory"],
-        sample_config["course_materials"],
-        "release",
-        assignment_name,
-    )
-    release_path.mkdir(parents=True, exist_ok=True)
+    # # I think i can remove the stuff below now...
+    # release_path = Path(
+    #     sample_config["course_directory"],
+    #     sample_config["course_materials"],
+    #     "release",
+    #     assignment_name,
+    # )
+    # release_path.mkdir(parents=True, exist_ok=True)
     # Should we test that the message printed is what we expect here?
     abctemplate.copy_assignment_files(
         sample_config, template_path, release_path
