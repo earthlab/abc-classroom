@@ -279,7 +279,7 @@ def abccopytree(
     is called with the `src` parameter, which is the directory
     being visited by copytree(), and `names` which is the list of
     `src` contents, as returned by os.listdir():
-        callable(src, names) -> ignored_names
+    callable(src, names) -> ignored_names
     Since copytree() is called recursively, the callable will be
     called once for each directory that is copied. It returns a
     list of names relative to the `src` directory that should
