@@ -63,3 +63,28 @@ def test_copy_files_with_ignored(default_config, tmp_path, test_files):
     # check files that we do not expect
     assert Path(dest_dir, "data.csv").exists() is False
     assert Path(dest_dir, "ignored").exists() is False
+
+
+def test_copy_files_combine_dirs(default_config, tmp_path, test_files):
+    """
+    Test that copy_files can add new files to an existing directory.
+    """
+    source_dir = test_files
+    dest_dir = Path(tmp_path, "destination")
+    abcutils.copy_files(source_dir, dest_dir)
+    dest_files = list(dest_dir.rglob("*"))
+
+    # copy a second directory into dest_dir
+    source_dir2 = Path(tmp_path, "source2")
+    source_dir2.mkdir()
+    Path(source_dir2, "file1.txt").touch()
+    Path(source_dir2, "file5.txt").touch()
+    abcutils.copy_files(source_dir2, dest_dir)
+
+    # check for files from both source dirs
+    assert Path(dest_dir, "file5.txt").exists()
+    assert Path(dest_dir, ".hidden").exists()
+
+    # check we have more now
+    dest_files2 = list(dest_dir.rglob("*"))
+    assert len(dest_files2) > len(dest_files)
