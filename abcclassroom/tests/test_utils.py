@@ -88,3 +88,12 @@ def test_copy_files_combine_dirs(default_config, tmp_path, test_files):
     # check we have more now
     dest_files2 = list(dest_dir.rglob("*"))
     assert len(dest_files2) > len(dest_files)
+
+
+def test_copy_files_no_source_dir():
+    """
+    Test that copy_files throws FileNotFoundError when source_dir does not
+    exist.
+    """
+    with pytest.raises(FileNotFoundError):
+        abcutils.copy_files("dirthatdoesnotexist", "destination")
