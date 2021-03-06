@@ -86,8 +86,8 @@ def create_dir_struct(course_name="abc_course", force=False, working_dir=None):
     copy(config_path, main_dir)
 
     # Use config functions to read / write config
-    # TODO: Can't we just copy the sample config - why are we rewriting it
-    #  here?
+    # We already have the file in the right place, but we need to
+    # re-write the config so that is has the right course directory
     config = cf.get_config(main_dir)
     config["course_directory"] = str(main_dir)
     cf.write_config(config, main_dir)
