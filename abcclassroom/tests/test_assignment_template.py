@@ -1,9 +1,7 @@
 # Tests for new-template and update-template scripts
 
 import pytest
-import os
 from pathlib import Path
-import shutil
 
 import abcclassroom.template as abctemplate
 import abcclassroom.github as github
@@ -96,6 +94,42 @@ def test_create_template_dir_delete_when_exists(course_structure_assignment):
     assert len(contents_after) == 0
 
 
+def test_create_template(course_structure_assignment):
+    """
+    Test that the create_template method creates the expected
+    template directory with at least one expected file. More detailed testing
+    left to called methods.
+    """
+
+    config, assignment_name, release_path = course_structure_assignment
+    course_dir = Path(config["course_directory"])
+    templates_dir = Path(config["template_dir"])
+
+    abctemplate.create_template(
+        assignment_name, push_to_github=False, custom_message=False
+    )
+
+    expected_template_dir = Path(
+        course_dir, templates_dir, "{}-template".format(assignment_name)
+    )
+    assert expected_template_dir.exists()
+    assert Path(expected_template_dir, "readme.md").exists()
+    assert Path(expected_template_dir, ".git").exists()
+
+
+def test_create_template_no_assignment(sample_course_structure):
+    """
+    Test that create_template raises FileNotFoundError if there
+    is no asignment directory.
+    """
+    with pytest.raises(
+        FileNotFoundError, match="Oops, it looks like the assignment"
+    ):
+        abctemplate.create_template(
+            "assignment_test", push_to_github=False, custom_message=False
+        )
+
+
 def test_create_template_dir_move_git_dir(course_structure_assignment):
     """
     Tests that if have already created a local git repo in a template
@@ -117,113 +151,74 @@ def test_create_template_dir_move_git_dir(course_structure_assignment):
     assert Path(template_path, ".git").exists()
 
 
-def test_copy_assignment_files(course_structure_assignment):
-    """Test that files are moved to the template repo directory and that
-    ignored files are NOT moved.
+def test_copy_files_to_template_repo(course_structure_assignment):
+    """
+    Test that files and directories in the release directory are
+    correctly copied to
+    template repo, skipping files in the files_to_ignore list.
+    """
+    config, assignment_name, release_path = course_structure_assignment
+    template_path = abctemplate.create_template_dir(config, assignment_name)
+
+    abctemplate.copy_files_to_template_repo(
+        config, template_path, assignment_name, release_path
+    )
+
+    # Test for specific files that we expect and those we don't -
+    #  this depends on the test data specified in conftest.py
+    # We can't iterate through release_path and check against
+    #  files_to_ignore without re-implementing the exact
+    #  shutil.ignore_patterns factory function used by utils.abccopytree
+    assert Path(template_path, "nb1.ipynb").exists()
+    assert Path(template_path, ".DS_Store").exists() is False
+    assert Path(template_path, "junk.csv").exists() is False
+    assert Path(template_path, "subdirectory").is_dir()
+    assert Path(template_path, "subdirectory", "nestedscript.py").exists()
+
+
+def test_copy_files_to_template_repo_extra_files(course_structure_assignment):
+    """
+    Test that files and directories in the extra_files directory are
+    correctly copied to template repo.
+    """
+    config, assignment_name, release_path = course_structure_assignment
+    template_path = abctemplate.create_template_dir(config, assignment_name)
+
+    # create a subdirectory and file in extra_files
+    Path("extra_files", ".github").mkdir()
+    Path("extra_files", ".github", "workflow.yml").touch()
+
+    abctemplate.copy_files_to_template_repo(
+        config, template_path, assignment_name, release_path
+    )
+
+    assert Path(template_path, "readme.md").exists()
+    assert Path(template_path, ".github").exists()
+    assert Path(template_path, ".github", "workflow.yml").exists()
+
+
+def test_copy_files_to_template_repo_no_extra_files(
+    course_structure_assignment,
+):
+    """
+    Test that the copy_files_to_template_repo method does not fail when
+    the extra_files dir does not exist.
     """
 
-    sample_config, assignment_name, release_path = course_structure_assignment
-
-    template_path = abctemplate.create_template_dir(
-        sample_config, assignment_name
+    config, assignment_name, release_path = course_structure_assignment
+    template_path = abctemplate.create_template_dir(config, assignment_name)
+    # rename the existing extra_files directory
+    Path("extra_files").rename("extra_files_renamed")
+    abctemplate.copy_files_to_template_repo(
+        config, template_path, assignment_name, release_path
     )
-    # # I think i can remove the stuff below now...
-    # release_path = Path(
-    #     sample_config["course_directory"],
-    #     sample_config["course_materials"],
-    #     "release",
-    #     assignment_name,
-    # )
-    # release_path.mkdir(parents=True, exist_ok=True)
-    # Should we test that the message printed is what we expect here?
-    abctemplate.copy_assignment_files(
-        sample_config, template_path, release_path
-    )
-    files_to_ignore = sample_config["files_to_ignore"]
-
-    # Test that both text files have been moved to the template dir but that
-    # the system .DS_Store is not there
-    for afile in os.listdir(release_path):
-        if afile not in files_to_ignore:
-            assert afile in os.listdir(template_path)
-        else:
-            assert afile not in os.listdir(template_path)
-
-
-# TODO - revisit this test as there is no error or print message thrown now...
-def test_copy_assignment_dirs(course_structure_assignment, capfd):
-    """Test that when there is a directory in the extra_files dir, things
-    still copy as expected.
-    """
-    sample_config, assignment_name, release_path = course_structure_assignment
-
-    # Manually create the dir to just test the copy function - this could be
-    # a third fixture... i'm being forced to use full paths - not sure if this
-    # is ideal
-    template_path = Path(
-        sample_config["course_directory"],
-        sample_config["template_dir"],
-        assignment_name + "-template",
-    )
-    template_path.mkdir(parents=True, exist_ok=True)
-    # release_dir = Path(sample_config["course_directory"],
-    #                    sample_config["course_materials"],
-    #                    "release",
-    #                    assignment_name)
-    # Create an empty directory to test what happens
-    release_path.joinpath("dummy-dir").mkdir(exist_ok=True)
-    abctemplate.copy_assignment_files(
-        sample_config, template_path, release_path
-    )
-    # This test is no longer relevant - i made it so it passes ...
-    # Revisit thi
-    # out, err = capfd.readouterr()
-    # print(out)
-    # assert "Oops - looks like" in out
-
-
-# Ok this test also isn't relevant as i moved the actual test for the dir
-# existing above to ensure an empty directory isn't created. this function
-# only copies assignment files assuming the dirs exist
-def test_copy_assignment_files_fails_nodir(course_structure_assignment):
-    """Test that copy_assignment_files fails if course_materials dir does not
-    exist"""
-
-    sample_config, assignment_name, release_path = course_structure_assignment
-
-    # default_config["course_directory"] = tmp_path
-    # assignment_name = "assignment1"
-    # I think this is created in the fixture
-    # template_repo = abctemplate.create_template_dir(
-    #     sample_config, assignment_name
-    # )
-
-    # Delete the nbgrader assignment directory
-    shutil.rmtree(release_path)
-
-    # with pytest.raises(FileNotFoundError,
-    #                    match="No such file or directory:"):
-    #     abctemplate.copy_assignment_files(
-    #         sample_config, template_repo, release_path
-    #     )
-
-
-def test_create_extra_files(course_structure_assignment):
-    """Test that create extra files actually moves files. """
-
-    sample_config, assignment_name, release_path = course_structure_assignment
-    template_repo = abctemplate.create_template_dir(
-        sample_config, assignment_name
-    )
-    abctemplate.copy_extra_files(sample_config, template_repo, assignment_name)
-    assert Path(template_repo, "readme.md").exists()
-    assert Path(template_repo, ".gitignore").exists()
-
-
-# Test for adding assignment name to readme contents
+    assert Path(template_path, "readme.md").exists() is False
 
 
 def test_add_assignment_to_readme(tmp_path):
+    """
+    Test that add_assignment_to_readme correctly modifies the readme file.
+    """
     assignment = "assignment1"
     path_to_readme = Path(tmp_path, "testreadme.md")
     readme_contents = ["# readme\n", "\n", "another line\n"]
