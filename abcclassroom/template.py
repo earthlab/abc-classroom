@@ -27,12 +27,16 @@ def new_update_template(args):
     ----------
     args : command line arguments
     """
-    create_template(
-        mode=args.mode,
-        push_to_github=args.github,
-        custom_message=args.custom_message,
-        assignment_name=args.assignment,
-    )
+
+    try:
+        create_template(
+            mode=args.mode,
+            push_to_github=args.github,
+            custom_message=args.custom_message,
+            assignment_name=args.assignment,
+        )
+    except FileNotFoundError as e:
+        print(e)
 
 
 def create_template(
@@ -81,13 +85,13 @@ def create_template(
     # release directory, if not, fail gracefully
     try:
         release_path.resolve(strict=True)
-    except FileNotFoundError:
+    except FileNotFoundError as e:
+        print(e)
         raise FileNotFoundError(
-            "Oops, it looks like the assignment - {} - doesn't yet"
-            " exist in the location that I expected it: {}. Did "
+            "Oops, it looks like the assignment - {} - does not exist"
+            "in the location that I expected it: \n{}. \nDid "
             "you spell the assignment name correctly and is there a "
-            "directory at this path: "
-            "?".format(assignment_name, release_path)
+            "directory at this path?".format(assignment_name, release_path)
         )
 
     # If the assignment exists, then create directory

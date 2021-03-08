@@ -9,16 +9,6 @@ import abcclassroom.config as cf
 
 # Tests here use the course setup fixtures in conftest.py
 
-# Is there something wrong with running abc-quickstart and got all dirs
-# and the config file are then setup That was as the quickstart is changed
-# the tests will all be dependent upon it
-
-
-# @pytest.fixture
-# def config_file(default_config, tmp_path):
-#     """Writes the config to a file in tmp_path"""
-#     cf.write_config(default_config, tmp_path)
-
 
 def test_create_template_dir(course_structure_assignment):
     """
@@ -96,9 +86,9 @@ def test_create_template_dir_delete_when_exists(course_structure_assignment):
 
 def test_create_template(course_structure_assignment):
     """
-    Test that the create_template method creates the expected
-    template directory with at least one expected file. More detailed testing
-    left to called methods.
+    Test that the top-level create_template method creates the expected
+    template directory with at least one expected file. More detailed
+    testing left to called methods.
     """
 
     config, assignment_name, release_path = course_structure_assignment
@@ -120,7 +110,7 @@ def test_create_template(course_structure_assignment):
 def test_create_template_no_assignment(sample_course_structure):
     """
     Test that create_template raises FileNotFoundError if there
-    is no asignment directory.
+    is no matching assignment in the release directory.
     """
     with pytest.raises(
         FileNotFoundError, match="Oops, it looks like the assignment"
