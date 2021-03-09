@@ -15,7 +15,8 @@ import abcclassroom.config as cf
 @pytest.fixture
 def test_data():
     """Creates a  course structure with student and file names to ensure
-    consistent creation of elements in all fixtures"""
+    consistent creation of elements in all fixtures. Note that some tests
+    depend on specific files, so check if modifying this list."""
     test_data = {
         "assignments": "assignment1",
         "students": ["bert", "alana"],
