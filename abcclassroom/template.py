@@ -35,8 +35,12 @@ def new_update_template(args):
             custom_message=args.custom_message,
             assignment_name=args.assignment,
         )
-    except FileNotFoundError as e:
-        print(e)
+    except FileNotFoundError as fnfe:
+        # if the assignment does not exist in course_materials/release
+        print(fnfe)
+    except FileExistsError as fee:
+        # if mode = fail and assignment repository already exists
+        print(fee)
 
 
 def create_template(
@@ -72,7 +76,7 @@ def create_template(
 
     print("Loading configuration from config.yml")
     config = cf.get_config()
-
+    cf.print_config()
     # Set up the path to the assignment files, which are in
     # course_dir/materials_dir/release/assignment_name
     course_dir = cf.get_config_option(config, "course_directory", True)
