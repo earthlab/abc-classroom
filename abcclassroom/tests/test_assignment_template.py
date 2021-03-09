@@ -1,4 +1,5 @@
 # Tests for new-template and update-template scripts
+# Tests here use the course setup fixtures in conftest.py
 
 import pytest
 from pathlib import Path
@@ -6,82 +7,6 @@ from pathlib import Path
 import abcclassroom.template as abctemplate
 import abcclassroom.github as github
 import abcclassroom.config as cf
-
-# Tests here use the course setup fixtures in conftest.py
-
-
-def test_create_template_dir(course_structure_assignment):
-    """
-    Tests that create_template_dir with default mode "fail" creates a
-    directory with the expected name.
-    """
-    config, assignment_name, release_path = course_structure_assignment
-
-    # # If we did the above, then we could remove a lot of this here
-    # default_config["course_directory"] = tmp_path
-    # templates_dir = default_config["template_dir"]
-    # assignment_name = "test_assignment"
-    template_path = abctemplate.create_template_dir(config, assignment_name)
-    assert Path(template_path).is_dir()
-
-    course_dir = cf.get_config_option(config, "course_directory", True)
-    templates_dir = cf.get_config_option(config, "template_dir", True)
-    assert template_path == Path(
-        course_dir, templates_dir, "{}-template".format(assignment_name)
-    )
-
-
-def test_create_template_dir_fail_when_exists(course_structure_assignment):
-    """
-    Tests that create_template_dir with default mode "fail" does indeed
-    throw FileExistsError when the directory already exists.
-    """
-    config, assignment_name, release_path = course_structure_assignment
-    abctemplate.create_template_dir(config, assignment_name)
-
-    # If run again, it should fail given the dir already exists
-    with pytest.raises(
-        FileExistsError, match=("Oops! The directory specified")
-    ):
-        abctemplate.create_template_dir(config, assignment_name)
-
-
-def test_create_template_dir_merge_when_exists(course_structure_assignment):
-    """
-    Tests that create_template_dir with mode "merge" does not fail when
-    directory already exists.
-    """
-    config, assignment_name, release_path = course_structure_assignment
-    abctemplate.create_template_dir(config, assignment_name)
-
-    # The test here is that there is no failure? or is there something we
-    # can explicetly test here? - the method simply returns and does nothing
-    # in this case, so I am not sure what else to test
-    abctemplate.create_template_dir(config, assignment_name, "merge")
-
-
-def test_create_template_dir_delete_when_exists(course_structure_assignment):
-    """
-    Tests that create_template_dir with mode "delete" re-creates a
-    directory with the same name without keeping contents.
-    """
-
-    config, assignment_name, release_path = course_structure_assignment
-    template_path = abctemplate.create_template_dir(config, assignment_name)
-    # create a file in the template dir
-    testfile = Path(template_path, "file1.txt")
-    testfile.touch()
-
-    # Run in delete mode
-    contents_before = list(Path(template_path).rglob("*"))
-    assert len(contents_before) > 0
-    assert testfile.exists()
-    template_path = abctemplate.create_template_dir(
-        config, assignment_name, "delete"
-    )
-    contents_after = list(Path(template_path).rglob("*"))
-    assert testfile.exists() is False
-    assert len(contents_after) == 0
 
 
 def test_create_template(course_structure_assignment):
@@ -109,7 +34,7 @@ def test_create_template(course_structure_assignment):
 
 def test_create_template_no_assignment(sample_course_structure):
     """
-    Test that create_template raises FileNotFoundError if there
+    Test that top-level create_template raises FileNotFoundError if there
     is no matching assignment in the release directory.
     """
     with pytest.raises(
@@ -118,6 +43,82 @@ def test_create_template_no_assignment(sample_course_structure):
         abctemplate.create_template(
             "assignment_test", push_to_github=False, custom_message=False
         )
+
+
+def test_create_template_dir(course_structure_assignment):
+    """
+    Tests that create_template_dir with default mode "fail" creates a
+    directory with the expected name.
+    """
+    config, assignment_name, release_path = course_structure_assignment
+
+    template_path = abctemplate.create_template_dir(config, assignment_name)
+    assert Path(template_path).is_dir()
+
+    course_dir = cf.get_config_option(config, "course_directory", True)
+    templates_dir = cf.get_config_option(config, "template_dir", True)
+    assert template_path == Path(
+        course_dir, templates_dir, "{}-template".format(assignment_name)
+    )
+
+
+def test_create_template_dir_fail_when_exists(course_structure_assignment):
+    """
+    Tests that create_template_dir with default mode "fail" does indeed
+    throw FileExistsError when the directory already exists.
+    """
+    config, assignment_name, release_path = course_structure_assignment
+    abctemplate.create_template_dir(config, assignment_name)
+
+    # If run again, it should fail given the dir already exists
+    with pytest.raises(
+        FileExistsError, match=("Oops! The directory specified")
+    ):
+        abctemplate.create_template_dir(config, assignment_name)
+
+
+def test_create_template_dir_merge_when_exists(course_structure_assignment):
+    """
+    Tests that create_template_dir with mode "merge" does not fail and
+    copies additional files when directory already exists.
+    """
+    config, assignment_name, release_path = course_structure_assignment
+    abctemplate.create_template_dir(config, assignment_name)
+
+    # Make some changes to the release dir
+    # Create a new file in release_path
+    Path(release_path, "new-notebook.ipynb").touch()
+    # And re-name an existing file
+    Path(release_path, "nb1.ipynb").replace(Path(release_path, "nb-1.ipynb"))
+    # re-run with mode==merge, should not fail and should create new file
+    abctemplate.create_template_dir(config, assignment_name, "merge")
+    assert Path(release_path, "new-notebook.ipynb").exists()
+    assert Path(release_path, "nb1.ipynb").exists() is False
+    assert Path(release_path, "nb-1.ipynb").exists()
+
+
+def test_create_template_dir_delete_when_exists(course_structure_assignment):
+    """
+    Tests that create_template_dir with mode "delete" re-creates a
+    directory with the same name without keeping contents.
+    """
+
+    config, assignment_name, release_path = course_structure_assignment
+    template_path = abctemplate.create_template_dir(config, assignment_name)
+    # create a file in the template dir
+    testfile = Path(template_path, "file1.txt")
+    testfile.touch()
+
+    # Run in delete mode
+    contents_before = list(Path(template_path).rglob("*"))
+    assert len(contents_before) > 0
+    assert testfile.exists()
+    template_path = abctemplate.create_template_dir(
+        config, assignment_name, "delete"
+    )
+    contents_after = list(Path(template_path).rglob("*"))
+    assert testfile.exists() is False
+    assert len(contents_after) == 0
 
 
 def test_create_template_dir_move_git_dir(course_structure_assignment):
@@ -155,9 +156,9 @@ def test_copy_files_to_template_repo(course_structure_assignment):
     )
 
     # Test for specific files that we expect and those we don't -
-    #  this depends on the test data specified in conftest.py
+    #  this depends on the specific test data in conftest.py
     # We can't iterate through release_path and check against
-    #  files_to_ignore without re-implementing the exact
+    #  files_to_ignore without re-implementing here the exact
     #  shutil.ignore_patterns factory function used by utils.abccopytree
     assert Path(template_path, "nb1.ipynb").exists()
     assert Path(template_path, ".DS_Store").exists() is False
