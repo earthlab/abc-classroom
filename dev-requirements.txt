@@ -8,5 +8,5 @@ sphinx==3.5.1
 tox==3.23.0
 sphinx-autobuild==2020.9.1
 sphinx_copybutton==0.3.1
-pydata_sphinx_theme==0.4.1
+pydata_sphinx_theme==0.4.3
 black==20.8b1
