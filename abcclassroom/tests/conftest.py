@@ -114,7 +114,7 @@ def course_with_student_clones(
     """
     Creates the final piece of a typical course including student cloned
     repos for the assignment. Student names and list of files come
-    from test_data fixture
+    from test_data fixture.
     """
     config, assignment_name, release_path = course_structure_assignment
 
@@ -128,5 +128,11 @@ def course_with_student_clones(
         )
         assignment_path.mkdir(parents=True, exist_ok=True)
         for f in test_data["files"]:
-            Path(assignment_path, f).touch()
+            fname = Path(f).name
+            if f == fname:
+                Path(assignment_path, f).touch()
+            else:
+                fparent = Path(assignment_path, Path(f).parent)
+                fparent.mkdir(parents=True, exist_ok=True)
+                Path(fparent, fname).touch()
     return config, assignment_name, students
