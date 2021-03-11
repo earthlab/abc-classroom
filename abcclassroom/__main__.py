@@ -35,8 +35,20 @@ def init():
     GitHub authentication yaml file, and if there isn't, create a valid file.
     """
 
-    print("Setting up GitHub API access")
+    print("Step 1: Setting up GitHub API access")
     github.get_access_token()
+
+    print(
+        """Step 2: Checking ssh access to GitHub. If you have not
+        connected before, you will see a message with an RSA fingerprint
+        asking if you want to continue connecting. Enter yes.
+        """
+    )
+    try:
+        github.check_git_ssh()
+        print("Access to GitHub via SSH seems to be configured correctly")
+    except RuntimeError:
+        pass
 
 
 def clone():
