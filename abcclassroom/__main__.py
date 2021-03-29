@@ -155,6 +155,27 @@ def new_template():
     template.new_update_template(args)
 
 
+def roster():
+    """Given a csv file containing a roster downloaded from Github
+    Classroom, creates an new file by adding an `id` column that contains
+    the github username. New file named `abc-classroom` unless alternate
+    name specified. The new roster file can be
+    used as the roster for both abc-classroom and nbgrader. Overwrites
+    existing roster file with same name.
+    """
+    parser = argparse.ArgumentParser(description=update_template.__doc__)
+    parser.add_argument(
+        "github_roster",
+        help="""A csv file in the format downloaded from GitHub Classroom.
+        Must contain github_username column.""",
+    )
+    parser.add_argument(
+        "--filename",
+        default="abc_roster.csv",
+        help="""The name of the new roster file, default is abc_roster.csv""",
+    )
+
+
 def update_template():
     """
     Updates an existing assignment template repository: update / add new and
