@@ -87,7 +87,12 @@ def clone_repos(assignment_name, skip_existing=False, no_submitted=True):
     """
 
     print("Loading configuration from config.yml")
-    config = cf.get_config()
+    try:
+        config = cf.get_config()
+    except (FileNotFoundError, RuntimeError) as err:
+        print(err)
+        return
+
     roster_filename = cf.get_config_option(config, "roster", True)
     course_dir = cf.get_config_option(config, "course_directory", True)
     clone_dir = cf.get_config_option(config, "clone_dir", True)

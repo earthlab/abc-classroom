@@ -77,7 +77,7 @@ def create_template(
     print("Loading configuration from config.yml")
     try:
         config = cf.get_config()
-    except RuntimeError as err:
+    except (FileNotFoundError, RuntimeError) as err:
         print(err)
         return
     # Set up the path to the assignment files, which are in
