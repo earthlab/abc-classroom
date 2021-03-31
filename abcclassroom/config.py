@@ -4,12 +4,12 @@ abc-classroom.config
 
 """
 
-import sys
 import pprint
 from pathlib import Path
 import os.path as op
 
 from ruamel.yaml import YAML
+import ruamel.yaml.composer
 
 
 def get_github_auth():
@@ -57,6 +57,16 @@ def set_github_auth(auth_info):
 
 
 def get_config(configpath=None):
+    """Attempts to read a config file at the provided path (or at
+    "config.yml" if no path provided). Throws FileNotFoundError if no
+    config file found, and RuntimeError if there
+    is a problem reading the file.
+
+    Returns
+    -------
+    ruamel.yaml.comments.CommentedMap
+        Yaml object that contains the contents of the config file.
+    """
     yaml = YAML()
     try:
         if configpath is None:
@@ -66,16 +76,23 @@ def get_config(configpath=None):
         with open(configpath) as f:
             config = yaml.load(f)
         return config
+    except ruamel.yaml.composer.ComposerError:
+        raise RuntimeError(
+            "Error reading config.yml. This can happen if the config "
+            "contains an unquoted *. Try adding quotes around any wildcards "
+            "in the config, e.g. '*.csv'. See "
+            "https://abc-classroom.readthedocs.io/en/latest/get-started/configuration.html "  # noqa
+            "for details."
+        )
     except FileNotFoundError:
-        configpath.resolve()
-        print(
+        c = configpath.resolve()
+        raise FileNotFoundError(
             "Oops! I can't seem to find a config.yml file at {}. "
             "Are you in the top-level directory for the course? If you don't "
             "have a course directory and config file "
             "setup yet, you can create one using abc-quickstart"
-            ".\n".format(configpath)
+            ".\n".format(c)
         )
-        sys.exit(1)
 
 
 def print_config(config=None, configpath=None):
