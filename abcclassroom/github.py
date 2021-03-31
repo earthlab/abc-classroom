@@ -61,6 +61,65 @@ def get_access_token():
     return access_token
 
 
+def check_git_ssh():
+    """Tests that ssh access to GitHub is set up correctly on the users
+    computer.
+
+    Throws a RuntimeError if setup is not working.
+    """
+    cmd = ["ssh", "-T", "git@github.com"]
+    try:
+        subprocess.run(
+            cmd,
+            check=True,
+            universal_newlines=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+    except subprocess.CalledProcessError as e:
+        # We ALWAYS will get here, because that subprocess call returns
+        # a non-zero exit code whether ssh access is set up correctly or
+        # not. Must check output.
+        subprocess_out = e.stderr
+        if not subprocess_out:
+            subprocess_out = e.stdout
+        if subprocess_out.startswith("Hi"):
+            # if everything set up correctly, the ssh test returns output
+            # starting with 'Hi username!'
+            pass
+        elif subprocess_out.startswith("Warning: Permanently"):
+            # if the user has set up ssh keys, but hasn't logged in yet,
+            # they will need to verify the RSA fingerprint
+            # If they do so, the message is 'Warning: Permanently
+            # added 'github.com' (RSA) to the list of known hosts.'
+            print(subprocess_out)
+            pass
+        else:
+            # possible reasons to get here include 1. no ssh key set up;
+            # 2. ssh key has incorrect permissions; 3. remote host
+            # identification changed. We print the error message for
+            # the user and point them to github documentation for help.
+            print("Encountered this error checking ssh access to git:")
+            print(subprocess_out)
+            docURL = "https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh"  # noqa
+            print(
+                """Your ssh access to github is not set up correctly; see
+            {}.""".format(
+                    docURL
+                )
+            )
+            raise RuntimeError(subprocess_out)
+    except FileNotFoundError as e:
+        # we get here if ssh is not installed. The error message is
+        # [Errno 2] No such file or directory: 'ssh'
+        print(e)
+        if "No such file or directory: 'ssh'" in str(e):
+            print(
+                """Did not find `ssh` command. Make sure that open-ssh
+                is installed on your operating system."""
+            )
+
+
 def _get_authenticated_user(token):
     """Test the validity of an access token.
 
@@ -178,16 +237,19 @@ def remote_repo_exists(org, repository, token=None):
 
 def clone_repo(organization, repo, dest_dir):
     """Clone `repository` from `org` into a sub-directory in `directory`.
-    Assumes you have ssh keys setup for github (rather than using GitHub API
-    token)."""
-    # If ssh  it not setup correctly -  or however we want to authenticate,
-    # we need a
-    # friendly message about that
-    # We should add some message about what is being cloned here - the  url
-    # works
-    url = "git@github.com:{}/{}.git".format(organization, repo)
-    print("cloning:", url)
-    _call_git("-C", dest_dir, "clone", url)
+
+    Raises RuntimeError if ssh keys not set up correctly, or if git clone
+    fails for other reasons.
+    """
+
+    try:
+        # first, check that local git set up with ssh keys for github
+        check_git_ssh()
+        url = "git@github.com:{}/{}.git".format(organization, repo)
+        print("cloning:", url)
+        _call_git("-C", dest_dir, "clone", url)
+    except RuntimeError as e:
+        raise e
 
 
 def create_repo(org, repository, token):
@@ -323,8 +385,10 @@ def _master_branch_to_main(dir):
 
 
 def push_to_github(directory, branch="main"):
-    """Push `branch` back to GitHub"""
+    """Push `branch` of the repository in `directory` back to GitHub"""
     try:
+        # first, check that local git set up with ssh keys for github
+        check_git_ssh()
         _call_git(
             "push", "--set-upstream", "origin", branch, directory=directory
         )
@@ -332,9 +396,11 @@ def push_to_github(directory, branch="main"):
         raise e
 
 
-def pull_from_github(directory, branch="master"):
+def pull_from_github(directory, branch="main"):
     """Pull `branch` of local repo in `directory` from GitHub"""
     try:
+        # first, check that local git set up with ssh keys for github
+        check_git_ssh()
         _call_git("pull", "origin", branch, directory=directory)
     except RuntimeError as e:
         raise e

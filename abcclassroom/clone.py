@@ -39,9 +39,17 @@ def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
                 )
             )
             return
-        gh.pull_from_github(destination_dir)
+        try:
+            gh.pull_from_github(destination_dir)
+        except RuntimeError as e:
+            print("Error pulling repository {}".format(destination_dir))
+            print(e)
     else:
-        gh.clone_repo(organization, repo, clone_dir)
+        try:
+            gh.clone_repo(organization, repo, clone_dir)
+        except RuntimeError as e:
+            print("Error cloning repository {}".format(repo))
+            print(e)
 
 
 def clone_student_repos(args):

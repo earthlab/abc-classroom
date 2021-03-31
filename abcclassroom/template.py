@@ -139,8 +139,8 @@ def create_or_update_remote(
     template_repo_path, organization, repo_name, token
 ):
     """
-    Push template repo to github creating a new repository or update the
-    repo's contents
+    Push template repo to GitHub. If remote does not yet exist, creates it
+    before pushing.
 
     Parameters
     ----------
@@ -175,7 +175,7 @@ def create_or_update_remote(
         print(
             """Push to github failed. This is usually because there are
             changes on the remote that you do not have locally. Here is the
-            github error:"""
+            git error:"""
         )
         print(e)
 

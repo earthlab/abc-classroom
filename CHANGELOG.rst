@@ -17,8 +17,9 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 - Modify how we generate an access token for GitHub API access due to upcoming deprecation of username + password authentication (@kcranston, #328)
 - Make new repositories use 'main' instead of 'master' as the default branch (@kcranston, #326)
 - Fix manged abc-quickstart success message (@kcranston, #367)
-- Refactor the main-to-master branch renaming for better error handling and usability (@kcranston, #363)
 - Implement copy_file helper for copying files from one dir to another (@kcranston, #382)
+- Check for working ssh keys before git commands that connect to github (@kcranston, #366)
+- Fix bug where git pull method was still trying to use master as the default branch rather than main (@kcranston, #376)
 
 [0.1.8]
 ------------
