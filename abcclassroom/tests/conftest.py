@@ -43,7 +43,7 @@ def default_config():
         "template_dir": "test_template",
         "course_materials": "nbgrader",
         "clone_dir": "cloned_repos",
-        "files_to_ignore": [".DS_Store", ".ipynb_checkpoints"],
+        "files_to_ignore": [".DS_Store", ".ipynb_checkpoints", "*.csv"],
         "files_to_grade": [".py", ".ipynb"],
     }
     return config
