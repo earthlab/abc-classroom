@@ -75,8 +75,11 @@ def create_template(
     """
 
     print("Loading configuration from config.yml")
-    config = cf.get_config()
-    cf.print_config()
+    try:
+        config = cf.get_config()
+    except RuntimeError as err:
+        print(err)
+        return
     # Set up the path to the assignment files, which are in
     # course_dir/materials_dir/release/assignment_name
     course_dir = cf.get_config_option(config, "course_directory", True)
