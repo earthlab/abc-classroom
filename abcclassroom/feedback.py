@@ -113,8 +113,11 @@ def copy_feedback_files(assignment_name, push_to_github=False, scrub=False):
                         )
 
     except FileNotFoundError as err:
-        print("Missing file or directory:")
-        print(" ", err)
+        abs_roster_path = Path(roster_filename).resolve()
+        raise FileNotFoundError(
+            "Cannot find roster file: {}".format(abs_roster_path)
+        )
+        print(err)
 
 
 def copy_feedback(args):

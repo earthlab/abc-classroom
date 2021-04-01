@@ -176,8 +176,9 @@ def clone_repos(assignment_name, skip_existing=False, no_submitted=True):
                     print(" {}".format(astudent))
 
     except FileNotFoundError as err:
+        abs_roster_path = Path(roster_filename).resolve()
         raise FileNotFoundError(
-            "Cannot find roster file: {}".format(roster_filename)
+            "Cannot find roster file: {}".format(abs_roster_path)
         )
         print(err)
 
