@@ -105,8 +105,8 @@ def create_dir_struct(course_name="abc_course", force=False, working_dir=None):
     # Copy the sample roster over to the new quickstart dir
     # TODO make sure the name of this file matches the default config name
     try:
-        sample_roster = path_to_example("sample_roster.csv")
-        copy(sample_roster, Path(main_dir))
+        classroom_roster = path_to_example("classroom_roster.csv")
+        copy(classroom_roster, Path(main_dir))
     except FileNotFoundError as err:
         print(
             """Sample config.yml configuration file cannot be located at {},

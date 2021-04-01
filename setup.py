@@ -49,7 +49,7 @@ setup(
     package_data={
         "abcclassroom": [
             "example-data/readme.md",
-            "example-data/sample_roster.csv",
+            "example-data/classroom_roster.csv",
             "example-data/config.yml",
             "example-data/extra_files/README.md",
             "example-data/extra_files/.gitignore",
