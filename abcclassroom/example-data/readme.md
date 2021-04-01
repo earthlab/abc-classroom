@@ -12,8 +12,9 @@ The template config file. When you run `abc-quickstart`, it copies this config i
 
 ## classroom_roster.csv
 
-A sample course roster (matching the format downloaded from [GitHub classroom](https://classroom.github.com/)). This file is copied by not used by `abc-quickstart` into the course materials directory as a sample of the roster
-format.
+A sample course roster (matching the format downloaded from [GitHub classroom](https://classroom.github.com/)). This file is copied by
+`abc-quickstart` into the course materials directory as a sample of
+the roster format.
 
 ## extra_files
 
