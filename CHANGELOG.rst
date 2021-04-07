@@ -8,7 +8,11 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 
 [unreleased]
 ------------
-
+- Check for working ssh keys before git commands that connect to github (@kcranston, #366)
+- Fix bug where git pull method was still trying to use master as the default branch rather than main (@kcranston, #376)
+- Use classroom_roster.csv consistently for roster filename (@kcranston, #383)
+- abc-clone and abc-feedback use same roster handling and print full path if FileNotFoundError (@kcranston, #384)
+- new abc-roster script that creates nbgrader-formatted roster from GitHub Classroom roster (@kcranston, #59)
 
 [0.1.9]
 ------------
@@ -18,11 +22,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 - Make new repositories use 'main' instead of 'master' as the default branch (@kcranston, #326)
 - Fix manged abc-quickstart success message (@kcranston, #367)
 - Refactor the main-to-master branch renaming for better error handling and usability (@kcranston, #363)
-- Check for working ssh keys before git commands that connect to github (@kcranston, #366)
-- Fix bug where git pull method was still trying to use master as the default branch rather than main (@kcranston, #376)
-- Use classroom_roster.csv consistently for roster filename (@kcranston, #383)
-- abc-clone and abc-feedback use same roster handling and print full path if FileNotFoundError (@kcranston, #384)
-- new abc-roster script that creates nbgrader-formatted roster from GitHub Classroom roster (@kcranston, #59)
+
 
 [0.1.8]
 ------------
