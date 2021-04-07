@@ -22,6 +22,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 - Fix bug where git pull method was still trying to use master as the default branch rather than main (@kcranston, #376)
 - Use classroom_roster.csv consistently for roster filename (@kcranston, #383)
 - abc-clone and abc-feedback use same roster handling and print full path if FileNotFoundError (@kcranston, #384)
+- new abc-roster script that creates nbgrader-formatted roster from GitHub Classroom roster (@kcranston, #59)
 
 [0.1.8]
 ------------
