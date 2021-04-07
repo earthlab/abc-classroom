@@ -63,6 +63,7 @@ setup(
             "abc-update-template = abcclassroom.__main__:update_template",
             "abc-clone = abcclassroom.__main__:clone",
             "abc-feedback = abcclassroom.__main__:feedback",
+            "abc-roster = abcclassroom.__main__:roster",
         ]
     },
     url="https://github.com/earthlab/abc-classroom",
