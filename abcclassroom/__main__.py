@@ -181,8 +181,15 @@ def roster():
         nbgrader_roster.csv. Created in the course_materials directory,
         as defined in config.yml""",
     )
+    parser.add_argument(
+        "-n",
+        "--namecolumn",
+        default="name",
+        help="""The column to split to make the new columns
+        first_name and last_name. Default is 'name'.""",
+    )
     args = parser.parse_args()
-    create_roster(args.github_roster, args.outfile)
+    create_roster(args.github_roster, args.outfile, args.namecolumn)
 
 
 def update_template():

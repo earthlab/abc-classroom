@@ -5,13 +5,14 @@ abc-classroom.roster
 """
 
 import csv
-import pprint
 from pathlib import Path
 
 from . import config as cf
 
 
-def create_roster(input_file, output_file="nbgrader_roster.csv"):
+def create_roster(
+    input_file, output_file="nbgrader_roster.csv", column_to_split="name"
+):
     """Given a roster file downloaded from GitHub Classroom, creates
     a roster file suitable for use with abc-classroom and nbgrader.
 
@@ -21,6 +22,9 @@ def create_roster(input_file, output_file="nbgrader_roster.csv"):
         Path to the GitHub Classroom roster
     output_file: string
         Name of the output file. Default is abc_roster.csv
+    column_to_split : string
+        The column that we want to split to create the new columns
+        first_name and last_name. Default is "name".
 
     """
     # create path to input file
@@ -58,19 +62,21 @@ def create_roster(input_file, output_file="nbgrader_roster.csv"):
         ) as csv_output:
             reader = csv.DictReader(csv_input)
             columns = reader.fieldnames
-            print(columns)
             columns.append("id")
             columns.append("first_name")
             columns.append("last_name")
-            print(columns)
             writer = csv.DictWriter(csv_output, fieldnames=columns)
             writer.writeheader()
             for row in reader:
                 newrow = row
                 ghname = row["github_username"]
+                if ghname == "":
+                    print("Skipping this row; no GitHub username found:")
+                    print(" ", list(row.values()))
+                    continue
                 row["id"] = ghname
-                if "name" in row:
-                    name = row["name"]
+                if column_to_split in row:
+                    name = row[column_to_split]
                     # split into two parts based on final space in field
                     # assume first part is first name and second part is
                     # last name
@@ -83,7 +89,7 @@ def create_roster(input_file, output_file="nbgrader_roster.csv"):
                         newrow["last_name"] = twonames[1]
                     except IndexError:
                         newrow["last_name"] = ""
-                pprint.pprint(newrow)
+                writer.writerow(newrow)
 
     except FileNotFoundError as err:
         # prints the error [Errno 2] No such file or directory:
