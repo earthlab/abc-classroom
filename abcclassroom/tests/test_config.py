@@ -6,22 +6,62 @@ from pathlib import Path
 
 import abcclassroom.config as abcconfig
 
-# def __write_config_file(config,tmp_path):
-#     yaml = YAML()
-#     cfpath = Path(tmp_path,"config.yml")
-#     with open(cfpath, "w") as f:
-#         yaml.dump(config, f)
 
+@pytest.fixture
+def broken_config(tmp_path):
+    """
+    Writes a improperly formatted config.yml file into the directory
+    broken_config.
+    """
 
-def test_write_config(default_config, tmp_path):
-    abcconfig.write_config(default_config, configpath=tmp_path)
-    assert Path(tmp_path, "config.yml").exists()
+    # Create directory for the config (to avoid messing up the config
+    # in tmp_path used by other tests)
+    dir = Path(tmp_path, "broken_config")
+    dir.mkdir()
+    configpath = Path(dir, "config.yml")
+
+    # write broken file (we can't use yaml / ruamel for this, because
+    # it would throw an error writing the file)
+    # The broken line is the *.csv without quotes
+    with open(configpath, "w") as f:
+        f.write("files_to_ignore:\n")
+        f.write("- .DS_Store\n")
+        f.write("- .ipynb_checkpoints\n")
+        f.write("- *.csv\n")
+
+    return dir
 
 
 def test_get_config(default_config, tmp_path):
+    """Test basic getting of config"""
     abcconfig.write_config(default_config, configpath=tmp_path)
     config = abcconfig.get_config(configpath=tmp_path)
     assert config == default_config
+
+
+def test_get_config_does_not_exist():
+    """Test that get_config throws a FileNotFoundError when the
+    given path does not exist.
+    """
+    with pytest.raises(
+        FileNotFoundError, match="Oops! I can't seem to find a config.yml"
+    ):
+        abcconfig.get_config("dirthatdoesntexist")
+
+
+def test_broken_config(broken_config):
+    """Test that we throw the right exception when the config contains
+    an unquoted wildcard (interpreted as a yaml alias)."""
+    with pytest.raises(RuntimeError, match="Error reading config.yml"):
+        abcconfig.get_config(broken_config)
+
+
+def test_write_config(default_config, tmp_path):
+    """Test that we can write the config to a custom path"""
+    testpath = Path(tmp_path, "write_config")
+    testpath.mkdir()
+    abcconfig.write_config(default_config, configpath=testpath)
+    assert Path(testpath, "config.yml").exists()
 
 
 def test_get_config_option(default_config):

@@ -18,8 +18,8 @@ def copy_feedback_files(assignment_name, push_to_github=False, scrub=False):
     """Copies feedback reports to local student repositories, commits the
     changes,
     and (optionally) pushes to github. Assumes files are in the directory
-    course_materials/feedback/student/assignment. Copies all files in the
-    source directory.
+    course_materials/feedback/student/assignment. Copies all html files in
+    the source directory.
 
     Parameters
     -----------
@@ -40,7 +40,11 @@ def copy_feedback_files(assignment_name, push_to_github=False, scrub=False):
     """
 
     print("Loading configuration from config.yml")
-    config = cf.get_config()
+    try:
+        config = cf.get_config()
+    except (FileNotFoundError, RuntimeError) as err:
+        print(err)
+        return
 
     # Get various paths from config
     # I think we do this a bunch so is it worth a helper for it?

@@ -30,10 +30,12 @@ clone_dir: cloned_repos
 # Linux or OS X or with 'C:' on Windows).
 template_dir: template_repos
 
-# A list of files that you do not want to be copied from your assignment
-# release directory to the github template repo. These may be system files
-# Checkpoints or other files that are created by various tools and operating
-# system functions. Add as many as you wish to the list below!
+# A list of file patterns that you do not want to be copied from your
+# assignment release directory to the github template repo. These may be
+# system files, checkpoints or other files that are created by various
+# tools and operating system functions. Add as many as you wish to the list
+# below! Use quoted wildcards, e.g. '*.csv', to ignore all files that match
+# a pattern.
 files_to_ignore:
 - .DS_Store
 - .ipynb_checkpoints
