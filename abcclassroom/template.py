@@ -6,7 +6,6 @@ abc-classroom.template
 import os
 import shutil
 from pathlib import Path
-import ntpath
 
 from . import config as cf
 from . import github as gh
@@ -28,12 +27,20 @@ def new_update_template(args):
     ----------
     args : command line arguments
     """
-    create_template(
-        mode=args.mode,
-        push_to_github=args.github,
-        custom_message=args.custom_message,
-        assignment_name=args.assignment,
-    )
+
+    try:
+        create_template(
+            mode=args.mode,
+            push_to_github=args.github,
+            custom_message=args.custom_message,
+            assignment_name=args.assignment,
+        )
+    except FileNotFoundError as fnfe:
+        # if the assignment does not exist in course_materials/release
+        print(fnfe)
+    except FileExistsError as fee:
+        # if mode = fail and assignment repository already exists
+        print(fee)
 
 
 def create_template(
@@ -46,8 +53,15 @@ def create_template(
     the same basic functions but with different command line arguments and
     defaults).
 
+    Creates an assignment directory in template_dir if it does not exist
+    already. Copies files from course_materials/release and from
+    extra_files, initializes as a git repo, and commits all changes.
+
     Creates an assignment entry in the config file if one does not already
     exist.
+
+    If push_to_github = True, then also pushes to github (creating the
+    remote repository if it does not already exist).
 
     Parameters
     ----------
@@ -61,32 +75,39 @@ def create_template(
     """
 
     print("Loading configuration from config.yml")
-    config = cf.get_config()
-
+    try:
+        config = cf.get_config()
+    except (FileNotFoundError, RuntimeError) as err:
+        print(err)
+        return
+    # Set up the path to the assignment files, which are in
+    # course_dir/materials_dir/release/assignment_name
     course_dir = cf.get_config_option(config, "course_directory", True)
     materials_dir = cf.get_config_option(config, "course_materials", True)
     # I think this should be moved above where it created the directory
     parent_path = utils.get_abspath(materials_dir, course_dir)
-    release_dir = Path(parent_path, "release", assignment_name)
+    release_path = Path(parent_path, "release", assignment_name)
 
-    # First check to see if there is an assignment with that name in the
+    # Check to see if there is an assignment with that name in the
     # release directory, if not, fail gracefully
     try:
-        release_dir.resolve(strict=True)
-    except FileNotFoundError:
+        release_path.resolve(strict=True)
+    except FileNotFoundError as e:
+        print(e)
         raise FileNotFoundError(
-            "Oops, it looks like the assignment - {} - doesn't yet"
-            " exist in the location that I expected it: {}. Did "
+            "Oops, it looks like the assignment - {} - does not exist"
+            "in the location that I expected it: \n{}. \nDid "
             "you spell the assignment name correctly and is there a "
-            "directory at this path: "
-            "?".format(assignment_name, release_dir)
+            "directory at this path?".format(assignment_name, release_path)
         )
 
-    # If the assignment exists, then create dirs and copy stuff
+    # If the assignment exists, then create directory
     template_repo_path = create_template_dir(config, assignment_name, mode)
-    copy_assignment_files(config, template_repo_path, release_dir)
-    # This is still copying DS_Store -- let's revisit
-    copy_extra_files(config, template_repo_path, assignment_name)
+
+    # and copy files
+    copy_files_to_template_repo(
+        config, template_repo_path, assignment_name, release_path
+    )
 
     # Create the local git repository and commit changes
     gh.init_and_commit(template_repo_path, custom_message)
@@ -192,7 +213,7 @@ def create_template_dir(config, assignment, mode="fail"):
         )
     else:
         if mode == "fail":
-            raise Exception(
+            raise FileExistsError(
                 "Oops! The directory specified: {} already exists "
                 "for this course; "
                 "re-run with --mode merge' or '--mode delete', "
@@ -201,7 +222,7 @@ def create_template_dir(config, assignment, mode="fail"):
             )
         elif mode == "merge":
             print(
-                "Oops! The directory specified: {} already exists for this"
+                "The directory specified: {} already exists for this"
                 " course; will keep directory but overwrite existing files "
                 "with same names".format(template_path.relative_to(course_dir))
             )
@@ -214,7 +235,8 @@ def create_template_dir(config, assignment, mode="fail"):
                     template_path.relative_to(course_dir)
                 )
             )
-            # Temporarily move the .git dir to the parent of the template_path
+            # Temporarily move the .git dir to the parent of the
+            # template_path (i.e. the template_repos dir in the config)
             # We do this to avoid issues if the local repo has already been
             # pushed to github (if we re-create a new repo, will get error
             # about unrelated histories when pushing)
@@ -229,115 +251,46 @@ def create_template_dir(config, assignment, mode="fail"):
 
                 # and then move the .git dir back
                 target.replace(gitdir)
+            else:
+                # remove template_path and re-create with same name
+                shutil.rmtree(template_path)
+                Path(template_path).mkdir()
 
     return template_path
 
 
-def copy_assignment_files(config, template_path, release_dir):
-    """Copy all of the files from the course_materials/release directory for the
-    assignment into the template repo directory.
+def copy_files_to_template_repo(
+    config, template_repo_path, assignment, release_path
+):
+    """
+    Copies files and directories for the assignment recursively into the
+    local template repository. Looks in release_dir and extra_files for
+    files to copy.
 
-    Parameters
-    ----------
-    config: ordered dictionary
-        Config file returned by ``get_config()`` that contains paths to the
-        course directory, github organization and other custom options
-    template_path: Pathlib Path object
-        Absolute path to the template repository where the assignment files
-        will be copied
-    release_dir: Path object
-        Path to the released assignment directory
+    If extra_files contains a readme, updates the readme with the assignment
+    name.
 
+    Excludes files and directories that match patterns in files_to_ignore.
     """
 
+    # get config options
+    files_to_ignore = cf.get_config_option(config, "files_to_ignore", False)
     course_dir = cf.get_config_option(config, "course_directory", True)
-    # materials_dir = cf.get_config_option(config, "course_materials", True)
 
-    # Turn this into a try / except? - or did i capture this test above?
-    # TODO - Write a test for this. If it fails gracefully we can remove
-    # this code
-    # if not release_dir.is_dir():
-    #     print(
-    #         "release directory {} does not exist; exiting\n".format(
-    #             release_dir
-    #         )
-    #     )
-    #     sys.exit(1)
+    # copy assignment-specific files
+    utils.copy_files(release_path, template_repo_path, files_to_ignore)
 
-    nfiles = 0
-    all_files = release_dir.glob("*")
-
-    print(
-        "Copying assignment files to {}: ".format(
-            template_path.relative_to(course_dir)
-        )
-    )
-    # TODO this could also use the copy files helper - thinking to put it in
-    # the utils module
-    # Get a list of files to ignore - maybe our default config has some
-    # could have some defaults - then remove all files that we want to ignore
-    files_to_ignore = cf.get_config_option(config, "files_to_ignore", True)
-    files_moved = []
-    for afile in all_files:
-        afile = Path(afile)
-        if afile.is_dir():
-            # TODO: Note that as written here, moving directories will fail so
-            print(
-                "Oops - looks like {} is a directory. Currently I can't "
-                "move that for you. Contact the abc-classroom maintainers"
-                "if this is a feature that you'd "
-                "like".format(afile.relative_to(course_dir))
-            )
-        else:
-            if not ntpath.basename(afile) in files_to_ignore:
-                # TODO Removed "relative_to" as This is causing issues between
-                #  str  and path
-                #  objects --- revisit
-                print("Moving: {}".format(afile))
-                # Overwrites if afile exists in template_repo
-                shutil.copy(afile, template_path)
-                files_moved.append(afile)
-                nfiles += 1
-
-    print(
-        "Copied {} files to your template assignment git repo: {}!".format(
-            nfiles, template_path
-        )
-    )
-    print("The files copied include: {}".format(files_moved))
-
-
-def copy_extra_files(config, template_repo, assignment):
-    """Copy any extra files that exist the extra_files directory
-
-    Parameters
-    ----------
-    config : Path
-        Path to the config.yml file??
-    template_repo : Path object ?
-        Path to the template repo that you wish to copy files over to. ??
-    assignment : string
-        Name of the assignment that you want to copy files over for.
-
-    """
-    course_dir = cf.get_config_option(config, "course_directory", True)
-    extra_path = Path(course_dir, "extra_files")
-
-    # TODO - implement helper for this part
-    files_to_ignore = cf.get_config_option(config, "files_to_ignore", True)
-
-    if extra_path.is_dir():
-        print("Copying extra files: ")
-        for f in extra_path.iterdir():
-            if not ntpath.basename(f) in files_to_ignore:
-                # Move file to new location
-                print(" {}".format(f.relative_to(course_dir)))
-                shutil.copy(f, template_repo)
-
-        # modify the readme with the assignment name
-        readme_path = Path(template_repo, "README.md")
+    # copy extra_files
+    extra_files_path = Path(course_dir, "extra_files")
+    try:
+        utils.copy_files(extra_files_path, template_repo_path, files_to_ignore)
+        # and add the assignment name to the readme, if it exists
+        readme_path = Path(template_repo_path, "README.md")
         if readme_path.exists():
             add_assignment_to_readme(readme_path, assignment)
+    except FileNotFoundError:
+        print("No extra_files directory found")
+        pass
 
 
 def add_assignment_to_readme(path_to_readme, assignment):
