@@ -10,6 +10,21 @@ from pathlib import Path
 from . import config as cf
 
 
+def column_to_split_exists(input_file_path, column_to_split):
+    """Given a path to the input file and a column name to
+    split into first_name, last_name, this method checks that the
+    column_to_split exists. Returns True is present and False if
+    not present.
+    """
+    column_exists = False
+    with open(input_file_path, newline="") as csv_input:
+        reader = csv.DictReader(csv_input)
+        columns = reader.fieldnames
+        if column_to_split in columns:
+            column_exists = True
+    return column_exists
+
+
 def create_roster(
     input_file, output_file="nbgrader_roster.csv", column_to_split="name"
 ):
@@ -24,7 +39,9 @@ def create_roster(
         Name of the output file. Default is abc_roster.csv
     column_to_split : string
         The column that we want to split to create the new columns
-        first_name and last_name. Default is "name".
+        first_name and last_name. Default is "name". If the column
+        provided does not exist, does not create first and last name
+        columns.
 
     """
     # create path to input file
@@ -56,6 +73,17 @@ def create_roster(
         )
         return
 
+    # check whether we are going to split an input columm into
+    # first_name, last_name
+    split_column = True
+    if not column_to_split_exists(classroom_roster_path, column_to_split):
+        print(
+            "Warning: The column '{}' does not exist in {}. Will not "
+            "create first_name, last_name columns in output "
+            "file".format(column_to_split, classroom_roster_path)
+        )
+        split_column = False
+
     try:
         with open(classroom_roster_path, newline="") as csv_input, open(
             output_file_path, "w", newline=""
@@ -63,19 +91,20 @@ def create_roster(
             reader = csv.DictReader(csv_input)
             columns = reader.fieldnames
             columns.append("id")
-            columns.append("first_name")
-            columns.append("last_name")
+            if split_column:
+                columns.append("first_name")
+                columns.append("last_name")
             writer = csv.DictWriter(csv_output, fieldnames=columns)
             writer.writeheader()
             for row in reader:
                 newrow = row
                 ghname = row["github_username"]
                 if ghname == "":
-                    print("Skipping this row; no GitHub username found:")
+                    print("Warning: Skipping row; no GitHub username found:")
                     print(" ", list(row.values()))
                     continue
                 row["id"] = ghname
-                if column_to_split in row:
+                if split_column:
                     name = row[column_to_split]
                     # split into two parts based on final space in field
                     # assume first part is first name and second part is
@@ -90,14 +119,15 @@ def create_roster(
                     except IndexError:
                         newrow["last_name"] = ""
                 writer.writerow(newrow)
+            print("New roster file at {}".format(output_file_path))
 
     except FileNotFoundError as err:
         # prints the error [Errno 2] No such file or directory:
         # 'classroom_roster_path'
         print(err)
     except KeyError as ke:
-        # prints error Error: Input file does not contain required column
-        # 'github_username'
+        # prints error Error: Input file does not contain column
+        # Happens when no github_username column
         print(
             "Error: Input file does not contain required column {}".format(ke)
         )
