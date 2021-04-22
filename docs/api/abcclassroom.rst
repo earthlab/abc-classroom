@@ -20,6 +20,7 @@ Submodules
    abcclassroom.notebook
    abcclassroom.ok
    abcclassroom.quickstart
+   abcclassroom.roster
    abcclassroom.scrub_feedback
    abcclassroom.template
    abcclassroom.utils

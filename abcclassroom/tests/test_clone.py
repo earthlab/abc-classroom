@@ -36,7 +36,9 @@ def test_roster_missing(sample_course_structure, tmp_path):
     """Test that when the roster is missing things fail gracefully."""
     # config = sample_course_structure
     assignment_name = "test_assignment"
-
+    course_name, config = sample_course_structure
+    roster_path = Path(config["course_directory"], "classroom_roster.csv")
+    roster_path.unlink()
     with pytest.raises(FileNotFoundError, match="Cannot find roster file"):
         abcclone.clone_repos(assignment_name, skip_existing=False)
 

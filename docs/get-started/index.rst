@@ -17,7 +17,8 @@ to understand the **abc-classroom** workflow.
    :maxdepth: 2
    :caption: Get Started with ABC-Classroom
 
+   ABC-Classroom Overview <overview>
    Installation & Github Authentication <get-started>
    create-course
-   ABC-Classroom Overview <overview>
+   Managing the Student Roster <classroom-roster>
    configuration

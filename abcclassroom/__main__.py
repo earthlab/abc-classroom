@@ -8,6 +8,7 @@ from . import github
 
 from .quickstart import create_dir_struct
 from .clone import clone_student_repos
+from .roster import create_roster
 
 
 def quickstart():
@@ -153,6 +154,42 @@ def new_template():
     args = parser.parse_args()
 
     template.new_update_template(args)
+
+
+def roster():
+    """Given a csv file containing a roster downloaded from Github
+    Classroom, creates new roster for use by nbgrader.
+    Two operations:
+    1. Adds an `id` column that contains the github username.
+    2. Attempts to split the `name` column into two new columns,
+    first_name and last_name.
+    Saves the new file in the course_materials directory using the
+    filename `nbgrader_roster.csv` unless you specify an alternate name.
+    Fails if output file already exists.
+    """
+    parser = argparse.ArgumentParser(description=roster.__doc__)
+    parser.add_argument(
+        "github_roster",
+        help="""A csv file in the format downloaded from GitHub Classroom.
+        Must contain github_username column.""",
+    )
+    parser.add_argument(
+        "-o",
+        "--outfile",
+        default="nbgrader_roster.csv",
+        help="""The name of the new roster file. Default is
+        nbgrader_roster.csv. Created in the course_materials directory,
+        as defined in config.yml""",
+    )
+    parser.add_argument(
+        "-n",
+        "--namecolumn",
+        default="name",
+        help="""The column to split to make the new columns
+        first_name and last_name. Default is 'name'.""",
+    )
+    args = parser.parse_args()
+    create_roster(args.github_roster, args.outfile, args.namecolumn)
 
 
 def update_template():

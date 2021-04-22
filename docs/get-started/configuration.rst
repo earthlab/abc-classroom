@@ -5,6 +5,17 @@ The settings for abc-classroom are in a configuration file. By default, this
 file is called "config.yml" and is located in the course directory. If you
 used ```abc-quickstart``, this file is created for you.
 
+roster
+======
+
+Enter the path to the classroom roster. If you enter a bare filename,
+`abc-classroom` will look in the course directory for the file. If your
+roster file is somewhere else, you can enter a full path to the file,
+e.g. `/home/user/directory/filename.csv`. 
+
+Default: `roster: classroom_roster.csv`
+
+
 Files_to_ignore
 ===============
 

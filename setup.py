@@ -49,7 +49,7 @@ setup(
     package_data={
         "abcclassroom": [
             "example-data/readme.md",
-            "example-data/sample_roster.csv",
+            "example-data/classroom_roster.csv",
             "example-data/config.yml",
             "example-data/extra_files/README.md",
             "example-data/extra_files/.gitignore",
@@ -63,6 +63,7 @@ setup(
             "abc-update-template = abcclassroom.__main__:update_template",
             "abc-clone = abcclassroom.__main__:clone",
             "abc-feedback = abcclassroom.__main__:feedback",
+            "abc-roster = abcclassroom.__main__:roster",
         ]
     },
     url="https://github.com/earthlab/abc-classroom",
