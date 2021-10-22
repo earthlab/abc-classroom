@@ -3,6 +3,7 @@
 import pytest
 import github3 as gh3
 import abcclassroom.github as github
+import os
 
 
 # Creating an OrganizationObject that will run instead of
@@ -99,25 +100,31 @@ def test_call_git_with_branch(fake_process):
     assert "On branch" in ret.stdout
 
 
-#
-#
-# def test_clone_repo_pass(fake_process):
-#     """Test that cloning a repository works."""
-#     fake_process.register_subprocess(
-#         [
-#             "git",
-#             "-C",
-#             "test_dir",
-#             "clone",
-#             "git@github.com:earthlab/abc-classroom.git",
-#         ],
-#         stderr=b"Cloning into 'abc-classroom'...\n",
-#     )
-#     try:
-#         github.clone_repo("earthlab", "abc-classroom", "test_dir")
-#         assert True
-#     except RuntimeError:
-#         assert False
+# TODO: This test assumes a dir called "test_dir" exists and it doesnt
+# Is this a space for a fixture / temp dir setup?
+def test_clone_repo_pass(fake_process, tmp_path):
+    """Test that cloning a repository works."""
+    os.chdir(tmp_path)
+    # TODO: This forces subprocess to work BUT i'm guessing it won't work on
+    # CI because SSH is not setup. We may want a fixture that creates an envt
+    # with a ssh key available?
+    fake_process.allow_unregistered(True)
+    fake_process.register_subprocess(
+        [
+            "git",
+            "clone" "git@github.com:earthlab/abc-classroom.git",
+        ],
+        stderr=b"Cloning into 'abc-classroom'...\n",
+    )
+    try:
+        github.clone_repo("earthlab", "abc-classroom", ".")
+        # TODO: should we do a dir check here to ensure that correct dir is
+        # actually created and contains expected files??
+        assert True
+    except RuntimeError:
+        assert False
+
+
 #
 #
 # def test_create_repo_pass(monkeypatch):
