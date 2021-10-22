@@ -235,6 +235,7 @@ def remote_repo_exists(org, repository, token=None):
     return True
 
 
+# TODO: do neither github python package wrap clone for us?
 def clone_repo(organization, repo, dest_dir):
     """Clone `repository` from `org` into a sub-directory in `directory`.
 
@@ -435,6 +436,9 @@ def check_student_repo_exists(org, course, student, token=None):
         repository = "{}-{}".format(course, student)
         g.repository(org, repository)
 
+    # TODO: this raises github3.exceptions.NotFoundError: 404 Not Found
+    # It might be better to capture the specific exception and raise a more
+    # helpful error?
     except Exception as e:
         raise e
 
