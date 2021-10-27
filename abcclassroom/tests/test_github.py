@@ -163,10 +163,17 @@ def test_clone_repo_bad_repo(
     # repo for us to check that it exists assignment-1/course-test-student"
 
     example_student_repo
-    # Replace check_github_ssh with a pass (Assume that works - is that ok??)
+    # Replace check_github_ssh with a pass
+    # TODO: Question - here i'm using monkeypatch below i'm using mock. is that
+    #  ok?
     monkeypatch.setattr(github, "check_git_ssh", mock_check_ssh)
 
-    # This is telling me it can't import github.clone_repo
+    # TODO: This is telling me it can't import github.clone_repo - the work
+    # around
+    # is to hard code the path to the function. why do i have to do this?
+    # TODO: Also here i'm mocking the RuntimeError - but why isn't it returning
+    # the
+    # Message that i expect that is in the clone_Repo function
     with mock.patch(
         "abcclassroom.github.clone_repo",
         side_effect=RuntimeError(),
@@ -178,7 +185,7 @@ def test_clone_repo_bad_repo(
                 dest_dir="assignment-2",
             )
             print("The error is", e)
-    # Mock the subprocess call
+    # TODO - delete everything below - Mock the subprocess call
     # process_mock = mock.Mock()
     # mock.Mock(side_effect=RuntimeError(github.clone_repo))
     # attrs = {"communicate.return_value": ("error")}

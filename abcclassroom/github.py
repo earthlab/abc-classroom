@@ -288,9 +288,11 @@ def clone_repo(organization, repo, dest_dir):
         # TODO: ? should we check where the error is - so is it an ssh error
         # vs a can't find repo / bad url error here??
     except RuntimeError as e:
-        # print("Oops, something went wrong when cloning {}\{}: \n".format(
-        #     organization, repo),
-        #     ret.stderr)
+        print(
+            r"Oops, something went wrong when cloning {}\{}: \n".format(
+                organization, repo
+            )
+        )
         raise e
 
 
