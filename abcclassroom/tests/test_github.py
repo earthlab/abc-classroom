@@ -157,26 +157,27 @@ def test_clone_repo_bad_repo(
     mock_subproc_run, monkeypatch, example_student_repo, capsys
 ):
     """Test what happens when you clone into a directory that hasn't been
-    created yet."""
+    created yet. This should return a RuntimeError"""
 
     # This fixture will drop an example git
     # repo for us to check that it exists assignment-1/course-test-student"
+
     example_student_repo
     # Replace check_github_ssh with a pass (Assume that works - is that ok??)
     monkeypatch.setattr(github, "check_git_ssh", mock_check_ssh)
 
-    import subprocess
-
+    # This is telling me it can't import github.clone_repo
     with mock.patch(
-        "subprocess.run",
-        side_effect=subprocess.CalledProcessError("128", "RuntimeError"),
+        "abcclassroom.github.clone_repo",
+        side_effect=RuntimeError(),
     ):
-        # with pytest.raises(RuntimeError,
-        #                    match="test message"):
-        e = github.clone_repo(
-            organization="earthlab", repo="edarthpy", dest_dir="assignment-2"
-        )
-        print("The error is", e)
+        with pytest.raises(RuntimeError):
+            e = github.clone_repo(
+                organization="earthlab",
+                repo="edarthpy",
+                dest_dir="assignment-2",
+            )
+            print("The error is", e)
     # Mock the subprocess call
     # process_mock = mock.Mock()
     # mock.Mock(side_effect=RuntimeError(github.clone_repo))
