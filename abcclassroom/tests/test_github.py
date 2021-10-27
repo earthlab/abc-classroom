@@ -135,14 +135,73 @@ def test_clone_repo_pass2(
     process_mock.configure_mock(**attrs)
     mock_subproc_run.return_value = process_mock
     github.clone_repo(
-        organization="earthlab", repo="earthpy", dest_dir="assignment-1"
+        organization="earth55lab", repo="earthpy", dest_dir="assignment-1"
     )
     captured = capsys.readouterr()
     lines = captured.out.splitlines()
     # assert captured.out starts with "cloning: git@github"
-    # print("HI:", lines[1], captured.out)
     # TODO do we also want to create a mock repo for it to check?
-    assert lines[1].startswith("cloning: git@github")
+    # TODO: this is not actually the text that git clone sends to st out
+    assert lines[1].startswith("Successfully cloned: git@github")
+    # Cloning into 'eartehpy'...  # ERROR: Repository not found.  # fatal:
+    # Could not read from remote repository.
+
+
+# CLONE: Test what happens when you clone into a directory that hasn't been
+# created
+# yet
+
+
+@mock.patch("subprocess.run")
+def test_clone_repo_bad_repo(
+    mock_subproc_run, monkeypatch, example_student_repo, capsys
+):
+    """Test what happens when you clone into a directory that hasn't been
+    created yet."""
+
+    # This fixture will drop an example git
+    # repo for us to check that it exists assignment-1/course-test-student"
+    example_student_repo
+    # Replace check_github_ssh with a pass (Assume that works - is that ok??)
+    monkeypatch.setattr(github, "check_git_ssh", mock_check_ssh)
+
+    import subprocess
+
+    with mock.patch(
+        "subprocess.run",
+        side_effect=subprocess.CalledProcessError("128", "RuntimeError"),
+    ):
+        # with pytest.raises(RuntimeError,
+        #                    match="test message"):
+        e = github.clone_repo(
+            organization="earthlab", repo="edarthpy", dest_dir="assignment-2"
+        )
+        print("The error is", e)
+    # Mock the subprocess call
+    # process_mock = mock.Mock()
+    # mock.Mock(side_effect=RuntimeError(github.clone_repo))
+    # attrs = {"communicate.return_value": ("error")}
+    # process_mock.side_effect = RuntimeError(mock.Mock('error'))
+    # How do i tell the mocked object to return the error here?
+    # process_mock.configure_mock(**attrs)
+    # mock_subproc_run.return_value = process_mock
+
+    # with pytest.raises(RuntimeError):
+    #     github.clone_repo(
+    #         organization="earthlab", repo="edarthpy", dest_dir="assignment-2"
+    #     )
+    # captured = capsys.readouterr()
+    # lines = captured.out.splitlines()
+    # assert captured.out starts with "cloning: git@github"
+    # print("Error:", lines[1], captured.err)
+    # TODO do we also want to create a mock repo for it to check?
+    # TODO: this is not actually the text that git clone sends to st out
+    # assert lines[1].startswith("RuntimeError: Cloning into 'eaorth'")
+    # This should return RuntimeError: Cloning into 'eaorth'...  # ERROR:
+    # Repository not found.
+
+
+# CLONE: test what happens when you clone and the remote doesn't exist
 
 
 # TODO: ok i just tested this. it's definitely not skipping the clone.

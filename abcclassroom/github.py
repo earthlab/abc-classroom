@@ -61,6 +61,9 @@ def get_access_token():
     return access_token
 
 
+# TODO: document this function with parameters and returns but also
+# should it provide a user friendly message based upon where it fails or
+# doesnt fail?
 def check_git_ssh():
     """Tests that ssh access to GitHub is set up correctly on the users
     computer.
@@ -223,12 +226,28 @@ def _call_git(*args, directory=None):
 
 
 def remote_repo_exists(org, repository, token=None):
-    """Check if the remote repository exists for the organization."""
+    """Check if the remote repository exists for the organization.
+    Parameters
+    ----------
+    org : string
+        Name of the organization where the repo lives on GitHub.
+    repository : string
+        Name of the repository within the organization to clone.
+    token : string (default None)
+        Token value required for authentication
+
+    Returns
+    -------
+    Boolean True if exists, False / raises exception if it doesn't exist.
+
+    """
 
     try:
         g = gh3.login(token=token)
         g.repository(org, repository)
 
+    # TODO: this raises github3.exceptions.NotFoundError: 404 Not Found
+    # should capture the specific exception and then return false
     except Exception:
         return False
 
@@ -237,19 +256,41 @@ def remote_repo_exists(org, repository, token=None):
 
 # TODO: do neither github python package wrap clone for us?
 def clone_repo(organization, repo, dest_dir):
-    """Clone `repository` from `org` into a sub-directory in `directory`.
+    """Clone `repository` from `org` into a sub-directory in `directory`
+    using ssh.
 
     Raises RuntimeError if ssh keys not set up correctly, or if git clone
     fails for other reasons.
+
+    Parameters
+    ----------
+    organization : string
+        A string with the name of the organization to clone from
+    repo : string
+        A string with the name of the GitHub repository to clone
+    dest_dir : string
+        Path to the destination directory
+        TODO: is this a full path, path object or string - what format is
+        dest_dir in
+
+    Returns
+    -------
+    Cloned github repository in the destination directory specified.
     """
 
     try:
         # first, check that local git set up with ssh keys for github
         check_git_ssh()
         url = "git@github.com:{}/{}.git".format(organization, repo)
-        print("cloning:", url)
+
         _call_git("-C", dest_dir, "clone", url)
+        print("Successfully cloned:", url)
+        # TODO: ? should we check where the error is - so is it an ssh error
+        # vs a can't find repo / bad url error here??
     except RuntimeError as e:
+        # print("Oops, something went wrong when cloning {}\{}: \n".format(
+        #     organization, repo),
+        #     ret.stderr)
         raise e
 
 
