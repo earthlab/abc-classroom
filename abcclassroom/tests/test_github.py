@@ -1,4 +1,5 @@
 # Tests for github script
+import sys
 
 import pytest
 import github3 as gh3
@@ -118,44 +119,71 @@ def example_student_repo():
 # stackoverflow.com/questions/25692440/mocking-a-subprocess-call-in-python
 
 
+def test_clone_repo_pass_context_mgr(
+    monkeypatch, example_student_repo, capsys
+):
+
+    # Fixture for demo student repo in desired repository
+    example_student_repo
+    # Replace check_github_ssh with a pass - using pytest monkeypatch
+    monkeypatch.setattr(github, "check_git_ssh", mock_check_ssh)
+
+    # Mock the subprocess call using unittest.mock
+    with mock.patch("subprocess.run"):
+        # Creates a MagickMock() object
+        # print(mock_subproc_run)
+        github.clone_repo(
+            organization="earth55lab", repo="earthpy", dest_dir="assignment-1"
+        )
+    captured = capsys.readouterr()
+    lines = captured.out.splitlines()
+    # assert captured.out starts with "cloning: git@github"
+    # TODO do we also want to create a mock repo for it to check?
+    assert lines[1].startswith("Successfully cloned: git@github")
+
+
+# Here is the SAME TEST as above but using a decorator
+# Note that you could use with mock.patch("subprocess.run") as mock_subproc_run
+# Below you just create the object with the decorator and define it in the text
+# function definition. They test the same thing however.
 @mock.patch("subprocess.run")
 def test_clone_repo_pass2(
     mock_subproc_run, monkeypatch, example_student_repo, capsys
 ):
+    """Test that a successfully cloned repo returns the expected
+    message.
+    Using the mock patch decorator here and allowing the returned
+    MagickMock object to just be returned so the test will continue
+    running as it it were successful"""
 
     # This fixture will drop an example git
     # repo for us to check that it exists assignment-1/course-test-student"
+    # TODO create a mock repo for it to check in the fixture below
     example_student_repo
     # Replace check_github_ssh with a pass (Assume that works - is that ok??)
     monkeypatch.setattr(github, "check_git_ssh", mock_check_ssh)
 
-    # Mock the subprocess call
-    process_mock = mock.Mock()
-    attrs = {"communicate.return_value": ("output", "error")}
-    process_mock.configure_mock(**attrs)
-    mock_subproc_run.return_value = process_mock
+    # Subprocess call from _call git will be mocked using the default (empty)
+    # MagickMock object
     github.clone_repo(
         organization="earth55lab", repo="earthpy", dest_dir="assignment-1"
     )
     captured = capsys.readouterr()
     lines = captured.out.splitlines()
-    # assert captured.out starts with "cloning: git@github"
-    # TODO do we also want to create a mock repo for it to check?
-    # TODO: this is not actually the text that git clone sends to st out
     assert lines[1].startswith("Successfully cloned: git@github")
-    # Cloning into 'eartehpy'...  # ERROR: Repository not found.  # fatal:
-    # Could not read from remote repository.
 
 
-# CLONE: Test what happens when you clone into a directory that hasn't been
-# created
-# yet
+# TODO: this will belong above IF we end up using it.
+# TODO: could i pass *args or **args here to allow this to just work?
+def mock_call_git(git_arg, dest_dir, git_command, url):
+    # Here i think i need to mock the expected st error and stout output??
+    # This right now isn't working like i think it should but i can revisit
+    # this later.
+    sys.stderr.write("Some git error here - test this")
+    raise RuntimeError()
 
 
-@mock.patch("subprocess.run")
-def test_clone_repo_bad_repo(
-    mock_subproc_run, monkeypatch, example_student_repo, capsys
-):
+def test_clone_repo_bad_repo(monkeypatch, example_student_repo, capsys):
     """Test what happens when you clone into a directory that hasn't been
     created yet. This should return a RuntimeError"""
 
@@ -167,128 +195,56 @@ def test_clone_repo_bad_repo(
     # TODO: Question - here i'm using monkeypatch below i'm using mock. is that
     #  ok?
     monkeypatch.setattr(github, "check_git_ssh", mock_check_ssh)
+    monkeypatch.setattr(github, "_call_git", mock_call_git)
+    # If i keep match = "" (empty) it passes but clearly there is output
 
-    # TODO: This is telling me it can't import github.clone_repo - the work
-    # around
-    # is to hard code the path to the function. why do i have to do this?
-    # TODO: Also here i'm mocking the RuntimeError - but why isn't it returning
-    # the
-    # Message that i expect that is in the clone_Repo function
-    with mock.patch(
-        "abcclassroom.github.clone_repo",
-        side_effect=RuntimeError(),
-    ):
-        with pytest.raises(RuntimeError):
-            e = github.clone_repo(
+    # Testing match output from mock call git
+    with pytest.raises(RuntimeError, match=""):
+        github.clone_repo(
+            organization="earthlab",
+            repo="eardthpy",
+            dest_dir="assignment-1",
+        )
+
+    captured = capsys.readouterr()
+    lines = captured.out.splitlines()
+    # Testing expected stout from clone_repo
+    assert lines[1].startswith("Oops, something")
+
+
+# TODO: play with writing to std error and out and make sure our functions are
+# returning both when needed.
+def test_clone_repo_bad_repo_unittest(
+    monkeypatch, example_student_repo, capsys
+):
+    """Test what happens when you clone into a directory that hasn't been
+    created yet. This is the same as the test above ubt using mock in a
+    context manager. i think that is a bit more specific / easy to read vs
+    the decorators.
+
+    This should return a RuntimeError"""
+
+    example_student_repo
+
+    monkeypatch.setattr(github, "check_git_ssh", mock_check_ssh)
+    # This works and is also raising sterr correctly! so this is all promising
+
+    with pytest.raises(RuntimeError):
+        with mock.patch(
+            github._call_git, side_effect=mock_call_git("1", "2", "2", "4")
+        ):
+            github.clone_repo(
                 organization="earthlab",
-                repo="edarthpy",
-                dest_dir="assignment-2",
+                repo="eardthpy",
+                dest_dir="assignment-1",
             )
-            print("The error is", e)
-    # TODO - delete everything below - Mock the subprocess call
-    # process_mock = mock.Mock()
-    # mock.Mock(side_effect=RuntimeError(github.clone_repo))
-    # attrs = {"communicate.return_value": ("error")}
-    # process_mock.side_effect = RuntimeError(mock.Mock('error'))
-    # How do i tell the mocked object to return the error here?
-    # process_mock.configure_mock(**attrs)
-    # mock_subproc_run.return_value = process_mock
-
-    # with pytest.raises(RuntimeError):
-    #     github.clone_repo(
-    #         organization="earthlab", repo="edarthpy", dest_dir="assignment-2"
-    #     )
-    # captured = capsys.readouterr()
-    # lines = captured.out.splitlines()
-    # assert captured.out starts with "cloning: git@github"
-    # print("Error:", lines[1], captured.err)
-    # TODO do we also want to create a mock repo for it to check?
-    # TODO: this is not actually the text that git clone sends to st out
-    # assert lines[1].startswith("RuntimeError: Cloning into 'eaorth'")
-    # This should return RuntimeError: Cloning into 'eaorth'...  # ERROR:
-    # Repository not found.
+    # TODO: delete this - but it just shows you that std error is writing out
+    #  correctly from my mock function that patches _call_git
+    captured = capsys.readouterr()
+    print(captured)
 
 
 # CLONE: test what happens when you clone and the remote doesn't exist
-
-
-# TODO: ok i just tested this. it's definitely not skipping the clone.
-# def test_clone_repo_pass(fake_process, monkeypatch, example_student_repo):
-#     """Test that a repo is correctly cloned to the right location."""
-#
-#     # Replace check_github_ssh with a pass (Assume that works - is that ok??)
-#     # Here i'm confused because i would think we're replacing _call_git with
-#     # a mock function so it doesn't try to clone
-#     monkeypatch.setattr(github, "check_git_ssh", mock_check_ssh)
-#
-#     # it is actually cloning hte data. we want to monkey patch around the
-#     # entire function i think or somehow use the faek subprocess to fake the
-#     # call
-#     git_commands = [
-#             "git",
-#             "-C",
-#             "assignment-1",
-#             "clone",
-#             "git@github.com:earthlab/abc-classroom.git",
-#         ]
-#     fake_process.register_subprocess(git_commands,
-#                          stderr=b"Cloning into 'abc-classroom'...\n" )
-#     # Not sure why it keeps telling me it's not registered so adding this
-#     fake_process.allow_unregistered(True)
-#     # Create the dir needed for the assignment (clone doesnt do this)
-#     # once this works we can use a tmp path fixture for it
-#     example_student_repo
-#     # Run the fake process - i thought we're testing clone_repo
-#     process = github.clone_repo(organization="earthlab",
-#                       repo="test",
-#                       dest_dir="assignment-1")
-#     # Create the new directory
-#     out, _ = process.communicate()
-#     print(out)
-#     # # Replace _call_git with the returned repo
-#     # monkeypatch.setattr(github, "_call_git", mock_clone)
-#     # organization, repo, dest_dir
-#
-#     assert os.path.isdir('assignment-1')
-
-
-# i suspect that this needs a fixture or object that returns a repository
-# in a new directory.
-# then i guess we can test that the repo contains a .git directory?
-# and maybe some files?
-# def test_clone_repo_pass1(fake_process, tmp_path):
-#     """Test that a cloned repo is saved in the correct location."""
-#     os.chdir(tmp_path)
-#     # TODO: This forces subprocess to work BUT i'm guessing it won't work on
-#     # CI because SSH is not setup. We may want a fixture that creates an envt
-#     # with a ssh key available?
-#     fake_process.allow_unregistered(True)
-#     fake_process.register_subprocess(
-#         [
-#             "git",
-#             "clone" "git@github.com:earthlab/abc-classroom.git",
-#         ],
-#         stderr=b"Cloning into 'abc-classroom'...\n",
-#     )
-#     try:
-#         github.clone_repo("earthlab", "abc-classroom", ".")
-#         # TODO: should we do a dir check here to ensure that correct dir is
-#         # actually created and contains expected files??
-#         assert True
-#     except RuntimeError:
-#         assert False
-
-
-#
-#
-# def test_create_repo_pass(monkeypatch):
-#     """Test that creating a new repository works."""
-#     monkeypatch.setattr(gh3, "login", mock_login)
-#     try:
-#         github.create_repo(org="earthlab",repository="test_repo", token=None)
-#         assert True
-#     except RuntimeError:
-#         assert False
 
 
 # This is the old tests
