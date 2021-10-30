@@ -1,11 +1,15 @@
 # Tests for github script
 import sys
-
-import pytest
-import github3 as gh3
-import abcclassroom.github as github
 import os
 from unittest import mock
+import pytest
+import github3 as gh3
+
+# TODO:  if we import tests this way we aren't necessarily testing the  dev
+# version
+# of abc classroom
+import abcclassroom.github as github
+import abcclassroom.config as config
 
 
 # Creating an OrganizationObject that will run instead of
@@ -43,6 +47,59 @@ def mock_check_ssh():
     # I'm not sure if this is really what we want?
     # We could also mock up an ssh key in a temp directory?
     return print("Pretending ssh is all setup nicely?")
+
+
+# TESTS FOR  get_access_token
+# TODO: right now the get_github_auth function is in the config module
+# it seems like it makes sense for all auth items to be in the same module?
+# creating test here for now
+
+
+@pytest.fixture()
+def create_token(tmp_path):
+    """Create a token file for testing"""
+    # Write file to the "home" dir
+    the_path = os.path.join(tmp_path, ".abc-classroom.tokens.yml")
+    with open(the_path, "w") as token_file:
+        # token_file = open(the_path, "w")
+        token_text_list = [
+            "github:\n",
+            "  access_token: ac09c4d040ffb190c3eef285eac2faea5b403eb6bd",
+        ]
+        token_file.writelines(token_text_list)
+
+
+def mock_set_token_path(tmp_path):
+    """Rather than overwriting a file in the users home, write it to
+    tmp_path for testing"""
+    return ""
+
+
+# Test that the get_github_auth returns token information when the file exists
+def test_get_github_auth_exists(tmp_path, monkeypatch, create_token):
+    """Test that when a valid token file exists, it is correctly returned"""
+
+    os.chdir(tmp_path)
+    create_token
+    # Replace expanduser with blank path so it directs to the tmp_path
+    monkeypatch.setattr(os.path, "expanduser", mock_set_token_path)
+    t_auth = config.get_github_auth()
+
+    assert (
+        t_auth["access_token"] == "ac09c4d040ffb190c3eef285eac2faea5b403eb6bd"
+    )
+
+
+def test_get_github_auth_noexist(tmp_path, monkeypatch):
+    """Test that when a valid token file exists, it is correctly returned"""
+
+    os.chdir(tmp_path)
+    # Replace expanduser with blank path so it directs to the tmp_path
+    monkeypatch.setattr(os.path, "expanduser", mock_set_token_path)
+    # This doesn't actually raise FileNotFound it just catches the exception
+    # and returns {}
+    a = config.get_github_auth()
+    assert a == {}
 
 
 # so if you run the check repo g.repository(org, repository) it returns the
@@ -214,6 +271,15 @@ def test_clone_repo_bad_repo(monkeypatch, example_student_repo, capsys):
 
 # TODO: play with writing to std error and out and make sure our functions are
 # returning both when needed.
+
+# TODO: tests to add:
+# Test what happens when you clone and the dir already exists
+# What happens when you clone and the directory you try to clone into
+# doesn't exist
+# Test that clone returned a git repo in the correct location?? <is that
+# contrived if this is mocked?>
+
+
 def test_clone_repo_bad_repo_unittest(
     monkeypatch, example_student_repo, capsys
 ):

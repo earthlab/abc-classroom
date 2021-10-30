@@ -25,7 +25,13 @@ def get_github_auth():
     """
     yaml = YAML()
     try:
-        with open(op.expanduser("~/.abc-classroom.tokens.yml")) as f:
+        with open(
+            op.join(op.expanduser("~"), ".abc-classroom.tokens.yml")
+        ) as f:
+            print(
+                "patched",
+                op.join(op.expanduser("~"), ".abc-classroom.tokens.yml"),
+            )
             config = yaml.load(f)
         return config["github"]
 
