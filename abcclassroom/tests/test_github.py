@@ -198,7 +198,9 @@ def test_remote_repo_exists_fail(monkeypatch):
 
 
 # NOTE: Updated to run git status so it works universally
-def test_call_git_status(fake_process):
+# TODO: discussion - i just am calling git status because it's a terminal
+#  command that prob doesn't need to be mocked.
+def test_call_git_status():
     """Testing that _call_git helper function works"""
     # When a function uses
     # subprocess.run instead of called gh3 directly, it's  difficult to
@@ -207,7 +209,7 @@ def test_call_git_status(fake_process):
     # allows subprocesses to be mocked.
 
     # TODO - is this really mocking the subprocess call?
-    fake_process.register_subprocess(["git", "status"], stdout=["On branch"])
+    # fake_process.register_subprocess(["git", "status"], stdout=["On branch"])
     ret = github._call_git("status")
     assert "On branch" in ret.stdout
 
