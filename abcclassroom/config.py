@@ -28,10 +28,6 @@ def get_github_auth():
         with open(
             op.join(op.expanduser("~"), ".abc-classroom.tokens.yml")
         ) as f:
-            print(
-                "patched",
-                op.join(op.expanduser("~"), ".abc-classroom.tokens.yml"),
-            )
             config = yaml.load(f)
         return config["github"]
 

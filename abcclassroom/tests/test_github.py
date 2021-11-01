@@ -2,6 +2,7 @@
 import sys
 import os
 from unittest import mock
+
 import pytest
 import github3 as gh3
 
@@ -69,10 +70,77 @@ def create_token(tmp_path):
         token_file.writelines(token_text_list)
 
 
+@pytest.fixture()
+def create_broken_token(tmp_path):
+    """Create a token file for testing"""
+    # Write file to the "home" dir
+    the_path = os.path.join(tmp_path, ".abc-classroom.tokens.yml")
+    with open(the_path, "w") as token_file:
+        # token_file = open(the_path, "w")
+        token_text_list = [
+            "github:\n",
+            "  party_ppl_access_token: "
+            "ac09c4d040ffb190c3eef285eac2faea5b403eb6bd",
+        ]
+        token_file.writelines(token_text_list)
+
+
 def mock_set_token_path(tmp_path):
     """Rather than overwriting a file in the users home, write it to
     tmp_path for testing"""
     return ""
+
+
+def test_get_access_token(tmp_path, capsys, monkeypatch, create_token):
+    """Test that get access token can open file and read key-value
+    pairs"""
+
+    # TODO this might become a fixture that returns a token depending on
+    # how many times i use this exact set of code lines
+    os.chdir(tmp_path)
+    create_token
+    # Replace expanduser with blank path so it directs to the tmp_path
+    monkeypatch.setattr(os.path, "expanduser", mock_set_token_path)
+    # Note - will need to patch _get_authenticated_user
+    with mock.patch("abcclassroom.github._get_authenticated_user"):
+        # skip actually hitting github with a valid token
+        github._get_authenticated_user.return_value = "auser"
+        t_auth = github.get_access_token()
+    captured = capsys.readouterr().out.splitlines()
+    assert (
+        captured[0] == "Access token is present and valid; successfully "
+        "authenticated as user auser"
+    )
+    assert t_auth == "ac09c4d040ffb190c3eef285eac2faea5b403eb6bd"
+
+
+def test_get_access_token_no_user(
+    tmp_path, monkeypatch, create_broken_token, capsys
+):
+    """Test that when a user isn't found, a KeyError is raised"""
+
+    # TODO this might become a fixture that returns a token depending on
+    # how many times i use this exact set of code lines
+    os.chdir(tmp_path)
+    create_broken_token
+    # Replace expanduser with blank path so it directs to the tmp_path
+    monkeypatch.setattr(os.path, "expanduser", mock_set_token_path)
+    # Note - will need to patch _get_authenticated_user
+    # Nesting multiple mocks (could also just user decorators)
+    with mock.patch("abcclassroom.github._get_authenticated_user"), mock.patch(
+        "abcclassroom.github._get_login_code"
+    ), mock.patch("abcclassroom.github._poll_for_status"):
+
+        # Skip hitting github API altogether and just test the workflow
+        github._get_authenticated_user.return_value = "auser"
+        github._get_login_code.return_value = "clientidhere"
+        github._poll_for_status.return_value = "faketokengoeshere"
+
+        a_token = github.get_access_token()
+
+    captured = capsys.readouterr().out.splitlines()
+    assert captured[1] == "Successfully authenticated as user auser"
+    assert a_token == "faketokengoeshere"
 
 
 # Test that the get_github_auth returns token information when the file exists
@@ -91,7 +159,7 @@ def test_get_github_auth_exists(tmp_path, monkeypatch, create_token):
 
 
 def test_get_github_auth_noexist(tmp_path, monkeypatch):
-    """Test that when a valid token file exists, it is correctly returned"""
+    """Test that when no token file exists, it is returns {}"""
 
     os.chdir(tmp_path)
     # Replace expanduser with blank path so it directs to the tmp_path
@@ -102,11 +170,17 @@ def test_get_github_auth_noexist(tmp_path, monkeypatch):
     assert a == {}
 
 
-# so if you run the check repo g.repository(org, repository) it returns the
-# text below if the repo exists. but i don't know if that is the return from
-# the package OR the api
-# g.repository(org, repository)
-# Out[57]: <Repository [earthlab/earthpy]>
+def test_get_github_auth_noexist_unittest(tmp_path):
+    """Test that when no token file exists, it is returns {}.
+    this does th e same thing as the test above but it uses mock.patch"""
+
+    os.chdir(tmp_path)
+    # Replace expanduser with blank path so it directs to the tmp_path
+    with mock.patch("os.path.expanduser"):
+        # Patch return value for  testing
+        os.path.expanduser.return_value = ""
+        a = config.get_github_auth()
+    assert a == {}
 
 
 def test_remote_repo_exists_pass(monkeypatch):

@@ -3,8 +3,6 @@ abc-classroom.github
 ====================
 """
 
-# import os
-# import logging
 import random
 import string
 import subprocess
@@ -179,11 +177,22 @@ def _get_login_code(client_id):
     return device_code
 
 
+# TODO get type for each of the input parameters and update docstring
 def _poll_for_status(client_id, device_code):
     """Polls API to see if user entered the device code
 
     This is the second step of the Device Flow. Returns an access token, and
     also writes the token to a file in the user's home directory.
+
+    Parameters
+    ----------
+    client_id :
+    device_code :
+
+    Returns
+    -------
+    Access token provided by GitHub.
+    Also writes the token to a file in the user's home directory
     """
 
     header = {"Content-Type": "application/json", "Accept": "application/json"}
