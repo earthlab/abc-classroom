@@ -78,9 +78,12 @@ def check_git_ssh():
             stderr=subprocess.PIPE,
         )
     except subprocess.CalledProcessError as e:
-        # We ALWAYS will get here, because that subprocess call returns
+        # We ALWAYS will get here. If you include check=True in subprocess
+        # it returns a calledprocess error. We do this because otherwise
+        # it's harder to capture a failed call. It just fails quietly. With
+        # check=True subprocess call returns
         # a non-zero exit code whether ssh access is set up correctly or
-        # not. Must check output.
+        # not. We then parse output to see what was returned.
         subprocess_out = e.stderr
         if not subprocess_out:
             subprocess_out = e.stdout

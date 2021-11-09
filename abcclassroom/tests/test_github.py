@@ -3,7 +3,7 @@ import sys
 import os
 from pathlib import Path
 from unittest import mock
-
+import subprocess
 import pytest
 import github3 as gh3
 
@@ -45,10 +45,12 @@ def mock_login(token=None):
 
 # Function to replace check_ssh
 def mock_check_ssh():
-    """stuff here"""
-    # I'm not sure if this is really what we want?
-    # We could also mock up an ssh key in a temp directory?
-    return print("Pretending ssh is all setup nicely?")
+    """Mock that returns a successful message following what Git returns."""
+    # TODO: Lets see how often i use this fixture. would be easy to patch
+    # via a mock object too...
+    return sys.stdout.write(
+        "Hi username! You've successfully authenticated \n"
+    )
 
 
 # TESTS FOR  get_access_token
@@ -444,6 +446,51 @@ def test_master_branch_to_main_no_commits(tmp_path):
     repo_dir.mkdir()
     github.git_init(repo_dir)
     github._master_branch_to_main(repo_dir)
+
+
+# TODO: add an  actual check here for the standard out
+def test_check_git_ssh_pass():
+    """When ssh is setup correctly, the check should run and pass with no
+    output."""
+    with mock.patch("subprocess.run"):
+        # Skip actually running the subprocess call and return the expected
+        # output
+        subprocess.run.side_effect = subprocess.CalledProcessError(
+            returncode=1, cmd="", stderr="Hi username"
+        )
+        # Here this should just run and pass
+        # I don't think we need an assert unless we add a message for
+        # successful check to the function. then we get a return output
+        github.check_git_ssh()
+
+
+def test_check_git_ssh_warning(capsys):
+    """Test what happens when ssh is setup but user hasn't logged in """
+    with mock.patch("subprocess.run"):
+        # Skip actually running the subprocess call and return the expected
+        # output
+        subprocess.run.side_effect = subprocess.CalledProcessError(
+            returncode=1, cmd="", stderr="Warning: Permanently"
+        )
+        # Here this should just run and pass
+        # I don't think we need an assert unless we add a message for
+        # successful check to the function. then we get a return output
+        github.check_git_ssh()
+        captured_output = capsys.readouterr().out.splitlines()
+        assert captured_output[0].startswith("Warning:")
+
+
+def test_check_git_ssh_error(capsys):
+    """Test what happens when ssh is not setup - should raise RuntimeError"""
+    with mock.patch("subprocess.run"):
+        # Skip running subprocess call, return the expected error
+        subprocess.run.side_effect = subprocess.CalledProcessError(
+            returncode=1, cmd="", stderr="Encountered this error"
+        )
+        with pytest.raises(RuntimeError):
+            github.check_git_ssh()
+        captured_output = capsys.readouterr().out.splitlines()
+        assert captured_output[0].startswith("Encountered this error")
 
 
 """
