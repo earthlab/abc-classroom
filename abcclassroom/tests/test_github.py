@@ -493,6 +493,21 @@ def test_check_git_ssh_error(capsys):
         assert captured_output[0].startswith("Encountered this error")
 
 
+# TODO this test is not working. i can't seem to force trigger a file not found
+# it always seems to raise a runtime error. i may not understand how that part
+# works.
+# def test_check_git_ssh_file_not_found(capsys):
+#     """Test what happens when ssh is not setup - should raise
+#     FileNotFoundError"""
+#     with mock.patch("subprocess.run"):
+#         # Skip running subprocess call, return the expected error
+#         subprocess.run.side_effect = FileNotFoundError
+#         with pytest.raises(FileNotFoundError):
+#             github.check_git_ssh()
+#         captured_output = capsys.readouterr().out.splitlines()
+#         assert captured_output[0].startswith("[Errno 2] No")
+
+
 """
 >>>>>> TESTS BELOW ARE ON FUNCTIONS THAT I THINK ARE DEPRECATED <<<<<
 """
