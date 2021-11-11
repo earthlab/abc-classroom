@@ -15,6 +15,7 @@ from .utils import input_editor, get_request
 from .config import get_github_auth, set_github_auth
 
 
+# TODO - do we check anywhere that a bad username / non existent user happened?
 def get_access_token():
     """Get a GitHub access token for the API
 
@@ -30,7 +31,7 @@ def get_access_token():
     if auth_info:
         try:
             access_token = auth_info["access_token"]
-            # if so, is it valid?
+            # If so, is it valid?
             user = _get_authenticated_user(access_token)
             if user is not None:
                 print(
@@ -66,7 +67,8 @@ def check_git_ssh():
     """Tests that ssh access to GitHub is set up correctly on the users
     computer.
 
-    Throws a RuntimeError if setup is not working.
+    Throws a RuntimeError if ssh setup is not working.
+    Throws a FileNotFoundError if SSH is installed.
     """
     cmd = ["ssh", "-T", "git@github.com"]
     try:
@@ -79,8 +81,8 @@ def check_git_ssh():
         )
     except subprocess.CalledProcessError as e:
         # We ALWAYS will get here. If you include check=True in subprocess
-        # it returns a calledprocess error. We do this because otherwise
-        # it's harder to capture a failed call. It just fails quietly. With
+        # it returns a CalledProcessError. We do this because otherwise
+        # it's harder to capture a failed call. It fails quietly. With
         # check=True subprocess call returns
         # a non-zero exit code whether ssh access is set up correctly or
         # not. We then parse output to see what was returned.

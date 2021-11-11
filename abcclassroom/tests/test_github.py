@@ -493,19 +493,66 @@ def test_check_git_ssh_error(capsys):
         assert captured_output[0].startswith("Encountered this error")
 
 
+#
+# def mock_check_ssh_fail():
+#     open("ssh.txt")
+#     return None
+
+
 # TODO this test is not working. i can't seem to force trigger a file not found
 # it always seems to raise a runtime error. i may not understand how that part
-# works.
+# works. This test currently doesn't work
 # def test_check_git_ssh_file_not_found(capsys):
 #     """Test what happens when ssh is not setup - should raise
 #     FileNotFoundError"""
-#     with mock.patch("subprocess.run"):
+#     with mock.patch('subprocess.run') as mock_requests:
+#         mock_requests.run.side_effect = FileNotFoundError
 #         # Skip running subprocess call, return the expected error
-#         subprocess.run.side_effect = FileNotFoundError
+#         #subprocess.run.return_value = mock_check_ssh_fail()
 #         with pytest.raises(FileNotFoundError):
 #             github.check_git_ssh()
 #         captured_output = capsys.readouterr().out.splitlines()
 #         assert captured_output[0].startswith("[Errno 2] No")
+
+
+@pytest.fixture
+def mock_auth_return():
+    """this is the faked return from the github API when you get a users
+    information"""
+    status = 200
+    body = {
+        "login": "test-user",
+        "id": 123456,
+        "node_id": "randomestring=2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/123456?v=4",
+        "gravatar_id": "",
+    }
+    return status, body
+
+
+def test_get_auth_user(mock_auth_return):
+    """Test that when authentication goes as planned, the username is
+    returned"""
+    with mock.patch("abcclassroom.github.get_request") as mock_get_request:
+        mock_get_request.return_value = mock_auth_return
+
+        user = github._get_authenticated_user("fake_token")
+        assert user == "test-user"
+
+
+# THIS Excepts a keyerror but never raises it... need to see how this is used
+# in the workflow
+def test_get_auth_user_no_username(mock_auth_return):
+    """Test that when authentication goes as planned, the username is
+    returned"""
+    status, body = mock_auth_return
+    del body["login"]
+    print("body is", body)
+    mock_auth_return = (status, body)
+    with mock.patch("abcclassroom.github.get_request") as mock_get_request:
+        mock_get_request.return_value = mock_auth_return
+        # This has a broken dictionary but the code just has it fail quietly
+        github._get_authenticated_user("fake_token")
 
 
 """
