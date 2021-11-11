@@ -465,7 +465,7 @@ def test_check_git_ssh_pass():
 
 
 def test_check_git_ssh_warning(capsys):
-    """Test what happens when ssh is setup but user hasn't logged in """
+    """Test what happens when ssh is setup but user hasn't logged in"""
     with mock.patch("subprocess.run"):
         # Skip actually running the subprocess call and return the expected
         # output
