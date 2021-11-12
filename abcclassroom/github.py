@@ -204,8 +204,10 @@ def _poll_for_status(client_id, device_code):
 
     Parameters
     ----------
-    client_id :
-    device_code :
+    client_id : str
+        A string representing the client code for the abc-classroom bot.
+    device_code : str
+        The device code returned from the API for the user's machine / device.
 
     Returns
     -------

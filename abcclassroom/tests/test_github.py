@@ -561,10 +561,9 @@ def test_get_auth_user_no_username(mock_auth_return):
 # TODO pay attention here as i may have this and be able to use this above?
 # Consider how to organize some of these tests. Maybe we have a file for all
 # things authentication?
-
-
 @pytest.fixture
 def mock_login_200():
+    """A fixture that recreates the response for a login to gh."""
     # Recreate the requests response
     r = requests.Response()
     r.status_code = 200
@@ -576,6 +575,8 @@ def mock_login_200():
         "interval": 5,
     }
 
+    # The object in the requests response containing the json response is a
+    # method so recreate the method here and return the data as expected.
     def json_func():
         return fake_data
 
@@ -594,6 +595,20 @@ def test_get_login_code(mock_login_200, capsys):
         github._get_login_code("client-id-here")
     captured_output = capsys.readouterr().out.splitlines()
     assert captured_output[0].startswith("To authorize this app,")
+
+
+def test_get_login_code_not_200(mock_login_200, capsys):
+    """Tests that a login code that isn't 200 returns the expected json
+    output"""
+    # Force a status code that isn't 200
+    mock_login_200.status_code = 0
+    with mock.patch("requests.post"), mock.patch(
+        "builtins.input", return_value="DUDE"
+    ):
+        requests.post.return_value = mock_login_200
+        github._get_login_code("client-id-here")
+    captured_output = capsys.readouterr().out.splitlines()
+    assert captured_output[0].startswith("{'device_code': ")
 
 
 """
