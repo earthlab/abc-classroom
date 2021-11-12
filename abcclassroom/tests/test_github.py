@@ -1,6 +1,7 @@
 # Tests for github script
 import sys
 import os
+import requests
 from pathlib import Path
 from unittest import mock
 import subprocess
@@ -130,6 +131,8 @@ def test_get_access_token_no_user(
     monkeypatch.setattr(os.path, "expanduser", mock_set_token_path)
     # Note - will need to patch _get_authenticated_user
     # Nesting multiple mocks (could also just user decorators)
+    # when you mock this way, i can just specify the return values which
+    # will skip the test actually running the function.
     with mock.patch("abcclassroom.github._get_authenticated_user"), mock.patch(
         "abcclassroom.github._get_login_code"
     ), mock.patch("abcclassroom.github._poll_for_status"):
@@ -553,6 +556,44 @@ def test_get_auth_user_no_username(mock_auth_return):
         mock_get_request.return_value = mock_auth_return
         # This has a broken dictionary but the code just has it fail quietly
         github._get_authenticated_user("fake_token")
+
+
+# TODO pay attention here as i may have this and be able to use this above?
+# Consider how to organize some of these tests. Maybe we have a file for all
+# things authentication?
+
+
+@pytest.fixture
+def mock_login_200():
+    # Recreate the requests response
+    r = requests.Response()
+    r.status_code = 200
+    fake_data = {
+        "device_code": "somebigstringonumbers234560be8d6744c088",
+        "user_code": "D123-D456",
+        "verification_uri": "https://github.com/login/device",
+        "expires_in": 899,
+        "interval": 5,
+    }
+
+    def json_func():
+        return fake_data
+
+    r.json = json_func
+    return r
+
+
+def test_get_login_code(mock_login_200, capsys):
+    """Tests that a login code can be properly processed and provides the
+    user with the expected prompts"""
+
+    with mock.patch("requests.post"), mock.patch(
+        "builtins.input", return_value="DUDE"
+    ):
+        requests.post.return_value = mock_login_200
+        github._get_login_code("client-id-here")
+    captured_output = capsys.readouterr().out.splitlines()
+    assert captured_output[0].startswith("To authorize this app,")
 
 
 """

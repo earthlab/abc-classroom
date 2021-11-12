@@ -145,12 +145,25 @@ def _get_authenticated_user(token):
         return None
 
 
+# TODO i think this is the bot id. is the BOT the client technically?
+# What is the device code? is it the code for my computer if i'm running
+# this on my computeR?
 def _get_login_code(client_id):
     """Prompts the user to authorize abc-classroom-bot.
 
     First part of the Device Flow workflow. Asks user to visit a URL and
     enter the provided code. Waits for user to hit RETURN to continue.
     Returns the device code.
+
+    Parameters
+    ----------
+    client_id : str
+        String representing the ID for the abc-classroom bot.
+
+    Returns
+    -------
+    device_code : str
+        The device code for the response.
     """
 
     # make the device call
