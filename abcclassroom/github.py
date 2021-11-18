@@ -3,8 +3,6 @@ abc-classroom.github
 ====================
 """
 
-import os
-import logging
 import random
 import string
 import subprocess
@@ -17,6 +15,7 @@ from .utils import input_editor, get_request
 from .config import get_github_auth, set_github_auth
 
 
+# TODO - do we check anywhere that a bad username / non existent user happened?
 def get_access_token():
     """Get a GitHub access token for the API
 
@@ -32,7 +31,7 @@ def get_access_token():
     if auth_info:
         try:
             access_token = auth_info["access_token"]
-            # if so, is it valid?
+            # If so, is it valid?
             user = _get_authenticated_user(access_token)
             if user is not None:
                 print(
@@ -61,11 +60,15 @@ def get_access_token():
     return access_token
 
 
+# TODO: document this function with parameters and returns but also
+# should it provide a user friendly message based upon where it fails or
+# doesnt fail?
 def check_git_ssh():
     """Tests that ssh access to GitHub is set up correctly on the users
     computer.
 
-    Throws a RuntimeError if setup is not working.
+    Throws a RuntimeError if ssh setup is not working.
+    Throws a FileNotFoundError if SSH is installed.
     """
     cmd = ["ssh", "-T", "git@github.com"]
     try:
@@ -77,9 +80,12 @@ def check_git_ssh():
             stderr=subprocess.PIPE,
         )
     except subprocess.CalledProcessError as e:
-        # We ALWAYS will get here, because that subprocess call returns
+        # We ALWAYS will get here. If you include check=True in subprocess
+        # it returns a CalledProcessError. We do this because otherwise
+        # it's harder to capture a failed call. It fails quietly. With
+        # check=True subprocess call returns
         # a non-zero exit code whether ssh access is set up correctly or
-        # not. Must check output.
+        # not. We then parse output to see what was returned.
         subprocess_out = e.stderr
         if not subprocess_out:
             subprocess_out = e.stdout
@@ -139,12 +145,25 @@ def _get_authenticated_user(token):
         return None
 
 
+# TODO i think this is the bot id. is the BOT the client technically?
+# What is the device code? is it the code for my computer if i'm running
+# this on my computeR?
 def _get_login_code(client_id):
     """Prompts the user to authorize abc-classroom-bot.
 
     First part of the Device Flow workflow. Asks user to visit a URL and
     enter the provided code. Waits for user to hit RETURN to continue.
     Returns the device code.
+
+    Parameters
+    ----------
+    client_id : str
+        String representing the ID for the abc-classroom bot.
+
+    Returns
+    -------
+    device_code : str
+        The device code for the response.
     """
 
     # make the device call
@@ -176,11 +195,24 @@ def _get_login_code(client_id):
     return device_code
 
 
+# TODO get type for each of the input parameters and update docstring
 def _poll_for_status(client_id, device_code):
     """Polls API to see if user entered the device code
 
     This is the second step of the Device Flow. Returns an access token, and
     also writes the token to a file in the user's home directory.
+
+    Parameters
+    ----------
+    client_id : str
+        A string representing the client code for the abc-classroom bot.
+    device_code : str
+        The device code returned from the API for the user's machine / device.
+
+    Returns
+    -------
+    Access token provided by GitHub.
+    Also writes the token to a file in the user's home directory
     """
 
     header = {"Content-Type": "application/json", "Accept": "application/json"}
@@ -223,32 +255,73 @@ def _call_git(*args, directory=None):
 
 
 def remote_repo_exists(org, repository, token=None):
-    """Check if the remote repository exists for the organization."""
+    """Check if the remote repository exists for the organization.
+    Parameters
+    ----------
+    org : string
+        Name of the organization where the repo lives on GitHub.
+    repository : string
+        Name of the repository within the organization to clone.
+    token : string (default None)
+        Token value required for authentication
+
+    Returns
+    -------
+    Boolean True if exists, False / raises exception if it doesn't exist.
+
+    """
 
     try:
         g = gh3.login(token=token)
         g.repository(org, repository)
 
+    # TODO: this raises github3.exceptions.NotFoundError: 404 Not Found
+    # should capture the specific exception and then return false
     except Exception:
         return False
 
     return True
 
 
+# TODO: do neither github python package wrap clone for us?
 def clone_repo(organization, repo, dest_dir):
-    """Clone `repository` from `org` into a sub-directory in `directory`.
+    """Clone `repository` from `org` into a sub-directory in `directory`
+    using ssh.
 
     Raises RuntimeError if ssh keys not set up correctly, or if git clone
     fails for other reasons.
+
+    Parameters
+    ----------
+    organization : string
+        A string with the name of the organization to clone from
+    repo : string
+        A string with the name of the GitHub repository to clone
+    dest_dir : string
+        Path to the destination directory
+        TODO: is this a full path, path object or string - what format is
+        dest_dir in
+
+    Returns
+    -------
+    Cloned github repository in the destination directory specified.
     """
 
     try:
         # first, check that local git set up with ssh keys for github
         check_git_ssh()
         url = "git@github.com:{}/{}.git".format(organization, repo)
-        print("cloning:", url)
+
         _call_git("-C", dest_dir, "clone", url)
+        print("Successfully cloned:", url)
+        # TODO: ? should we check where the error is - so is it an ssh error
+        # vs a can't find repo / bad url error here??
     except RuntimeError as e:
+        print(
+            r"Oops, something went wrong when cloning {}\{}: \n".format(
+                organization, repo
+            )
+        )
         raise e
 
 
@@ -411,102 +484,108 @@ def git_init(directory, defaultbranch="main"):
     _call_git("init", directory=directory)
 
 
+# TODO: let's remove these if we aren't using them?
+# FOR NOW illl comment out but if we can decide to finally delete (i'm ok
+# with this now) lets do it.
 ###################################################
 # Methods below are from before the re-factoring.
 # Retaining for reference, but with no guarantee
 # about correct function.
 
-
-def check_student_repo_exists(org, course, student, token=None):
-    """Check if the student has a repository for the course.
-
-    It happens that students delete their repository or do not accept the
-    invitation to the course. In either case they will not have a repository
-    yet.
-    """
-    # temporarily change log level of github3.py as it prints weird messages
-    # XXX could be done more nicely with a context manager maybe
-    gh3_log = logging.getLogger("github3")
-    old_level = gh3_log.level
-    gh3_log.setLevel("ERROR")
-
-    try:
-        g = gh3.login(token=token)
-        repository = "{}-{}".format(course, student)
-        g.repository(org, repository)
-
-    except Exception as e:
-        raise e
-
-    finally:
-        gh3_log.setLevel(old_level)
-
-
-def close_existing_pullrequests(
-    org, repository, branch_base="new-material-", token=None
-):
-    """Close all oustanding course material update Pull Requests
-
-    If there are any PRs open in a student's repository that originate from
-    a branch starting with `branch_base` as name and created by the user
-    we are logged in we close them.
-    """
-    g = gh3.login(token=token)
-    me = g.me()
-    repo = g.repository(org, repository)
-    for pr in repo.pull_requests(state="open"):
-        origin = pr.head.label
-        origin_repo, origin_branch = origin.split(":")
-        if origin_branch.startswith(branch_base) and pr.user == me:
-            pr.create_comment(
-                "Closed in favor of a new Pull Request to "
-                "bring you up-to-date."
-            )
-            pr.close()
-
-
-def create_pr(org, repository, branch, message, token):
-    """Create a Pull Request with changes from branch"""
-    msg_parts = message.split("\n\n")
-    if len(msg_parts) == 1:
-        title = msg = msg_parts[0]
-    else:
-        title = msg_parts[0]
-        msg = "\n\n".join(msg_parts[1:])
-
-    g = gh3.login(token=token)
-    repo = g.repository(org, repository)
-    repo.create_pull(title, "master", branch, msg)
-
-
-def fetch_student(org, course, student, directory, token=None):
-    """Fetch course repository for `student` from `org`
-
-    The repository will be cloned into a sub-directory in `directory`.
-
-    Returns the directory in which to find the students work.
-    """
-    # use ssh if there is no token
-    if token is None:
-        fetch_command = [
-            "git",
-            "clone",
-            "git@github.com:{}/{}-{}.git".format(org, course, student),
-        ]
-    else:
-        fetch_command = [
-            "git",
-            "clone",
-            "https://{}@github.com/{}/{}-{}.git".format(
-                token, org, course, student
-            ),
-        ]
-    subprocess.run(
-        fetch_command,
-        cwd=directory,
-        check=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-
-    return os.path.join(directory, "{}-{}".format(course, student))
+#
+# def check_student_repo_exists(org, course, student, token=None):
+#     """Check if the student has a repository for the course.
+#
+#     It happens that students delete their repository or do not accept the
+#     invitation to the course. In either case they will not have a repository
+#     yet.
+#     """
+#     # temporarily change log level of github3.py as it prints weird messages
+#     # XXX could be done more nicely with a context manager maybe
+#     gh3_log = logging.getLogger("github3")
+#     old_level = gh3_log.level
+#     gh3_log.setLevel("ERROR")
+#
+#     try:
+#         g = gh3.login(token=token)
+#         repository = "{}-{}".format(course, student)
+#         g.repository(org, repository)
+#
+#     # TODO: this raises github3.exceptions.NotFoundError: 404 Not Found
+#     # It might be better to capture the specific exception and raise a more
+#     # helpful error?
+#     except Exception as e:
+#         raise e
+#
+#     finally:
+#         gh3_log.setLevel(old_level)
+#
+#
+# def close_existing_pullrequests(
+#     org, repository, branch_base="new-material-", token=None
+# ):
+#     """Close all oustanding course material update Pull Requests
+#
+#     If there are any PRs open in a student's repository that originate from
+#     a branch starting with `branch_base` as name and created by the user
+#     we are logged in we close them.
+#     """
+#     g = gh3.login(token=token)
+#     me = g.me()
+#     repo = g.repository(org, repository)
+#     for pr in repo.pull_requests(state="open"):
+#         origin = pr.head.label
+#         origin_repo, origin_branch = origin.split(":")
+#         if origin_branch.startswith(branch_base) and pr.user == me:
+#             pr.create_comment(
+#                 "Closed in favor of a new Pull Request to "
+#                 "bring you up-to-date."
+#             )
+#             pr.close()
+#
+#
+# def create_pr(org, repository, branch, message, token):
+#     """Create a Pull Request with changes from branch"""
+#     msg_parts = message.split("\n\n")
+#     if len(msg_parts) == 1:
+#         title = msg = msg_parts[0]
+#     else:
+#         title = msg_parts[0]
+#         msg = "\n\n".join(msg_parts[1:])
+#
+#     g = gh3.login(token=token)
+#     repo = g.repository(org, repository)
+#     repo.create_pull(title, "master", branch, msg)
+#
+#
+# def fetch_student(org, course, student, directory, token=None):
+#     """Fetch course repository for `student` from `org`
+#
+#     The repository will be cloned into a sub-directory in `directory`.
+#
+#     Returns the directory in which to find the students work.
+#     """
+#     # use ssh if there is no token
+#     if token is None:
+#         fetch_command = [
+#             "git",
+#             "clone",
+#             "git@github.com:{}/{}-{}.git".format(org, course, student),
+#         ]
+#     else:
+#         fetch_command = [
+#             "git",
+#             "clone",
+#             "https://{}@github.com/{}/{}-{}.git".format(
+#                 token, org, course, student
+#             ),
+#         ]
+#     subprocess.run(
+#         fetch_command,
+#         cwd=directory,
+#         check=True,
+#         stdout=subprocess.PIPE,
+#         stderr=subprocess.PIPE,
+#     )
+#
+#     return os.path.join(directory, "{}-{}".format(course, student))

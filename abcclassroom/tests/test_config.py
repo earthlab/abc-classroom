@@ -3,7 +3,6 @@
 import pytest
 
 from pathlib import Path
-
 import abcclassroom.config as abcconfig
 
 
