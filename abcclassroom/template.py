@@ -9,7 +9,7 @@ from pathlib import Path
 
 from . import config as cf
 from . import git as abcgit
-from . import github
+from . import github as abcgithub
 from . import utils
 
 
@@ -156,12 +156,14 @@ def create_or_update_remote(
         ``abc-init``
 
     """
-    remote_exists = abcgit.remote_repo_exists(organization, repo_name, token)
+    remote_exists = abcgithub.remote_repo_exists(
+        organization, repo_name, token
+    )
     if not remote_exists:
         print("Creating remote repo {}".format(repo_name))
         # create the remote repo on github and push the local repo
         # (will print error and return if repo already exists)
-        github.create_repo(organization, repo_name, token)
+        abcgithub.create_repo(organization, repo_name, token)
 
     try:
         abcgit.add_remote(template_repo_path, organization, repo_name)
