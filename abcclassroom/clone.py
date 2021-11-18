@@ -9,7 +9,7 @@ from pathlib import Path
 import shutil
 
 from . import config as cf
-from . import git as gt
+from . import git as abcgit
 
 
 def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
@@ -40,13 +40,13 @@ def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
             )
             return
         try:
-            gt.pull_from_github(destination_dir)
+            abcgit.pull_from_github(destination_dir)
         except RuntimeError as e:
             print("Error pulling repository {}".format(destination_dir))
             print(e)
     else:
         try:
-            gt.clone_repo(organization, repo, clone_dir)
+            abcgit.clone_repo(organization, repo, clone_dir)
         except RuntimeError as e:
             print("Error cloning repository {}".format(repo))
             print(e)
