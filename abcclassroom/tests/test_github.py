@@ -10,11 +10,42 @@ import github3 as gh3
 
 # TODO:  if we import tests this way we aren't necessarily testing the dev
 # version depending upon how abc is installed
-# of abc classroom
 import abcclassroom.config as config
 import abcclassroom.github as github
 
 
+# Fixtures
+@pytest.fixture()
+def create_token(tmp_path):
+    """Create a token file for testing"""
+    # Write file to the "home" dir
+    the_path = os.path.join(tmp_path, ".abc-classroom.tokens.yml")
+    with open(the_path, "w") as token_file:
+        # token_file = open(the_path, "w")
+        token_text_list = [
+            "github:\n",
+            "  access_token: ac09c4d040ffb190c3eef285eac2faea5b403eb6bd",
+        ]
+        token_file.writelines(token_text_list)
+
+
+@pytest.fixture()
+def create_broken_token(tmp_path):
+    """Create a token file for testing"""
+    # Write file to the "home" dir
+    the_path = os.path.join(tmp_path, ".abc-classroom.tokens.yml")
+    with open(the_path, "w") as token_file:
+        # token_file = open(the_path, "w")
+        token_text_list = [
+            "github:\n",
+            "  party_ppl_access_token: "
+            "ac09c4d040ffb190c3eef285eac2faea5b403eb6bd",
+        ]
+        token_file.writelines(token_text_list)
+
+
+# TODO: evaluate using mock objects vs creating a mock.mock class object in
+#  situ
 # Creating an OrganizationObject that will run instead of
 # github3.create_repository
 class OrganizationObject(object):
@@ -59,36 +90,7 @@ def mock_check_ssh():
 # it seems like it makes sense for all auth items to be in the same module?
 # creating test here for now
 
-
-@pytest.fixture()
-def create_token(tmp_path):
-    """Create a token file for testing"""
-    # Write file to the "home" dir
-    the_path = os.path.join(tmp_path, ".abc-classroom.tokens.yml")
-    with open(the_path, "w") as token_file:
-        # token_file = open(the_path, "w")
-        token_text_list = [
-            "github:\n",
-            "  access_token: ac09c4d040ffb190c3eef285eac2faea5b403eb6bd",
-        ]
-        token_file.writelines(token_text_list)
-
-
-@pytest.fixture()
-def create_broken_token(tmp_path):
-    """Create a token file for testing"""
-    # Write file to the "home" dir
-    the_path = os.path.join(tmp_path, ".abc-classroom.tokens.yml")
-    with open(the_path, "w") as token_file:
-        # token_file = open(the_path, "w")
-        token_text_list = [
-            "github:\n",
-            "  party_ppl_access_token: "
-            "ac09c4d040ffb190c3eef285eac2faea5b403eb6bd",
-        ]
-        token_file.writelines(token_text_list)
-
-
+# TODO this probably can be replaced with a mock object
 def mock_set_token_path(tmp_path):
     """Rather than overwriting a file in the users home, write it to
     tmp_path for testing"""
@@ -128,11 +130,9 @@ def test_get_access_token_no_user(
     os.chdir(tmp_path)
     create_broken_token
     # Replace expanduser with blank path so it directs to the tmp_path
+    # This avoids us overwriting someone's actual token on their computer
+    # while also allowing us to test on CI
     monkeypatch.setattr(os.path, "expanduser", mock_set_token_path)
-    # Note - will need to patch _get_authenticated_user
-    # Nesting multiple mocks (could also just user decorators)
-    # when you mock this way, i can just specify the return values which
-    # will skip the test actually running the function.
     with mock.patch("abcclassroom.github._get_authenticated_user"), mock.patch(
         "abcclassroom.github._get_login_code"
     ), mock.patch("abcclassroom.github._poll_for_status"):
@@ -176,27 +176,30 @@ def test_get_github_auth_noexist(tmp_path, monkeypatch):
     assert a == {}
 
 
-def test_get_github_auth_noexist_unittest(tmp_path):
-    """Test that when no token file exists, it is returns {}.
-    this does th e same thing as the test above but it uses mock.patch"""
-
-    os.chdir(tmp_path)
-    # Replace expanduser with blank path so it directs to the tmp_path
-    with mock.patch("os.path.expanduser"):
-        # Patch return value for  testing
-        os.path.expanduser.return_value = ""
-        a = config.get_github_auth()
-    assert a == {}
+# This is the same test as above but using all unittest vs pytest monkeypatch
+# def test_get_github_auth_noexist_unittest(tmp_path):
+#     """Test that when no token file exists, it is returns {}.
+#     this does th e same thing as the test above but it uses mock.patch"""
+#
+#     os.chdir(tmp_path)
+#     # Replace expanduser with blank path so it directs to the tmp_path
+#     # TODO above i use monkey patch. It could be that is simpler to read but
+#     #  you don't know how it's patched
+#     with mock.patch("os.path.expanduser"):
+#         # Patch return value for  testing
+#         os.path.expanduser.return_value = ""
+#         a = config.get_github_auth()
+#     assert a == {}
 
 
 def test_remote_repo_exists_pass(monkeypatch):
     """If the remote repo exists, return True"""
-    # Creating the fake function that will replace gh3.login with mock_login.
+    # Patch gh3.login with mock login function
     monkeypatch.setattr(gh3, "login", mock_login)
-    # Running this function with the newly faked function inside of it.
     assert github.remote_repo_exists("earthlab", "abc-classroom")
 
 
+# TODO this test will fail with no token regardless.
 def test_remote_repo_exists_fail(monkeypatch):
     """Test that a remote repository that doesn't exist fails."""
     monkeypatch.setattr(gh3, "login", mock_login)
