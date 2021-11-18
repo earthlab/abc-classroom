@@ -8,7 +8,8 @@ import shutil
 from pathlib import Path
 
 from . import config as cf
-from . import github as gh
+from . import git as gt
+from . import github
 from . import utils
 
 
@@ -110,7 +111,7 @@ def create_template(
     )
 
     # Create the local git repository and commit changes
-    gh.init_and_commit(template_repo_path, custom_message)
+    gt.init_and_commit(template_repo_path, custom_message)
 
     # Create / append assignment entry in config - this should only happen if
     # the assignment above exists...
@@ -155,22 +156,22 @@ def create_or_update_remote(
         ``abc-init``
 
     """
-    remote_exists = gh.remote_repo_exists(organization, repo_name, token)
+    remote_exists = gt.remote_repo_exists(organization, repo_name, token)
     if not remote_exists:
         print("Creating remote repo {}".format(repo_name))
         # create the remote repo on github and push the local repo
         # (will print error and return if repo already exists)
-        gh.create_repo(organization, repo_name, token)
+        github.create_repo(organization, repo_name, token)
 
     try:
-        gh.add_remote(template_repo_path, organization, repo_name)
+        gt.add_remote(template_repo_path, organization, repo_name)
     except RuntimeError:
         print("Remote already added to local repository.")
         pass
 
     print("Pushing any changes to remote repository on GitHub.")
     try:
-        gh.push_to_github(template_repo_path, "main")
+        gt.push_to_github(template_repo_path, "main")
     except RuntimeError as e:
         print(
             """Push to github failed. This is usually because there are
