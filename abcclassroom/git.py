@@ -1,6 +1,6 @@
 """
-abc-classroom.github
-====================
+abc-classroom.git
+=================
 """
 
 # Methods for command line git operations. See github.py for
