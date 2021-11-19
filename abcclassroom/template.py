@@ -10,6 +10,7 @@ from pathlib import Path
 from . import config as cf
 from . import git as abcgit
 from . import github as abcgithub
+from . import auth
 from . import utils
 
 
@@ -129,7 +130,7 @@ def create_template(
     if push_to_github:
         organization = cf.get_config_option(config, "organization", True)
         repo_name = os.path.basename(template_repo_path)
-        token = cf.get_github_auth()["access_token"]
+        token = auth.get_github_auth()["access_token"]
 
         create_or_update_remote(
             template_repo_path, organization, repo_name, token
