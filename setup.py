@@ -28,10 +28,7 @@ setup(
     license="BSD",
     packages=["abcclassroom"],
     install_requires=[
-        "nbclean",
         "jinja2",
-        "papermill",
-        "nbformat",
         "ruamel.yaml",
         "github3.py",
     ],

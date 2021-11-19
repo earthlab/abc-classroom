@@ -9,14 +9,10 @@ import os
 import stat
 import shutil
 import subprocess
-import sys
 import tempfile
 import textwrap
 
 import requests
-from contextlib import contextmanager
-
-from IPython import get_ipython
 
 
 def copy_files(src_dir, dest_dir, files_to_ignore=None):
@@ -49,55 +45,6 @@ def copy_files(src_dir, dest_dir, files_to_ignore=None):
         abccopytree(src_dir, dest_dir, dirs_exist_ok=True)
 
 
-# TODO: this will require grabbing paths to files or creating paths in this
-# function so it will require a bit more thought.
-
-#
-# def move_files(all_files, src_dir, dest_dir):
-#     """Moves files from one location to another.
-#
-#     Ignores files specified
-#     in the ``files_to_ignore`` in the config. Currently does not support
-#     moving directories but could in the future.
-#
-#     Parameters
-#     ----------
-#     all_files: list or glob generator object?
-#         list of file and directory names to move
-#     src_dir: path
-#         Path to the src directory of files to move
-#     dest_dir: path
-#         Path to the destination directory of files to move
-#
-#     """
-#     # TODO this could also use the copy files helper - thinking to put it in
-#     # the utils module
-#     # Get a list of files to ignore - maybe our default config has some
-#     # could have some defaults - then remove all files that we want to ignore
-#     config = cf.get_config()
-#     files_to_ignore = cf.get_config_option(config, "files_to_ignore", True)
-#     files_to_move = set(all_files).difference(files_to_ignore)
-#
-#     for file in files_to_move:
-#         fpath = Path(release_dir, file)
-#         if fpath.is_dir():
-#             # TODO: Note that as written here, moving directories will fail
-#             print(
-#                 "Oops - looks like {} is a directory. Currently I can't "
-#                 "move that for you. Contact the abc-classroom maintainers"
-#                 "if this is a feature that you'd "
-#                 "like".format(fpath.relative_to(course_dir))
-#             )
-#         else:
-#             print(" {}".format(fpath.relative_to(course_dir)))
-#             # Overwrites if fpath exists in template_repo
-#             shutil.copy(fpath, template_repo)
-#             nfiles += 1
-#
-#     print("Copied {} files to your assignment directory!".format(nfiles))
-#     print("The files copied include: {}".format(files_to_move))
-
-
 class Error(OSError):
     pass
 
@@ -120,43 +67,6 @@ def get_request(url, token=None):
     r = requests.get(url, headers=header)
     return (r.status_code, r.json())
 
-
-# Draft for a function to include only certain patterns instead of ignoring
-# patterns when copying folders
-
-# def include_patterns(patterns):
-#     """Factory function that can be used with copytree() ignore parameter.
-#
-#     Arguments define a sequence of glob-style patterns
-#     that are used to specify what files to NOT ignore.
-#     Creates and returns a function that determines this for each directory
-#     in the file hierarchy rooted at the source directory when used with
-#     shutil.copytree().
-#
-#     Parameters
-#     -----------
-#     patterns: list
-#         List of strings file extensions to be copied. Should be a string of
-#         what it's expected the file name will end in.
-#     """
-#
-#     # We might want to move this to utils, as it is a helper for copytree
-#
-#     def _ignore_patterns(path, names):
-#         keep = set(
-#             name
-#             for pattern in patterns
-#             for name in names
-#             if name.endswith(pattern)
-#         )
-#         ignore = set(
-#             name
-#             for name in names
-#             if name not in keep and not Path(path, name).is_dir()
-#         )
-#         return ignore
-#
-#     return _ignore_patterns
 
 # The following two functions are from python>3.8 where copytree
 # has an optional argument that allows the destination directory to exist
@@ -348,94 +258,3 @@ def write_file(filepath, contents):
 
     except OSError as err:
         print("Cannot open file: {0}".format(err))
-
-
-def flush_inline_matplotlib_plots():
-    """
-    Flush matplotlib plots immediately, rather than asynchronously.
-    Basically, the inline backend only shows the plot after the entire
-    cell executes, which means we can't easily use a contextmanager to
-    suppress displaying it.
-    See https://github.com/jupyter-widgets/ipywidgets/issues/1181/
-    and https://github.com/ipython/ipython/issues/10376 for more details. This
-    function displays flushes any pending matplotlib plots if we are using
-    the inline backend.
-
-    Stolen from https://github.com/jupyter-widgets/ipywidgets/blob/4cc15e66d5e9e69dac8fc20d1eb1d7db825d7aa2/ipywidgets/widgets/interaction.py#L35 # noqa: E501
-    """
-    if "matplotlib" not in sys.modules:
-        # matplotlib hasn't been imported, nothing to do.
-        return
-
-    try:
-        import matplotlib as mpl
-        from ipykernel.pylab.backend_inline import flush_figures
-    except ImportError:
-        return
-
-    if mpl.get_backend() == "module://ipykernel.pylab.backend_inline":
-        flush_figures()
-
-
-@contextmanager
-def hide_outputs():
-    """
-    Context manager for hiding outputs from display() calls.
-
-    IPython handles matplotlib outputs specially, so those are supressed too.
-    """
-    ipy = get_ipython()
-    if ipy is None:
-        # Not running inside ipython!
-        yield
-        return
-    old_formatters = ipy.display_formatter.formatters
-    ipy.display_formatter.formatters = {}
-    try:
-        yield
-    finally:
-        ipy.display_formatter.formatters = old_formatters
-
-
-@contextmanager
-def chdir(path):
-    """Change working directory to `path` and restore old path on exit.
-    `path` can be `None` in which case this is a no-op.
-    """
-    if path is None:
-        yield
-    else:
-        old_dir = os.getcwd()
-        os.chdir(path)
-        try:
-            yield
-        finally:
-            os.chdir(old_dir)
-
-
-#################################################################
-# Unused code from before the refactor that is causing the
-# linters to fail
-
-# def P(*paths):
-#     """Construct absolute path inside the repository from `paths`"""
-#     path = os.path.join(*paths)
-#     return os.path.join(TOP(), path)
-
-# @lru_cache(1)
-# def TOP():
-#     """Path to the top level of the repository we are in"""
-#     try:
-#         ret = _call_git("rev-parse", "--show-toplevel")
-#     except RuntimeError as e:
-#         print(" ".join(e.args))
-#         sys.exit(1)
-#
-#     return ret.stdout.decode("utf-8").strip()
-
-# def valid_date(s):
-#     try:
-#         return datetime.datetime.strptime(s, "%Y-%m-%d").date()
-#     except ValueError:
-#         msg = "Not a valid date: '{0}'.".format(s)
-#         raise argparse.ArgumentTypeError(msg)

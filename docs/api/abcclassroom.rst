@@ -14,11 +14,8 @@ Submodules
 
    abcclassroom.clone
    abcclassroom.config
-   abcclassroom.distribute
    abcclassroom.feedback
    abcclassroom.github
-   abcclassroom.notebook
-   abcclassroom.ok
    abcclassroom.quickstart
    abcclassroom.roster
    abcclassroom.scrub_feedback
