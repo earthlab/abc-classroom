@@ -6,54 +6,8 @@ abc-classroom.config
 
 import pprint
 from pathlib import Path
-import os.path as op
-
 from ruamel.yaml import YAML
 import ruamel.yaml.composer
-
-
-def get_github_auth():
-    """
-    Check to see if there is an existing github authentication
-    and load the authentication.
-
-    Returns
-    -------
-    ruamel.yaml.comments.CommentedMap
-        Yaml object that contains the token and id for a github session.
-        If yaml doesn't exists, return an empty dictionary.
-    """
-    yaml = YAML()
-    try:
-        with open(op.expanduser("~/.abc-classroom.tokens.yml")) as f:
-            config = yaml.load(f)
-        return config["github"]
-
-    except FileNotFoundError:
-        return {}
-
-
-def set_github_auth(auth_info):
-    """
-    Set the github authentication information. Put the token and id
-    authentication information into a yaml file if it doesn't already exist.
-
-    Parameters
-    ----------
-    auth_info : dictionary
-        The token and id authentication information from github stored in a
-        dictionary object.
-    """
-    yaml = YAML()
-    config = {}
-    if get_github_auth():
-        with open(op.expanduser("~/.abc-classroom.tokens.yml")) as f:
-            config = yaml.load(f)
-
-    config["github"] = auth_info
-
-    with open(op.expanduser("~/.abc-classroom.tokens.yml"), "w") as f:
-        yaml.dump(config, f)
 
 
 def get_config(configpath=None):

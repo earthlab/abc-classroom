@@ -1,7 +1,7 @@
 # Tests for git and github methods
 from pathlib import Path
 
-import abcclassroom.github as abcgit
+import abcclassroom.git as abcgit
 
 
 def test_init_and_commit(default_config, tmp_path):

@@ -5,7 +5,7 @@ import pytest
 from pathlib import Path
 
 import abcclassroom.template as abctemplate
-import abcclassroom.github as github
+import abcclassroom.git as abcgit
 import abcclassroom.config as cf
 
 
@@ -132,7 +132,7 @@ def test_create_template_dir_move_git_dir(course_structure_assignment):
     # create a file in the template dir, init a git repo and commit
     testfile = Path(template_path, "file1.txt")
     testfile.touch()
-    github.init_and_commit(template_path, False)
+    abcgit.init_and_commit(template_path, False)
     assert Path(template_path, ".git").exists()
 
     template_path = abctemplate.create_template_dir(

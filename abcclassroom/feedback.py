@@ -8,7 +8,7 @@ import csv
 import shutil
 
 from . import config as cf
-from . import github
+from . import git as abcgit
 
 # or import just the function we need?
 from . import scrub_feedback as sf
@@ -99,7 +99,7 @@ def copy_feedback_files(assignment_name, push_to_github=False, scrub=False):
                     )
                     shutil.copy(f, destination_dir)
 
-                github.commit_all_changes(
+                abcgit.commit_all_changes(
                     destination_dir,
                     msg="Adding feedback for assignment {}".format(
                         assignment_name
@@ -107,7 +107,7 @@ def copy_feedback_files(assignment_name, push_to_github=False, scrub=False):
                 )
                 if push_to_github:
                     try:
-                        github.push_to_github(destination_dir)
+                        abcgit.push_to_github(destination_dir)
                     except RuntimeError as e:
                         print(e)
                         print(
