@@ -7,7 +7,6 @@ abc-classroom.auth
 # github.py for methods that use the API.
 
 import requests
-
 import os.path as op
 from ruamel.yaml import YAML
 
@@ -16,8 +15,8 @@ from .utils import get_request
 
 def get_github_auth():
     """
-    Check to see if there is an existing github authentication
-    and load the authentication.
+    Check for a YAML file with
+    github authentication and load the authentication information.
 
     Returns
     -------
@@ -27,7 +26,9 @@ def get_github_auth():
     """
     yaml = YAML()
     try:
-        with open(op.expanduser("~/.abc-classroom.tokens.yml")) as f:
+        with open(
+            op.join(op.expanduser("~"), ".abc-classroom.tokens.yml")
+        ) as f:
             config = yaml.load(f)
         return config["github"]
 
@@ -45,22 +46,34 @@ def set_github_auth(auth_info):
     auth_info : dictionary
         The token and id authentication information from github stored in a
         dictionary object.
+
+    Returns
+    -------
+    Creates a file called .abc-classroom.tokens.yml in the users home dir.
     """
     yaml = YAML()
     config = {}
+
+    # If conf file already exists, open it and get config file
     if get_github_auth():
-        with open(op.expanduser("~/.abc-classroom.tokens.yml")) as f:
+        with open(
+            op.join(op.expanduser("~"), ".abc-classroom.tokens.yml")
+        ) as f:
             config = yaml.load(f)
 
     config["github"] = auth_info
 
-    with open(op.expanduser("~/.abc-classroom.tokens.yml"), "w") as f:
+    with open(
+        op.join(op.expanduser("~"), ".abc-classroom.tokens.yml"), "w"
+    ) as f:
         yaml.dump(config, f)
 
 
 def get_access_token():
-    """Get a GitHub access token for the API
+    """Get GitHub API access token stored in a yaml file in users home
+    directory.
 
+    # TODO does it actually generate the new token?
     First tries to read from local token file. If token does not exist,
     or is not valid, generates a new token using the OAuth Device Flow.
     https://docs.github.com/en/free-pro-team@latest/developers/apps/
@@ -68,7 +81,7 @@ def get_access_token():
 
     Returns an access token (string).
     """
-    # first, we see if we have a saved token
+    # First, check for saved token in the users home directory
     auth_info = get_github_auth()
     if auth_info:
         try:
