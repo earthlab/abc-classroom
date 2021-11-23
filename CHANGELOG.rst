@@ -8,7 +8,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 
 [unreleased]
 ------------
-- Remove old unused code from before the big redirection (@kcranston, #449)
+- Remove old unused code from before the big redirection (@kcranston, #449, #465)
 - Reoganize github module into smaller chunks (@kcranston, #447)
 - Check for working ssh keys before git commands that connect to github (@kcranston, #366)
 - Fix bug where git pull method was still trying to use master as the default branch rather than main (@kcranston, #376)
