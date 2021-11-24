@@ -247,7 +247,21 @@ def _master_branch_to_main(dir):
 
 
 def push_to_github(directory, branch="main"):
-    """Push `branch` of the repository in `directory` back to GitHub"""
+    """Push `branch` of the repository in `directory` back to GitHub
+
+    Assumes git remotes are already setup.
+
+    Parameters
+    ----------
+    directory : PathLib Path object
+        A path to the local directory where the git repo of interest is saved.
+    branch : str
+        A string representing the branch that you wish to pull. Default = main
+
+    Returns
+    -------
+    Pushes any new commits to the repo locally to GitHub.
+    """
     try:
         # first, check that local git set up with ssh keys for github
         check_git_ssh()
@@ -258,8 +272,25 @@ def push_to_github(directory, branch="main"):
         raise e
 
 
+# TODO here we have a parameter called directory. I suspect that is actually
+# a URL to a git repo
 def pull_from_github(directory, branch="main"):
-    """Pull `branch` of local repo in `directory` from GitHub"""
+    """Pull `branch` of local repo in `directory` from GitHub.
+
+    Assumes git remotes are already setup.
+
+    Parameters
+    ----------
+    directory : PathLib Path object
+        A path to the local directory where the git repo of interest is saved.
+    branch : str
+        A string representing the branch that you wish to pull. Default = main
+
+    Returns
+    -------
+    Pulls any new commits to the repo from GitHub to local computer.
+
+    """
     try:
         # first, check that local git set up with ssh keys for github
         check_git_ssh()

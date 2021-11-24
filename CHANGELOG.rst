@@ -8,6 +8,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 
 [unreleased]
 ------------
+- Test suite for git module (@lwasser, #448, #194)
 - Remove old unused code from before the big redirection (@kcranston, #449, #465)
 - Reoganize github module into smaller chunks (@kcranston, #447)
 - Check for working ssh keys before git commands that connect to github (@kcranston, #366)

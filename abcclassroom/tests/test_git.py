@@ -105,15 +105,15 @@ def test_check_git_ssh_error(capsys):
         assert captured_output[0].startswith("Encountered this error")
 
 
-# NOTE: Updated to run git status so it works universally
-# TODO: i am cheating and mocking git status and forcing a return. is this
-#  even useful? Also does status really need to be mocked? Does CI have status
-# setup because perhaps this is something we can just run without a mock?
-def test_call_git_status(capsys):
+# TODO do we need a test with a broken git command that will return a runtime?
+def test_call_git_status(tmpdir, example_student_repo_git):
     """Test that _call_git helper function runs as expected"""
-    with mock.patch("abcclassroom.git._call_git", return_value="On branch"):
-        ret = abcgit._call_git("status")
-    assert "On branch" in ret
+
+    os.chdir(tmpdir)
+    repo_path = example_student_repo_git
+    print("TO", repo_path)
+    ret = abcgit._call_git("status", directory=repo_path)
+    assert "On branch" in ret.stdout
 
 
 # TODO i am not sure how to set this up but what happens if git isn't setup
@@ -251,7 +251,7 @@ def test_init_and_commit(tmpdir, example_student_repo):
 # TODO this actually opens up a text editor at the CLI when i run the tests
 # i'm really confused by this because i thought it would allow me to pass a
 # string to the function and do the rest for me.
-def test_init_and_commit_custom_messate(tmpdir, example_student_repo):
+def test_init_and_commit_custom_message(tmpdir, example_student_repo):
     """
     Test that init and commit works when provided a custom message.
     """
@@ -259,8 +259,9 @@ def test_init_and_commit_custom_messate(tmpdir, example_student_repo):
     # Create the empty repo and initialized it
     os.chdir(tmpdir)
     repo_path = example_student_repo
-
-    abcgit.init_and_commit(repo_path, custom_message="message here great!")
+    print(repo_path)
+    # TODO will wait on this until we decide how custom message works
+    # abcgit.init_and_commit(repo_path, custom_message="message here great!")
 
 
 # TODO - this could use that example repo fixture once again?
@@ -303,3 +304,72 @@ def test_master_branch_to_main_no_commits(tmp_path):
     repo_dir.mkdir()
     abcgit.git_init(repo_dir)
     abcgit._master_branch_to_main(repo_dir)
+
+
+def test_push_to_github_runtime(tmpdir, capsys, example_student_repo_git):
+    """Test to ensure push to github throws Runtime when bad commands
+    provided"""
+
+    # Create mock student repo
+    student_dir_path = example_student_repo_git
+    # Mock check ssh
+    with mock.patch(
+        "abcclassroom.git.check_git_ssh", return_value=mock_check_ssh()
+    ):
+        with pytest.raises(RuntimeError, match="fatal: 'origin'"):
+            abcgit.push_to_github(directory=student_dir_path)
+
+
+def test_push_to_github_pass(tmpdir, capsys, example_student_repo_git):
+    """Test to ensure push to github throws RunTime when bad commands
+    provided"""
+
+    # Create mock student repo
+    student_dir_path = example_student_repo_git
+    # Make sure repo has a main branch
+    abcgit._master_branch_to_main(student_dir_path)
+    # Mock check ssh & push to github
+    with mock.patch(
+        "abcclassroom.git.check_git_ssh", return_value=mock_check_ssh()
+    ), mock.patch(
+        "abcclassroom.git.push_to_github",
+        # Default out from git push is Enumerating objects
+        return_value=sys.stdout.write("Enumerating objects:"),
+    ):
+        abcgit.push_to_github(directory=student_dir_path)
+        captured = capsys.readouterr().out.splitlines()
+        assert captured[1].startswith("Enumerating objects:")
+
+
+# TODO if we keep this structure i could make a fixture with main branch
+def test_pull_from_github_pass(tmpdir, capsys, example_student_repo_git):
+    """Test to ensure push to github throws Runtime when bad commands
+    provided"""
+
+    # Create mock student repo
+    student_dir_path = example_student_repo_git
+    # Make sure repo has a main branch
+    abcgit._master_branch_to_main(student_dir_path)
+    # Mock check ssh & push to github
+    with mock.patch(
+        "abcclassroom.git.check_git_ssh", return_value=mock_check_ssh()
+    ), mock.patch(
+        "abcclassroom.git.pull_from_github",
+        # Default out warning: Pulling without specifying how to reconcile
+        return_value=sys.stdout.write("warning: Pulling without specifying"),
+    ):
+        abcgit.pull_from_github(directory=student_dir_path)
+        captured = capsys.readouterr().out.splitlines()
+        assert captured[1].startswith("warning: Pulling without specifying")
+
+
+def test_pull_from_github_runtime(tmpdir, capsys, example_student_repo_git):
+    """Test to ensure push to github throws RunTime when bad commands
+    provided. In this case we try to push from a dir that is not a git repo"""
+
+    # Mock check ssh & push to github
+    with mock.patch(
+        "abcclassroom.git.check_git_ssh", return_value=mock_check_ssh()
+    ):
+        with pytest.raises(RuntimeError, match="fatal: not a git repository"):
+            abcgit.pull_from_github(directory=tmpdir)
