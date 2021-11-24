@@ -111,7 +111,6 @@ def test_call_git_status(tmpdir, example_student_repo_git):
 
     os.chdir(tmpdir)
     repo_path = example_student_repo_git
-    print("TO", repo_path)
     ret = abcgit._call_git("status", directory=repo_path)
     assert "On branch" in ret.stdout
 
