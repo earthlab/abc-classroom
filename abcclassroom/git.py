@@ -97,6 +97,20 @@ def clone_repo(organization, repo, dest_dir):
 
     Raises RuntimeError if ssh keys not set up correctly, or if git clone
     fails for other reasons.
+
+    Parameters
+    ----------
+    organization : string
+        A string with the name of the organization to clone from
+    repo : string
+        A string with the name of the GitHub repository to clone
+    dest_dir : string
+        Path to the destination directory
+        TODO: is this a full path, path object or string - what format is
+        dest_dir in
+    Returns
+    -------
+    Cloned github repository in the destination directory specified.
     """
 
     try:

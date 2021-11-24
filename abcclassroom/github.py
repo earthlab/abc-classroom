@@ -11,7 +11,21 @@ import github3 as gh3
 
 
 def remote_repo_exists(org, repository, token=None):
-    """Check if the remote repository exists for the organization."""
+    """Check if the remote repository exists for the organization.
+
+    Parameters
+    ----------
+    org : string
+        Name of the organization where the repo lives on GitHub.
+    repository : string
+        Name of the repository within the organization to clone.
+    token : string (default None)
+        Token value required for authentication
+    Returns
+    -------
+    Boolean True if exists, False / raises exception if it doesn't exist.
+
+    """
 
     try:
         g = gh3.login(token=token)

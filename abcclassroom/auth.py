@@ -127,6 +127,15 @@ def _get_login_code(client_id):
     First part of the Device Flow workflow. Asks user to visit a URL and
     enter the provided code. Waits for user to hit RETURN to continue.
     Returns the device code.
+
+    Parameters
+    ----------
+    client_id : str
+        String representing the ID for the abc-classroom bot.
+    Returns
+    -------
+    device_code : str
+        The device code for the response.
     """
 
     # make the device call
@@ -161,8 +170,19 @@ def _get_login_code(client_id):
 def _poll_for_status(client_id, device_code):
     """Polls API to see if user entered the device code
 
-    This is the second step of the Device Flow. Returns an access token, and
+    This is the second step of the device flow. Returns an access token, and
     also writes the token to a file in the user's home directory.
+
+        Parameters
+    ----------
+    client_id : str
+        A string representing the client code for the abc-classroom bot.
+    device_code : str
+        The device code returned from the API for the user's machine / device.
+    Returns
+    -------
+    Access token provided by GitHub.
+    Writes the token to a file in the user's home directory
     """
 
     header = {"Content-Type": "application/json", "Accept": "application/json"}
