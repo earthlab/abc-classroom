@@ -6,8 +6,6 @@ abc-classroom.git
 # Methods for command line git operations. See github.py for
 # methods that involve the GitHub API
 
-import random
-import string
 import subprocess
 import sys
 
@@ -140,20 +138,6 @@ def repo_changed(directory):
     """Determine if the Git repository in directory is dirty"""
     ret = _call_git("status", "--porcelain", directory=directory)
     return bool(ret.stdout)
-
-
-# TODO: DO WE USE THIS? i can't find it called anywhere
-def new_branch(directory, name=None):
-    """Create a new git branch in directory"""
-    if name is None:
-        postfix = "".join(
-            [random.choice(string.ascii_letters) for n in range(4)]
-        )
-        name = "new-material-{}".format(postfix)
-
-    _call_git("checkout", "-b", name, directory=directory)
-
-    return name
 
 
 def get_commit_message():
