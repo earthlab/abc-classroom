@@ -60,7 +60,7 @@ will create subdirectories within ``course_materials`` for each student as neede
 Clone and Do Not Move to Submitted
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Sometimes you need to update student repos however  you may not with to update
-the submitted directory which contains the version oof the assignment that you
+the submitted directory which contains the version of the assignment that you
 graded. In this case, you can run ``abc-clone assignment-name --no-submitted``.
 The ``no-submitted`` flag / parameter will make abc-clone only clone or pull down
 repo updates. It will NOT update your submitted directory.
