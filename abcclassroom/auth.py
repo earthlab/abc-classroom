@@ -59,17 +59,25 @@ def set_github_auth(auth_info):
 
 
 def check_or_generate_token():
-    """Check that a valid access token exists for the GitHub API
+    """Check that a valid access token exists for the GitHub API and
+    generates if one does not exist.
 
-    First tries to read and validate a token from local token file.
-    If token does not exist or is not valid, generates
-    a new token using the OAuth Device Flow.
-    https://docs.github.com/en/free-pro-team@latest/developers/apps/
-    identifying-and-authorizing-users-for-github-apps#device-flow
+    First tries local token file for valid token.
+    If token does not exist or is not valid, generates a new one.
 
-    Returns an access token (string).
     """
-    # first, we see if we have a saved and valid token
+    # TODO: this needs error handling.
+
+    # do we have a saved and valid token?
+    if not _check_local_token():
+        # if not, generate a new one
+        _generate_new_token()
+
+
+def _check_local_token():
+    """Checks that there is an access token in the local tokens file
+    and if so, checks if the token is valid against the GitHub API."""
+    valid_token_exists = False
     auth_info = get_github_auth()
     if auth_info:
         try:
@@ -81,11 +89,22 @@ def check_or_generate_token():
                     "Access token is present and valid; successfully "
                     "authenticated as user {}".format(user)
                 )
-                return access_token
+                valid_token_exists = True
         except KeyError:
+            # no access token in the file, so we leave valid_token_exists
+            # as False and continue on
             pass
+    return valid_token_exists
 
-    # otherwise, generate a new token
+
+def _generate_new_token():
+    """Generates a new GitHub API access token using the OAuth Device Flow.
+    https://docs.github.com/en/free-pro-team@latest/developers/apps/
+    identifying-and-authorizing-users-for-github-apps#device-flow
+
+    Saves token to local token file.
+    """
+
     print("Generating new access token")
     # client id for the abc-classroom-bot GitHub App
     client_id = "Iv1.8df72ad9560c774c"
@@ -100,16 +119,24 @@ def check_or_generate_token():
     user = _get_authenticated_user(access_token)
     if user is not None:
         print("""Successfully authenticated as user {}""".format(user))
-    return access_token
+
+    # save the token to the local tokens file
+    set_github_auth({"access_token": access_token})
 
 
 def _get_authenticated_user(token):
-    """Test the validity of an access token.
-
-    Given a github access token, test that it is valid by making an
+    """Test the validity of an access token by making an
     API call to get the authenticated user.
 
-    Returns the GitHub username of the authenticated user if token valid,
+    Parameters
+    ----------
+    token : string
+        A string to try as a GitHub access token
+
+    Returns
+    -------
+    username : string
+    The GitHub username of the authenticated user if token valid,
     otherwise returns None.
     """
 
@@ -171,10 +198,9 @@ def _get_login_code(client_id):
 def _poll_for_status(client_id, device_code):
     """Polls API to see if user entered the device code
 
-    This is the second step of the device flow. Returns an access token, and
-    also writes the token to a file in the user's home directory.
+    This is the second step of the device flow. Returns an access token.
 
-        Parameters
+    Parameters
     ----------
     client_id : str
         A string representing the client code for the abc-classroom bot.
@@ -183,7 +209,6 @@ def _poll_for_status(client_id, device_code):
     Returns
     -------
     Access token provided by GitHub.
-    Writes the token to a file in the user's home directory
     """
 
     header = {"Content-Type": "application/json", "Accept": "application/json"}
@@ -200,5 +225,4 @@ def _poll_for_status(client_id, device_code):
 
     data = r.json()
     access_token = data["access_token"]
-    set_github_auth({"access_token": access_token})
     return access_token
