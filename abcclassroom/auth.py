@@ -58,7 +58,7 @@ def set_github_auth(auth_info):
         yaml.dump(config, f)
 
 
-def get_access_token():
+def check_for_token():
     """Get a GitHub access token for the API
 
     First tries to read from local token file. If token does not exist,
