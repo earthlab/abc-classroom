@@ -40,7 +40,7 @@ def init():
     """
 
     print("Step 1: Setting up GitHub API access")
-    abcauth.check_for_token()
+    abcauth.check_or_generate_token()
 
     print(
         """Step 2: Checking ssh access to GitHub. If you have not

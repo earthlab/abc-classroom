@@ -58,17 +58,18 @@ def set_github_auth(auth_info):
         yaml.dump(config, f)
 
 
-def check_for_token():
-    """Get a GitHub access token for the API
+def check_or_generate_token():
+    """Check that a valid access token exists for the GitHub API
 
-    First tries to read from local token file. If token does not exist,
-    or is not valid, generates a new token using the OAuth Device Flow.
+    First tries to read and validate a token from local token file.
+    If token does not exist or is not valid, generates
+    a new token using the OAuth Device Flow.
     https://docs.github.com/en/free-pro-team@latest/developers/apps/
     identifying-and-authorizing-users-for-github-apps#device-flow
 
     Returns an access token (string).
     """
-    # first, we see if we have a saved token
+    # first, we see if we have a saved and valid token
     auth_info = get_github_auth()
     if auth_info:
         try:
