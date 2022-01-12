@@ -5,6 +5,8 @@ from argparse import ArgumentParser
 from . import template
 from . import feedback as fdback
 from . import github
+from . import git
+from . import auth
 
 from .quickstart import create_dir_struct
 from .clone import clone_student_repos
@@ -37,7 +39,7 @@ def init():
     """
 
     print("Step 1: Setting up GitHub API access")
-    github.get_access_token()
+    auth.get_access_token()
 
     print(
         """Step 2: Checking ssh access to GitHub. If you have not
@@ -46,7 +48,7 @@ def init():
         """
     )
     try:
-        github.check_git_ssh()
+        git.check_git_ssh()
         print("Access to GitHub via SSH seems to be configured correctly")
     except RuntimeError:
         pass
