@@ -1,28 +1,273 @@
-# Tests for git and github methods
+"""
+Tests for git and github methods
+"""
+
+import os
+import sys
+import subprocess
 from pathlib import Path
+import unittest.mock as mock
+import pytest
 
 import abcclassroom.git as abcgit
 
 
-def test_init_and_commit(default_config, tmp_path):
+# Function to replace check_ssh
+def mock_check_ssh():
+    """Mock that returns a successful message following what Git returns."""
+    # TODO: Lets see how often i use this fixture. would be easy to patch
+    # via a mock object too...
+    return sys.stdout.write(
+        "Hi username! You've successfully authenticated \n"
+    )
+
+
+# TODO - do we need this??
+def mock_call_git():
+    """A basic mock that returns a RuntimeError"""
+
+    # TODO: can i write to stderr as a return value perhaps? test this
+    # sys.stderr.write("Some git error here - test this")
+    raise RuntimeError("Some git error here - test this")
+
+
+@pytest.fixture()
+def example_student_repo(tmpdir):
+    """A fixture that creates an example student repo.
+    This can be run in a temp dir to avoid messing with a dev's local
+    environment. This allows us to test init and other repo functions
+    without needing to create files in our tests each time."""
+
+    repo_dir = Path(tmpdir, "assignment-1", "course-test-student")
+    repo_dir.mkdir(parents=True, exist_ok=True)
+    a_file = Path(repo_dir, "README.md")
+    a_file.write_text("Some text in the readme")
+
+    return repo_dir
+
+
+@pytest.fixture()
+def example_student_repo_git(tmpdir, example_student_repo):
+    """A fixture with an initialized git repo"""
+
+    import contextlib
+
+    # Create the repo dir
+    repo_path = example_student_repo
+    with open(os.devnull, "w") as f, contextlib.redirect_stdout(f):
+        # This just suppresses print messages so we aren't getting extra
+        # stdout to weed through
+        abcgit.init_and_commit(repo_path)
+    return repo_path
+
+
+# TODO: add an  actual check here for the standard out
+def test_check_git_ssh_pass():
+    """When ssh is setup correctly, the check should run and pass with no
+    output."""
+    with mock.patch("subprocess.run"):
+        # Skip actually running the subprocess call and return the expected
+        # output
+        subprocess.run.side_effect = subprocess.CalledProcessError(
+            returncode=1, cmd="", stderr="Hi username"
+        )
+        # Here this should just run and pass
+        # I don't think we need an assert unless we add a message for
+        # successful check to the function. Then we get a return output that
+        # can be tested
+        abcgit.check_git_ssh()
+
+
+def test_check_git_ssh_warning(capsys):
+    """Test what happens when ssh is setup but user hasn't logged in"""
+    with mock.patch("subprocess.run"):
+        # Skip actually running the subprocess call and return the expected
+        # output. We always trigger a CalledProcessError in this function
+        subprocess.run.side_effect = subprocess.CalledProcessError(
+            returncode=1, cmd="", stderr="Warning: Permanently"
+        )
+
+        abcgit.check_git_ssh()
+        captured_output = capsys.readouterr().out.splitlines()
+        assert captured_output[0].startswith("Warning:")
+
+
+def test_check_git_ssh_error(capsys):
+    """Test what happens when ssh is not setup - should raise RuntimeError"""
+    with mock.patch("subprocess.run"):
+        # Skip running subprocess call, return the expected error
+        subprocess.run.side_effect = subprocess.CalledProcessError(
+            returncode=1, cmd="", stderr="Encountered this error"
+        )
+        with pytest.raises(RuntimeError):
+            abcgit.check_git_ssh()
+        captured_output = capsys.readouterr().out.splitlines()
+        assert captured_output[0].startswith("Encountered this error")
+
+
+# TODO do we need a test with a broken git command that will return a runtime?
+def test_call_git_status(tmpdir, example_student_repo_git):
+    """Test that _call_git helper function runs as expected"""
+
+    os.chdir(tmpdir)
+    repo_path = example_student_repo_git
+    ret = abcgit._call_git("status", directory=repo_path)
+    assert "On branch" in ret.stdout
+
+
+# TODO i am not sure how to set this up but what happens if git isn't setup
+#  and you try to run _call_git?
+
+
+def test_clone_repo_pass(monkeypatch, example_student_repo, capsys, tmp_path):
+    """Test that clone_repo works as expected. This test assumes that git
+    clone runs as it should and just tests that the correct message is
+    returned.
+
+    TODO: this currently does NOT test that the clone goes to the right
+    location. I don't think we can do that without actually calling clone
+    because this is part of the clone command.
+
     """
-    Tests that we can create a directory, initialize it as a git repo,
+
+    # Fixture creates demo student repo in case we do want to test location
+    # need to talk this through however because right now we don't need this -
+    # right now this test is kind of weak in what it actually does.
+    os.chdir(tmp_path)
+    example_student_repo
+
+    # Mock the subprocess.run and check_git_ssh
+    with mock.patch("subprocess.run", return_value=""), mock.patch(
+        "abcclassroom.git.check_git_ssh", return_value=mock_check_ssh()
+    ):
+        abcgit.clone_repo(
+            organization="earth55lab", repo="earthpy", dest_dir="assignment-1"
+        )
+    captured = capsys.readouterr()
+    lines = captured.out.splitlines()
+
+    assert lines[1].startswith("Cloning: git@github")
+
+
+def test_clone_repo_bad_repo(
+    monkeypatch, example_student_repo, capsys, tmpdir
+):
+    """Test what happens when you clone into a directory that hasn't been
+    created yet. This should return a RuntimeError"""
+
+    # TODO: again this isn't checking that it places the repo in the correct
+    #  directory. i think that can only be tested by running the command
+    #  because it is placed where it belongs when you call git clone.
+    #  alternatively if there is some really creative way to patch over the
+    #  part of git clone that hits the GH api and test the part that only
+    #  does dir stuff that is another option?
+
+    os.chdir(tmpdir)
+    example_student_repo
+
+    with mock.patch(
+        "abcclassroom.git.check_git_ssh", return_value=mock_check_ssh()
+    ), mock.patch(
+        "abcclassroom.git._call_git",
+        side_effect=RuntimeError("Error message here"),
+    ):
+        # Test match output from mock call git - note that because i'm
+        # triggering the runtime error above i specify the error message. So
+        # here, match= isn't that helpful but it does show us it's catching
+        # the side effect but also capturing below the stdout that we expect
+        # from abcclassroom.
+        with pytest.raises(RuntimeError, match="Error message here"):
+            abcgit.clone_repo(
+                organization="earthlab",
+                repo="eardthpy",
+                dest_dir="assignment-1",
+            )
+
+    captured = capsys.readouterr()
+    lines = captured.out.splitlines()
+    # Testing expected stout from clone_repo
+    assert lines[2].startswith(
+        "Oops, something went wrong when cloning " "earthlab"
+    )
+
+
+# TODO: I'm not sure there is any point of failure here because this doesn't
+# check
+# that the remote is valid in the function. is that ok?
+def test_add_remote(tmpdir, example_student_repo_git):
+    """Function that tests the add remote correctly adds a new remote to a
+    git repo"""
+
+    repo_path = example_student_repo_git
+    abcgit.add_remote(
+        directory=repo_path,
+        organization="demo-org",
+        remote_repo="student-repo",
+    )
+    # Now check that setting the remote worked
+    ret = abcgit._call_git("remote", "-v", directory=repo_path)
+    assert ret.stdout.startswith(
+        "origin\tgit@github.com:demo-org/student-repo.git (fetch)"
+    )
+
+
+# Test repo changed
+def test_repo_changed(tmpdir, example_student_repo_git):
+    """Should return True if the repo is dirty"""
+    repo_path = example_student_repo_git
+    # Make that puppy dirty / change stuff
+    a_file = Path(repo_path, "README.md")
+    a_file.write_text("Some new text in the readme")
+    ret = abcgit.repo_changed(directory=repo_path)
+    assert ret
+
+
+# TODO this test and the above could be in the same test fun. not sure what
+#  best practice is here
+def test_repo_clean(tmpdir, example_student_repo_git):
+    """Should return True if the repo is dirty"""
+    repo_path = example_student_repo_git
+    ret = abcgit.repo_changed(directory=repo_path)
+    assert ret is False
+
+
+def test_init_and_commit(tmpdir, example_student_repo):
+    """
+    Test that we can create a directory, initialize it as a git repo,
     and commit some changes.
     """
-    repo_dir = Path(tmp_path, "init-and-commit")
-    repo_dir.mkdir()
-    a_file = Path(repo_dir, "testfile.txt")
-    a_file.write_text("Some text")
-    abcgit.init_and_commit(repo_dir)
-    assert Path(repo_dir, ".git").exists()
-    git_return = abcgit._call_git("log", directory=repo_dir)
+
+    # Create the empty repo and initialized it
+    os.chdir(tmpdir)
+    repo_path = example_student_repo
+
+    abcgit.init_and_commit(repo_path)
+    assert Path(repo_path, ".git").exists()
+    git_return = abcgit._call_git("log", directory=repo_path)
     assert git_return.stdout.startswith("commit")
 
 
+# TODO this actually opens up a text editor at the CLI when i run the tests
+# i'm really confused by this because i thought it would allow me to pass a
+# string to the function and do the rest for me.
+def test_init_and_commit_custom_message(tmpdir, example_student_repo):
+    """
+    Test that init and commit works when provided a custom message.
+    """
+
+    # Create the empty repo and initialized it
+    os.chdir(tmpdir)
+    repo_path = example_student_repo
+    print(repo_path)
+    # TODO will wait on this until we decide how custom message works
+    # abcgit.init_and_commit(repo_path, custom_message="message here great!")
+
+
+# TODO - this could use that example repo fixture once again?
 def test_master_branch_to_main_repeatedly(tmp_path):
     """
-    Tests that we can sucessfully change the default master branch to
-    main, and nothing bad happends if we try and do it again
+    Tests that we can successfully change the default master branch to
+    main, and nothing bad happens if we try and do it again
     """
     repo_dir = Path(tmp_path, "change-master")
     repo_dir.mkdir()
@@ -51,10 +296,79 @@ def test_master_branch_to_main_repeatedly(tmp_path):
 
 def test_master_branch_to_main_no_commits(tmp_path):
     """
-    Tests that changing the name of the master branch in a initialized
+    Test that changing the name of the master branch in a initialized
     repo without commits works.
     """
     repo_dir = Path(tmp_path, "change-master-no-commits")
     repo_dir.mkdir()
     abcgit.git_init(repo_dir)
     abcgit._master_branch_to_main(repo_dir)
+
+
+def test_push_to_github_runtime(tmpdir, capsys, example_student_repo_git):
+    """Test to ensure push to github throws Runtime when bad commands
+    provided"""
+
+    # Create mock student repo
+    student_dir_path = example_student_repo_git
+    # Mock check ssh
+    with mock.patch(
+        "abcclassroom.git.check_git_ssh", return_value=mock_check_ssh()
+    ):
+        with pytest.raises(RuntimeError, match="fatal: 'origin'"):
+            abcgit.push_to_github(directory=student_dir_path)
+
+
+def test_push_to_github_pass(tmpdir, capsys, example_student_repo_git):
+    """Test to ensure push to github throws RunTime when bad commands
+    provided"""
+
+    # Create mock student repo
+    student_dir_path = example_student_repo_git
+    # Make sure repo has a main branch
+    abcgit._master_branch_to_main(student_dir_path)
+    # Mock check ssh & push to github
+    with mock.patch(
+        "abcclassroom.git.check_git_ssh", return_value=mock_check_ssh()
+    ), mock.patch(
+        "abcclassroom.git.push_to_github",
+        # Default out from git push is Enumerating objects
+        return_value=sys.stdout.write("Enumerating objects:"),
+    ):
+        abcgit.push_to_github(directory=student_dir_path)
+        captured = capsys.readouterr().out.splitlines()
+        assert captured[1].startswith("Enumerating objects:")
+
+
+# TODO if we keep this structure i could make a fixture with main branch
+def test_pull_from_github_pass(tmpdir, capsys, example_student_repo_git):
+    """Test to ensure push to github throws Runtime when bad commands
+    provided"""
+
+    # Create mock student repo
+    student_dir_path = example_student_repo_git
+    # Make sure repo has a main branch
+    abcgit._master_branch_to_main(student_dir_path)
+    # Mock check ssh & push to github
+    with mock.patch(
+        "abcclassroom.git.check_git_ssh", return_value=mock_check_ssh()
+    ), mock.patch(
+        "abcclassroom.git.pull_from_github",
+        # Default out warning: Pulling without specifying how to reconcile
+        return_value=sys.stdout.write("warning: Pulling without specifying"),
+    ):
+        abcgit.pull_from_github(directory=student_dir_path)
+        captured = capsys.readouterr().out.splitlines()
+        assert captured[1].startswith("warning: Pulling without specifying")
+
+
+def test_pull_from_github_runtime(tmpdir, capsys, example_student_repo_git):
+    """Test to ensure push to github throws RunTime when bad commands
+    provided. In this case we try to push from a dir that is not a git repo"""
+
+    # Mock check ssh & push to github
+    with mock.patch(
+        "abcclassroom.git.check_git_ssh", return_value=mock_check_ssh()
+    ):
+        with pytest.raises(RuntimeError, match="fatal: not a git repository"):
+            abcgit.pull_from_github(directory=tmpdir)
