@@ -9,6 +9,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 [unreleased]
 ------------
 - Remove docs build on python 3.6 - sphinx template no longer supports 3.6 (@lwasser, #481)
+- Reorganize the functions for checking, validating, and generating access tokens to make testing easier (@kcranston, #460)
 - Remove old unused code from before the big redirection (@kcranston, #449, #465)
 - Reoganize github module into smaller chunks (@kcranston, #447)
 - Check for working ssh keys before git commands that connect to github (@kcranston, #366)
