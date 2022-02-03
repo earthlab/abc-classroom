@@ -42,6 +42,8 @@ jobs:
       run: |
         pytest
     - name: Build Docs
+      # Only run docs on python 3.8
+      if: contains(matrix.python-version, '3.8')
       run: |
         make docs -B
     - name: Lint
