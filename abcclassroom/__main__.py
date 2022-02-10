@@ -4,9 +4,9 @@ from argparse import ArgumentParser
 
 from . import template
 from . import feedback as fdback
-from . import github
-from . import git
-from . import auth
+from . import auth as abcauth
+from . import git as abcgit
+
 
 from .quickstart import create_dir_struct
 from .clone import clone_student_repos
@@ -34,12 +34,14 @@ def quickstart():
 
 def init():
     """
-    Setup GitHub credentials for later. Make sure that there is a valid
-    GitHub authentication yaml file, and if there isn't, create a valid file.
+    Setup git and GitHub credentials for later. 1. Make sure that there
+    is a valid GitHub authentication yaml file, and if there isn't,
+    create a valid file; 2. Check that ssh access to GitHub via git
+    commands is working.
     """
 
     print("Step 1: Setting up GitHub API access")
-    auth.get_access_token()
+    abcauth.check_or_generate_token()
 
     print(
         """Step 2: Checking ssh access to GitHub. If you have not
@@ -48,8 +50,11 @@ def init():
         """
     )
     try:
-        git.check_git_ssh()
-        print("Access to GitHub via SSH seems to be configured correctly")
+        abcgit.check_git_ssh()
+        print(
+            """Running git commands that access GitHub via SSH seems to
+        be configured correctly"""
+        )
     except RuntimeError:
         pass
 
