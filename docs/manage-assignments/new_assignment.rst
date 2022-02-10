@@ -84,6 +84,32 @@ changes to files. The command to merge would look like::
 
     abc-new-template assignment1 --mode merge --github
 
+Extra Files: Readme and other Template Files
+=============================================
+GitHub repos normally have a ``Readme.md`` and a ``.gitignore`` file. The ``readme.md`` file
+provides a user with an overview of the repository. The ``.gitignore`` specifies files that
+should never be committed to git history. One example of such a file is a Jupyter Notebook
+``.ipynb_checkpoints`` file. This is a file that you may never want to be committed
+to git but that will always by in a directory where you are working on a
+Jupyter Notebook. By default, abc-classroom provides a standard ``readme.md`` and
+``.gitignore`` file that can be found in the ``extra_files`` directory that is created
+when you create a new class with abc-classroom. You can look at the default
+content contained within those files, on GitHub, here:
+https://github.com/earthlab/abc-classroom/tree/main/abcclassroom/example-data/extra_files
+
+* To customize the ``readme.md`` file, you can edit the file within the ``extra_files`` directory.
+* To customize the ``.gitignore`` file, edit that file within the ``extra_files`` directory.
+
+You can also add any files that you wish to that directory such as images, text
+files, etc. Any files within the ``extra_files`` directory will be added to a new
+template repository upon creating or updating a new assignment.
+
+A few notes about how this works:
+
+* Extra files will NOT be updated for older assignments when you create or update a new template. Only that new template will have the newest files.
+* Abc-classroom will add the assignment name to the top of the readme file.
+
+
 Text Editors and Git Commit Messages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The default commit message used when you run
