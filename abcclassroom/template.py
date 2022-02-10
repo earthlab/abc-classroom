@@ -102,7 +102,7 @@ def create_template(
     except FileNotFoundError as e:
         print(e)
         raise FileNotFoundError(
-            "Oops, it looks like the assignment - {} - does not exist"
+            "Oops, it looks like the assignment - {} - does not exist "
             "in the location that I expected it: \n{}. \nDid "
             "you spell the assignment name correctly and is there a "
             "directory at this path?".format(assignment_name, release_path)
