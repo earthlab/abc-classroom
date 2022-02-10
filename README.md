@@ -60,7 +60,7 @@ is installed in the active environment that you are using for your class.
 ## How to Contribute
 
 We welcome contributions to abc-classroom as we are developing it and beyond! Please be sure to check out our
-[contributing guidelines](https://abc-classroom.readthedocs.io/en/latest/contributing.html)
+[contributing guidelines](https://abc-classroom.readthedocs.io/en/latest/contributing/index.html)
 for more information about submitting pull requests or changes to abc-classroom.
 
 ## License & Citation

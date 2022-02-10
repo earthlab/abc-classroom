@@ -9,6 +9,8 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 [unreleased]
 ------------
 - Rather than opening text editor for commit message, allow user to provide custom message as command line arg; changes name of command line arg to 'commit_message' from 'custom_message' (@kcranston, #466)
+- Update documentation to discuss using extra_files to modify gitignore and readme (@lwasser, #178)
+- Reorganize the functions for checking, validating, and generating access tokens to make testing easier (@kcranston, #460)
 - Remove old unused code from before the big redirection (@kcranston, #449, #465)
 - Reoganize github module into smaller chunks (@kcranston, #447)
 - Check for working ssh keys before git commands that connect to github (@kcranston, #366)

@@ -5,9 +5,13 @@ Install abc-classroom & Setup GitHub Authentication
 Installation Instructions
 ==========================
 
-To install the release version of **abc-classroom**:
+To install the release version of **abc-classroom** with PyPi, use:
 
 ``pip install abc-classroom``
+
+Or use conda-forge:
+
+``conda install -c conda-forge abc-classroom``
 
 If you want the development version, you can install directly from GitHub:
 
