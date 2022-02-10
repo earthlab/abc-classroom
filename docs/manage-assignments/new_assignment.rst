@@ -113,23 +113,13 @@ A few notes about how this works:
 Text Editors and Git Commit Messages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The default commit message used when you run
-``abc-new-template <assignment-name>`` is **initial commit**. A text editor
-will not open in this case.
+``abc-new-template <assignment-name>`` is "Initial commit". For 
+``abc-update-template`` the default message is "Updating assignment". 
 
-When you run ``abc-update-template`` the text editor that is specified in your
-system configuration settings will open up. If you do not have a text editor
-specified, VIM will open as a default.
+If you want to provide a custom commit message, use the ``--commit-message`` 
+flag with either script, and provide a message after the flag, e.g.::
 
-If you wish to use nano instead you can run the following in your terminal::
-
-  export EDITOR=nano
-
-.. note::
-  Right now if you try to use an editor like atom that launches outside of the
-  terminal, abc-classroom will currently fail and return a message saying
-  **empty commit message** . This may be fixed in the future but for now we
-  suggest that you use a terminal based editor for your default when using
-  abc-classroom.
+  abc-update-template assignment1 --commit-message "adding new notebook"
 
 
 
@@ -153,8 +143,7 @@ Run ``abc-new-template -h`` to see the options. The output is reproduced below::
 
     optional arguments:
       -h, --help            show this help message and exit
-      --custom-message      Use a custom commit message for git. Will open the
-                            default git text editor for entry (if not set, uses
+      --commit-message      Provide a custom commit message for git (if not set, uses
                             default message 'Initial commit').
       --github              Also perform the GitHub operations (create remote repo
                             on GitHub and push to remote (by default, only does
@@ -201,6 +190,8 @@ is reproduced here::
 
     optional arguments:
       -h, --help            show this help message and exit
+      --commit-message      Provide a custom commit message for git (if not set, uses
+                            default message 'Updating assignment').
       --mode {delete,merge}
                             What to do with existing contents of template
                             directory. Choices are: delete = remove contents
