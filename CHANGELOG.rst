@@ -9,6 +9,8 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 [unreleased]
 ------------
 - Rather than opening text editor for commit message, allow user to provide custom message as command line arg; changes name of command line arg to 'commit_message' from 'custom_message' (@kcranston, #466)
+- Remove docs build on python 3.6 - sphinx template no longer supports 3.6, add build for 3.9 (@lwasser, #481)
+- Cleanup old requirements and directories (@lwasser, #415)
 - Update documentation to discuss using extra_files to modify gitignore and readme (@lwasser, #178)
 - Reorganize the functions for checking, validating, and generating access tokens to make testing easier (@kcranston, #460)
 - Remove old unused code from before the big redirection (@kcranston, #449, #465)

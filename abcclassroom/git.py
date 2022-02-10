@@ -146,7 +146,21 @@ def commit_all_changes(directory, msg=None):
 
 def init_and_commit(directory, commit_message):
     """Run git init, git add, git commit on given directory. Checks git status
-    first and does nothing if no changes.
+    first and does nothing if no changes are detected.
+
+    Parameters
+    ----------
+    directory : Pathlib Path object?
+        A relative or full Path to the directory that needs to be
+        initialized via git init.
+    custom_message : str (defaults to default message - 'Initial commit')
+        String with a custom message if you wish the first commit to not be
+        the stock git init message provided by abc-classroom.
+
+    Returns
+    -------
+    Initializes the specified directory with a .git file and associated
+    tracking
     """
     # local git things - initialize, add, commit
     # note that running git init on an existing repo is safe, so no need
@@ -199,7 +213,21 @@ def _master_branch_to_main(dir):
 
 
 def push_to_github(directory, branch="main"):
-    """Push `branch` of the repository in `directory` back to GitHub"""
+    """Push `branch` of the repository in `directory` back to GitHub
+
+    Assumes git remotes are already setup.
+
+    Parameters
+    ----------
+    directory : PathLib Path object
+        A path to the local directory where the git repo of interest is saved.
+    branch : str
+        A string representing the branch that you wish to pull. Default = main
+
+    Returns
+    -------
+    Pushes any new commits to the repo locally to GitHub.
+    """
     try:
         # first, check that local git set up with ssh keys for github
         check_git_ssh()
@@ -211,7 +239,22 @@ def push_to_github(directory, branch="main"):
 
 
 def pull_from_github(directory, branch="main"):
-    """Pull `branch` of local repo in `directory` from GitHub"""
+    """Pull `branch` of local repo in `directory` from GitHub.
+
+    Assumes git remotes are already setup.
+
+    Parameters
+    ----------
+    directory : PathLib Path object
+        A path to the local directory where the git repo of interest is saved.
+    branch : str
+        A string representing the branch that you wish to pull. Default = main
+
+    Returns
+    -------
+    Pulls any new commits to the repo from GitHub to local computer.
+
+    """
     try:
         # first, check that local git set up with ssh keys for github
         check_git_ssh()
