@@ -28,7 +28,6 @@ setup(
     license="BSD",
     packages=["abcclassroom"],
     install_requires=[
-        "jinja2",
         "ruamel.yaml",
         "github3.py",
     ],
