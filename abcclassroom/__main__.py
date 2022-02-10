@@ -137,7 +137,7 @@ def new_template():
     )
     parser.add_argument(
         "--commit-message",
-        # action="store_true",
+        default="Initial commit",
         help="""Enter a commit message for git. If not set, uses default
         message 'Initial commit').""",
     )
@@ -158,7 +158,6 @@ def new_template():
         (Default = fail).""",
     )
     args = parser.parse_args()
-
     template.new_update_template(args)
 
 
@@ -221,7 +220,7 @@ def update_template():
     )
     parser.add_argument(
         "--commit-message",
-        # action="store_true",
+        default="Updating assignment",
         help="""Enter a commit message for git. If not set, uses default
         message 'Updating assignment').""",
     )
