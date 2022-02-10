@@ -1,4 +1,4 @@
-
+UPDATE: abc-classroom is in a transition period where maintainence will slow down. We are open to new maintainers so please reach out via an issue if you are interested. The main work that needs to happen at this point is a better object-oriented test suite that makes it easier to contribute to the package without the big worry of breaking things. There are plans to have a developer spend some time on this package but this likely won't happen until later in the year (2022).  
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3539582.svg)](https://doi.org/10.5281/zenodo.3539582)
 
