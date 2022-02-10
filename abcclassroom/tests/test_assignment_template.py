@@ -20,9 +20,7 @@ def test_create_template(course_structure_assignment):
     course_dir = Path(config["course_directory"])
     templates_dir = Path(config["template_dir"])
 
-    abctemplate.create_template(
-        assignment_name, push_to_github=False, custom_message=False
-    )
+    abctemplate.create_template(assignment_name, push_to_github=False)
 
     expected_template_dir = Path(
         course_dir, templates_dir, "{}-template".format(assignment_name)
@@ -40,9 +38,32 @@ def test_create_template_no_assignment(sample_course_structure):
     with pytest.raises(
         FileNotFoundError, match="Oops, it looks like the assignment"
     ):
-        abctemplate.create_template(
-            "assignment_test", push_to_github=False, custom_message=False
-        )
+        abctemplate.create_template("assignment_test", push_to_github=False)
+
+
+def test_create_custom_commit_message(course_structure_assignment):
+    """
+    Test that top-level create_template uses a custom commit message
+    if provided.
+    """
+    config, assignment_name, release_path = course_structure_assignment
+    course_dir = Path(config["course_directory"])
+    templates_dir = Path(config["template_dir"])
+
+    abctemplate.create_template(
+        assignment_name,
+        mode="delete",
+        push_to_github=False,
+        commit_message="Custom commit message",
+    )
+
+    expected_template_dir = Path(
+        course_dir, templates_dir, "{}-template".format(assignment_name)
+    )
+    assert expected_template_dir.exists()
+
+    git_return = abcgit._call_git("log", directory=expected_template_dir)
+    assert "Custom commit" in git_return.stdout
 
 
 def test_create_template_dir(course_structure_assignment):
@@ -132,7 +153,7 @@ def test_create_template_dir_move_git_dir(course_structure_assignment):
     # create a file in the template dir, init a git repo and commit
     testfile = Path(template_path, "file1.txt")
     testfile.touch()
-    abcgit.init_and_commit(template_path, False)
+    abcgit.init_and_commit(template_path, "commit message")
     assert Path(template_path, ".git").exists()
 
     template_path = abctemplate.create_template_dir(

@@ -12,9 +12,11 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   abcclassroom.auth
    abcclassroom.clone
    abcclassroom.config
    abcclassroom.feedback
+   abcclassroom.git
    abcclassroom.github
    abcclassroom.quickstart
    abcclassroom.roster

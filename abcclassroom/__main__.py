@@ -136,11 +136,10 @@ def new_template():
         course_materials/release directory""",
     )
     parser.add_argument(
-        "--custom-message",
-        action="store_true",
-        help="""Use a custom commit message for git. Will open the default
-        git text editor for entry (if not set, uses default message 'Initial
-        commit').""",
+        "--commit-message",
+        default="Initial commit",
+        help="""Enter a commit message for git. If not set, uses default
+        message 'Initial commit').""",
     )
     parser.add_argument(
         "--github",
@@ -159,7 +158,6 @@ def new_template():
         (Default = fail).""",
     )
     args = parser.parse_args()
-
     template.new_update_template(args)
 
 
@@ -220,9 +218,14 @@ def update_template():
         directory); merge = overwrite existing files add new files
         (Default = merge).""",
     )
+    parser.add_argument(
+        "--commit-message",
+        default="Updating assignment",
+        help="""Enter a commit message for git. If not set, uses default
+        message 'Updating assignment').""",
+    )
     args = parser.parse_args()
     # now set the additional args (so that it matches the keys in add_template
     # and we can use the same implementation methods)
     setattr(args, "github", True)
-    setattr(args, "custom_message", True)
     template.new_update_template(args)

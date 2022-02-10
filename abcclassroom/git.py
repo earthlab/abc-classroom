@@ -7,9 +7,6 @@ abc-classroom.git
 # methods that involve the GitHub API
 
 import subprocess
-import sys
-
-from .utils import input_editor
 
 
 def check_git_ssh():
@@ -134,22 +131,6 @@ def repo_changed(directory):
     return bool(ret.stdout)
 
 
-def get_commit_message():
-    default_message = """
-    # Please enter the commit message for your changes. Lines starting
-    # with '#' will be ignored, and an empty message aborts the commit.
-    # This message will be used as commit and Pull Request message."""
-    message = input_editor(default_message)
-    message = "\n".join(
-        [
-            line
-            for line in message.split("\n")
-            if not line.strip().startswith("#")
-        ]
-    )
-    return message
-
-
 def commit_all_changes(directory, msg=None):
     """Run git add, git commit on a given directory. Checks git status
     first and does nothing if no changes.
@@ -163,7 +144,7 @@ def commit_all_changes(directory, msg=None):
         print("No changes in repository {}; doing nothing".format(directory))
 
 
-def init_and_commit(directory, custom_message=False):
+def init_and_commit(directory, commit_message):
     """Run git init, git add, git commit on given directory. Checks git status
     first and does nothing if no changes are detected.
 
@@ -187,13 +168,7 @@ def init_and_commit(directory, custom_message=False):
     git_init(directory)
     _master_branch_to_main(directory)
     if repo_changed(directory):
-        message = "Initial commit"
-        if custom_message:
-            message = get_commit_message()
-            if not message:
-                print("Empty commit message, exiting.")
-                sys.exit(1)  # sys is undefined - ask karen about this
-        commit_all_changes(directory, message)
+        commit_all_changes(directory, commit_message)
     else:
         print("No changes to local repository.")
 

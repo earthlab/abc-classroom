@@ -34,7 +34,7 @@ def new_update_template(args):
         create_template(
             mode=args.mode,
             push_to_github=args.github,
-            custom_message=args.custom_message,
+            commit_message=args.commit_message,
             assignment_name=args.assignment,
         )
     except FileNotFoundError as fnfe:
@@ -46,7 +46,10 @@ def new_update_template(args):
 
 
 def create_template(
-    assignment_name, mode="fail", push_to_github=False, custom_message=False
+    assignment_name,
+    mode="fail",
+    push_to_github=False,
+    commit_message="Initial commit",
 ):
     """
     Classroom package function that creates or updates an assignment template
@@ -70,8 +73,10 @@ def create_template(
     push_to_github : boolean
         True if you want to push to GH
     mode : merge, fail
-    custom message : boolean (default = False)
-        True if you want to push to github.
+    commit_message : string
+        Sets a custom git commit message. For new templates, default is
+        "Initial commit" and for updating templates, default is
+        "Updating assignment"
     assignment_name : string
         name of the assignment
     """
@@ -97,7 +102,7 @@ def create_template(
     except FileNotFoundError as e:
         print(e)
         raise FileNotFoundError(
-            "Oops, it looks like the assignment - {} - does not exist"
+            "Oops, it looks like the assignment - {} - does not exist "
             "in the location that I expected it: \n{}. \nDid "
             "you spell the assignment name correctly and is there a "
             "directory at this path?".format(assignment_name, release_path)
@@ -112,7 +117,7 @@ def create_template(
     )
 
     # Create the local git repository and commit changes
-    abcgit.init_and_commit(template_repo_path, custom_message)
+    abcgit.init_and_commit(template_repo_path, commit_message)
 
     # Create / append assignment entry in config - this should only happen if
     # the assignment above exists...

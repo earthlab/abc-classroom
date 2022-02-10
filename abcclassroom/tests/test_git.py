@@ -13,7 +13,8 @@ def test_init_and_commit(default_config, tmp_path):
     repo_dir.mkdir()
     a_file = Path(repo_dir, "testfile.txt")
     a_file.write_text("Some text")
-    abcgit.init_and_commit(repo_dir)
+    commit_message = "changing some things"
+    abcgit.init_and_commit(repo_dir, commit_message)
     assert Path(repo_dir, ".git").exists()
     git_return = abcgit._call_git("log", directory=repo_dir)
     assert git_return.stdout.startswith("commit")
