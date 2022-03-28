@@ -9,4 +9,4 @@ tox==3.24.5
 sphinx-autobuild==2021.3.14
 sphinx_copybutton==0.5.0
 pydata_sphinx_theme==0.8.0
-black==22.1.0
+black==22.3.0
