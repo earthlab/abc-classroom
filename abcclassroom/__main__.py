@@ -39,6 +39,14 @@ def init():
     create a valid file; 2. Check that ssh access to GitHub via git
     commands is working.
     """
+    parser = argparse.ArgumentParser(description=init.__doc__)
+    parser.add_argument(
+        "--ssh_user",
+        default="git@github.com",
+        help="""Name of the Github user when connecting over ssh. Default to
+        git@github.com""",
+    )
+    args = parser.parse_args()
 
     print("Step 1: Setting up GitHub API access")
     abcauth.check_or_generate_token()
@@ -50,7 +58,7 @@ def init():
         """
     )
     try:
-        abcgit.check_git_ssh()
+        abcgit.check_git_ssh(args.ssh_user)
         print(
             """Running git commands that access GitHub via SSH seems to
         be configured correctly"""
@@ -88,6 +96,12 @@ def clone():
         "--no-submitted",
         action="store_false",
         help="""Skip moving files from cloned repo to submitted.""",
+    )
+    parser.add_argument(
+        "--ssh_user",
+        default="git@github.com",
+        help="""Name of the Github user when connecting over ssh. Default to
+        git@github.com""",
     )
     args = parser.parse_args()
 
@@ -157,6 +171,12 @@ def new_template():
         merge = keep existing dir, overwrite existing files, add new files
         (Default = fail).""",
     )
+    parser.add_argument(
+        "--ssh_user",
+        default="git@github.com",
+        help="""Name of the Github user when connecting over ssh. Default to
+        git@github.com""",
+    )
     args = parser.parse_args()
     template.new_update_template(args)
 
@@ -223,6 +243,12 @@ def update_template():
         default="Updating assignment",
         help="""Enter a commit message for git. If not set, uses default
         message 'Updating assignment').""",
+    )
+    parser.add_argument(
+        "--ssh_user",
+        default="git@github.com",
+        help="""Name of the Github user when connecting over ssh. Default to
+        git@github.com""",
     )
     args = parser.parse_args()
     # now set the additional args (so that it matches the keys in add_template

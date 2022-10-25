@@ -9,13 +9,18 @@ abc-classroom.git
 import subprocess
 
 
-def check_git_ssh():
+def check_git_ssh(ssh_user="git@github.com"):
     """Tests that ssh access to GitHub is set up correctly on the users
     computer.
 
     Throws a RuntimeError if setup is not working.
+
+    Parameters
+    ----------
+    ssh_user: string (default = "git@github.com")
+        Name of the Github user when connecting over ssh. 
     """
-    cmd = ["ssh", "-T", "git@github.com"]
+    cmd = ["ssh", "-T", ssh_user]
     try:
         subprocess.run(
             cmd,
@@ -89,7 +94,7 @@ def _call_git(*args, directory=None):
     return ret
 
 
-def clone_repo(organization, repo, dest_dir):
+def clone_repo(organization, repo, dest_dir, ssh_user="git@github.com"):
     """Clone `repository` from `org` into a sub-directory in `directory`.
 
     Raises RuntimeError if ssh keys not set up correctly, or if git clone
@@ -105,6 +110,8 @@ def clone_repo(organization, repo, dest_dir):
         Path to the destination directory
         TODO: is this a full path, path object or string - what format is
         dest_dir in
+    ssh_user: string (default = "git@github.com")
+        Name of the Github user when connecting over ssh. 
     Returns
     -------
     Cloned github repository in the destination directory specified.
@@ -112,16 +119,16 @@ def clone_repo(organization, repo, dest_dir):
 
     try:
         # first, check that local git set up with ssh keys for github
-        check_git_ssh()
-        url = "git@github.com:{}/{}.git".format(organization, repo)
+        check_git_ssh(ssh_user=ssh_user)
+        url = "{}:{}/{}.git".format(ssh_user, organization, repo)
         print("cloning:", url)
         _call_git("-C", dest_dir, "clone", url)
     except RuntimeError as e:
         raise e
 
 
-def add_remote(directory, organization, remote_repo):
-    remote_url = "git@github.com:{}/{}.git".format(organization, remote_repo)
+def add_remote(directory, organization, remote_repo, ssh_user):
+    remote_url = "{}:{}/{}.git".format(ssh_user, organization, remote_repo)
     _call_git("remote", "add", "origin", remote_url, directory=directory)
 
 
@@ -212,7 +219,7 @@ def _master_branch_to_main(dir):
         _call_git("branch", "-m", "master", "main", directory=dir)
 
 
-def push_to_github(directory, branch="main"):
+def push_to_github(directory, branch="main", ssh_user="git@github.com"):
     """Push `branch` of the repository in `directory` back to GitHub
 
     Assumes git remotes are already setup.
@@ -223,6 +230,8 @@ def push_to_github(directory, branch="main"):
         A path to the local directory where the git repo of interest is saved.
     branch : str
         A string representing the branch that you wish to pull. Default = main
+    ssh_user: string (default = "git@github.com")
+        Name of the Github user when connecting over ssh. 
 
     Returns
     -------
@@ -230,7 +239,7 @@ def push_to_github(directory, branch="main"):
     """
     try:
         # first, check that local git set up with ssh keys for github
-        check_git_ssh()
+        check_git_ssh(ssh_user=ssh_user)
         _call_git(
             "push", "--set-upstream", "origin", branch, directory=directory
         )
@@ -238,7 +247,7 @@ def push_to_github(directory, branch="main"):
         raise e
 
 
-def pull_from_github(directory, branch="main"):
+def pull_from_github(directory, branch="main", ssh_user="git@github.com"):
     """Pull `branch` of local repo in `directory` from GitHub.
 
     Assumes git remotes are already setup.
@@ -249,6 +258,8 @@ def pull_from_github(directory, branch="main"):
         A path to the local directory where the git repo of interest is saved.
     branch : str
         A string representing the branch that you wish to pull. Default = main
+    ssh_user: string (default = "git@github.com")
+        Name of the Github user when connecting over ssh.
 
     Returns
     -------
@@ -257,7 +268,7 @@ def pull_from_github(directory, branch="main"):
     """
     try:
         # first, check that local git set up with ssh keys for github
-        check_git_ssh()
+        check_git_ssh(ssh_user=ssh_user)
         _call_git("pull", "origin", branch, directory=directory)
     except RuntimeError as e:
         raise e

@@ -14,7 +14,8 @@ from . import git as abcgit
 from . import scrub_feedback as sf
 
 
-def copy_feedback_files(assignment_name, push_to_github=False, scrub=False):
+def copy_feedback_files(assignment_name, push_to_github=False, scrub=False, 
+    ssh_user="git@github.com"):
     """Copies feedback reports to local student repositories, commits the
     changes,
     and (optionally) pushes to github. Assumes files are in the directory
@@ -31,7 +32,9 @@ def copy_feedback_files(assignment_name, push_to_github=False, scrub=False):
     scrub: boolean
         If true, and we are moving an html file this will clean the html file
         before copying it over.
-
+    ssh_user: string (default = "git@github.com")
+        Name of the Github user when connecting over ssh. 
+        
     Returns
     -------
         Moves feedback html files from the student feedback directory to the
@@ -107,7 +110,7 @@ def copy_feedback_files(assignment_name, push_to_github=False, scrub=False):
                 )
                 if push_to_github:
                     try:
-                        abcgit.push_to_github(destination_dir)
+                        abcgit.push_to_github(destination_dir, ssh_user)
                     except RuntimeError as e:
                         print(e)
                         print(
