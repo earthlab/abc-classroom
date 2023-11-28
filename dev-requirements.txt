@@ -8,5 +8,5 @@ pytest-cov==4.0.0
 tox==4.6.3
 sphinx-autobuild==2021.3.14
 sphinx_copybutton==0.5.2
-pydata_sphinx_theme==0.13.1
+pydata_sphinx_theme==0.14.4
 black==23.3.0
