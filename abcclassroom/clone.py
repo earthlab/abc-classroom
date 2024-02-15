@@ -12,7 +12,7 @@ from . import config as cf
 from . import git as abcgit
 
 
-def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
+def clone_or_update_repo(organization, repo, clone_dir, skip_existing, ssh_user="git@github.com"):
     """
     Tries to clone the single repository 'repo' from the organization. If the
     local repository already exists, pulls instead of cloning (unless the
@@ -46,7 +46,7 @@ def clone_or_update_repo(organization, repo, clone_dir, skip_existing):
             print(e)
     else:
         try:
-            abcgit.clone_repo(organization, repo, clone_dir)
+            abcgit.clone_repo(organization, repo, clone_dir, ssh_user=ssh_user)
         except RuntimeError as e:
             print("Error cloning repository {}".format(repo))
             print(e)
@@ -66,11 +66,12 @@ def clone_student_repos(args):
     assignment_name = args.assignment
     skip_existing = args.skip_existing
     no_submitted = args.no_submitted
+    ssh_user = args.ssh_user
 
-    clone_repos(assignment_name, skip_existing, no_submitted)
+    clone_repos(assignment_name, skip_existing, no_submitted, ssh_user)
 
 
-def clone_repos(assignment_name, skip_existing=False, no_submitted=True):
+def clone_repos(assignment_name, skip_existing=False, no_submitted=True, ssh_user="git@github.com"):
     """Iterates through the student roster, clones each repo for this
     assignment into the directory specified in the config, and then copies the
     notebook files into the 'course_materials/submitted' directory, based on
@@ -140,6 +141,7 @@ def clone_repos(assignment_name, skip_existing=False, no_submitted=True):
                                 repo,
                                 Path(clone_dir, assignment_name),
                                 skip_existing,
+                                ssh_user=ssh_user
                             )
                             if materials_dir is not None and no_submitted:
                                 copy_assignment_files(

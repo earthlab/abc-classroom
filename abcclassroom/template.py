@@ -36,6 +36,7 @@ def new_update_template(args):
             push_to_github=args.github,
             commit_message=args.commit_message,
             assignment_name=args.assignment,
+            ssh_user=args.ssh_user
         )
     except FileNotFoundError as fnfe:
         # if the assignment does not exist in course_materials/release
@@ -50,6 +51,7 @@ def create_template(
     mode="fail",
     push_to_github=False,
     commit_message="Initial commit",
+    ssh_user="git@github.com"
 ):
     """
     Classroom package function that creates or updates an assignment template
@@ -79,6 +81,8 @@ def create_template(
         "Updating assignment"
     assignment_name : string
         name of the assignment
+    ssh_user: string (default = "git@github.com")
+        Name of the Github user when connecting over ssh. 
     """
 
     print("Loading configuration from config.yml")
@@ -138,12 +142,12 @@ def create_template(
         token = auth.get_github_auth()["access_token"]
 
         create_or_update_remote(
-            template_repo_path, organization, repo_name, token
+            template_repo_path, organization, repo_name, token, ssh_user
         )
 
 
 def create_or_update_remote(
-    template_repo_path, organization, repo_name, token
+    template_repo_path, organization, repo_name, token, ssh_user
 ):
     """
     Push template repo to GitHub. If remote does not yet exist, creates it
@@ -172,14 +176,14 @@ def create_or_update_remote(
         abcgithub.create_repo(organization, repo_name, token)
 
     try:
-        abcgit.add_remote(template_repo_path, organization, repo_name)
+        abcgit.add_remote(template_repo_path, organization, repo_name, ssh_user)
     except RuntimeError:
         print("Remote already added to local repository.")
         pass
 
     print("Pushing any changes to remote repository on GitHub.")
     try:
-        abcgit.push_to_github(template_repo_path, "main")
+        abcgit.push_to_github(template_repo_path, "main", ssh_user)
     except RuntimeError as e:
         print(
             """Push to github failed. This is usually because there are
